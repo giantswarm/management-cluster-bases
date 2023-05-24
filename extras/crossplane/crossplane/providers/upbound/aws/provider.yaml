@@ -1,0 +1,15 @@
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-aws
+  namespace: crossplane
+spec:
+  controllerConfigRef:
+    name: upbound-provider-aws
+  ignoreCrossplaneConstraints: false
+  package: xpkg.upbound.io/upbound/provider-aws:v0.30.0
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: false

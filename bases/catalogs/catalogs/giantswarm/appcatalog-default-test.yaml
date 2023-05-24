@@ -1,0 +1,65 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-default-test
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-default-test
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "default-test"
+      title: "Giant Swarm Default Test"
+      catalogType: "test"
+      catalogVisibility: "internal"
+      description: >
+        This catalog holds test versions of the apps in Giant Swarm Default.
+        No guarantees, no SLA! Here be dragons! Giant Swarm developers only.
+      logoURL: "/images/repo_icons/incubator.png"
+      storage:
+        URL: "https://giantswarm.github.io/default-test-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/default-test-catalog/"
+      config:
+        configMap:
+          values:
+            helm:
+              kubernetes:
+                waitTimeout: 120s
+            exporter:
+              namespace: "kube-system"
+            externalDNSIP: 8.8.8.8
+            image:
+              registry: "quay.io"
+            # TODO: Moving the number of coreDNS replicas into app setting and
+            # need a better handling extra small cluster
+            # Issues: https://github.com/giantswarm/giantswarm/issues/9316
+            minReplicas: 3
+            tiller:
+              namespace: "giantswarm"
+            NetExporter:
+              DNSCheck:
+                TCP:
+                  Disabled: false
+              Hosts: "giantswarm.io.,kubernetes.default.svc.cluster.local."
+              NTPServers: "0.flatcar.pool.ntp.org,1.flatcar.pool.ntp.org"

@@ -1,0 +1,5 @@
+bases: []
+resources:
+- ./helm-repositories
+- resource-gitrepositories.yaml
+- resource-kustomizations.yaml

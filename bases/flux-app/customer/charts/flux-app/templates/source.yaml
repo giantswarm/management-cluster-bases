@@ -1,0 +1,104 @@
+{{- $two_step_upgrade := printf "unsupported: true" | fromYaml }}
+{{- if (.Capabilities.APIVersions.Has "application.giantswarm.io/v1alpha1") }}
+{{- $two_step_upgrade = include "appPlatform.twoStepInstall" .Release.Name | fromYaml }}
+{{- end }}
+{{- if .Values.sopsEncryption.enabled }}
+apiVersion: v1
+data:
+{{- range $index, $key := .Values.sopsEncryption.encryptionKeys }}
+  "sops-{{ $index }}.asc": "{{ $key | b64enc }}"
+{{- end }}
+kind: Secret
+metadata:
+  name: "{{ .Release.Name }}-sops-gpg"
+  namespace: "{{ .Release.Namespace }}"
+---
+{{- end }}
+{{- range .Values.sources }}
+{{- $is_gitrepository_crd := (lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "gitrepositories.source.toolkit.fluxcd.io") -}}
+{{- if or $two_step_upgrade.unsupported $is_gitrepository_crd }}
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: "{{ .name }}"
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  interval: "{{ .interval }}"
+  ref:
+    branch: "{{ .branch }}"
+  secretRef:
+    name: "{{ .name }}-credentials"
+  url: "{{ .url }}"
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "{{ .name }}-credentials"
+  namespace: "{{ $.Release.Namespace }}"
+type: Opaque
+data:
+  username: "{{ .credentials.username | b64enc }}"
+  password: "{{ .credentials.password | b64enc }}"
+  token: "{{ .credentials.password | b64enc }}"
+{{- $is_provider_crd := (lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "providers.notification.toolkit.fluxcd.io") -}}
+{{- if or $two_step_upgrade.unsupported $is_provider_crd }}
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Provider
+metadata:
+  name: "{{ .name }}-github-notification-provider"
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  type: {{ .provider }}
+  address: "{{ .url | trimSuffix ".git" }}"
+  secretRef:
+    name: "{{ .name }}-credentials"
+{{- end }}
+{{- end }}
+{{- range .Values.kustomizations }}
+{{- $is_kustomization_crd := (lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "kustomizations.kustomize.toolkit.fluxcd.io") -}}
+{{- if or $two_step_upgrade.unsupported $is_kustomization_crd }}
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: "{{ .name }}"
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  interval: "{{ .interval }}"
+  path: "{{ .path }}"
+{{- if .postBuild }}
+  postBuild:
+{{- .postBuild | toYaml | nindent 4 }}
+{{- end }}
+  prune: {{ .prune }}
+  sourceRef:
+    kind: GitRepository
+    name: "{{ .source_name }}"
+{{- if $.Values.sopsEncryption.enabled }}
+  decryption:
+    provider: sops
+    secretRef:
+      name: "{{ $.Release.Name }}-sops-gpg"
+{{- end }}
+{{- end }}
+{{- $is_alert_crd := (lookup "apiextensions.k8s.io/v1" "CustomResourceDefinition" "" "alerts.notification.toolkit.fluxcd.io") -}}
+{{- if or $two_step_upgrade.unsupported $is_alert_crd }}
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Alert
+metadata:
+  name: "{{ .name }}-github-alert"
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  providerRef:
+    name: "{{ .source_name }}-github-notification-provider"
+  eventSeverity: info
+  eventSources:
+    - kind: Kustomization
+      name: "{{ .name }}"
+      namespace: "{{ $.Release.Namespace }}"
+{{- end }}
+{{- end }}

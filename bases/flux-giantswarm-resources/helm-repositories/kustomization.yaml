@@ -1,0 +1,3 @@
+resources:
+- helmrepository-giantswarm-catalog.yaml
+- helmrepository-control-plane-catalog.yaml

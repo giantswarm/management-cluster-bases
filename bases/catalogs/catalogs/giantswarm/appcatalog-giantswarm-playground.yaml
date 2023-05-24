@@ -1,0 +1,41 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-giantswarm-playground
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-giantswarm-playground
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "giantswarm-playground"
+      title: "Giant Swarm Playground"
+      catalogType: "test"
+      catalogVisibility: "internal"
+      catalogNamespace: "default"
+      description: "This catalog holds applications that are not covered by any support plan. Still, we try to make them install and run on Giant Swarm smoothly!"
+      logoURL: "/images/repo_icons/incubator.png"
+      storage:
+        URL: "https://giantswarm.github.io/giantswarm-playground-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/giantswarm-playground-catalog/"

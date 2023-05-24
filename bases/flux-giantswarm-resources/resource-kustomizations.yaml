@@ -1,0 +1,125 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: flux-crds
+  namespace: flux-giantswarm
+spec:
+  interval: 1h
+  path: "./bases/flux-app/crds"
+  # Think about changing prune settings twice. Or three times. In fact, don't
+  # change it at all. You are risking deleting customer Workload Clusters and
+  # more.
+  prune: false
+  retryInterval: 30s
+  timeout: 15m
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: management-clusters-fleet
+    namespace: flux-giantswarm
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: flux
+  namespace: flux-giantswarm
+spec:
+  dependsOn:
+    - name: flux-crds
+  interval: 5m
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}"
+  prune: false
+  retryInterval: 30s
+  sourceRef:
+    kind: GitRepository
+    name: management-clusters-fleet
+    namespace: flux-giantswarm
+  timeout: 4m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: flux-extras
+  namespace: flux-giantswarm
+spec:
+  dependsOn:
+    - name: flux
+  interval: 5m
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/extras"
+  prune: false
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: management-clusters-fleet
+    namespace: flux-giantswarm
+  timeout: 3m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: catalogs
+  namespace: flux-giantswarm
+spec:
+  dependsOn:
+    - name: flux
+  interval: 5m
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/catalogs"
+  prune: false
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: management-clusters-fleet
+    namespace: flux-giantswarm
+  timeout: 3m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: collection
+  namespace: flux-giantswarm
+spec:
+  dependsOn:
+    - name: catalogs
+  interval: 5m
+  patches:
+  - patch: |-
+      apiVersion: application.giantswarm.io/v1alpha1
+      kind: App
+      metadata:
+        name: kyverno
+        namespace: giantswarm
+      spec:
+        install:
+          timeout: 10m0s
+        upgrade:
+          timeout: 10m0s
+    target:
+      kind: App
+      name: kyverno
+      namespace: giantswarm
+  - patch: |-
+      apiVersion: application.giantswarm.io/v1alpha1
+      kind: App
+      metadata:
+        name: prometheus-operator-app
+        namespace: giantswarm
+      spec:
+        install:
+          skipCRDs: true
+    target:
+      kind: App
+      name: prometheus-operator-app
+      namespace: giantswarm
+  path: ./flux-manifests
+  prune: false
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: collection
+    namespace: flux-giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m

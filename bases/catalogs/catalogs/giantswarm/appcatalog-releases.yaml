@@ -1,0 +1,47 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-releases
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-releases
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "releases"
+      title: "Giant Swarm Releases"
+      catalogType: "stable"
+      catalogVisibility: "internal"
+      description: "This catalog holds production revisions of helm charts of Release CRs which define versions of components for cluster creation and upgrades."
+      logoURL: "/images/repo_icons/giantswarm.png"
+      storage:
+        URL: "https://giantswarm.github.io/releases-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/releases-catalog/"
+      config:
+        configMap:
+          values:
+            image:
+              registry: "quay.io"
+            tiller:
+              namespace: "giantswarm"

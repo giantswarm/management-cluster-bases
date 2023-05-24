@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-control-plane-catalog
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-control-plane-catalog
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "control-plane-catalog"
+      title: "Control Plane Catalog"
+      catalogType: "stable"
+      catalogVisibility: "internal"
+      description: >
+        This catalog holds Apps exclusively running on Giant Swarm control planes.
+      logoURL: "/images/repo_icons/giantswarm.png"
+      storage:
+        URL: "https://giantswarm.github.io/control-plane-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/control-plane-catalog/"
+      config:
+        configMap:
+          name: "draughtsman-values-configmap"
+          namespace: "draughtsman"
+          managed: false
+        secret:
+          name: "draughtsman-values-secret"
+          namespace: "draughtsman"
+          managed: false

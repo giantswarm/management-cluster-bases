@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "priorityClass.name" . }}
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+value: {{ int .Values.priorityClass.value }}

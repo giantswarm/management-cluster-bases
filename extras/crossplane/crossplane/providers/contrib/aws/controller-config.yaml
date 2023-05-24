@@ -1,0 +1,11 @@
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: provider-aws
+  namespace: crossplane
+spec:
+  args:
+    - --debug
+  image: docker.io/giantswarm/crossplane-provider-aws:v0.37.1
+  serviceAccountName: provider-aws

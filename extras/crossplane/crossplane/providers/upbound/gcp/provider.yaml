@@ -1,0 +1,15 @@
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-gcp
+  namespace: crossplane
+spec:
+  controllerConfigRef:
+    name: upbound-provider-gcp
+  ignoreCrossplaneConstraints: false
+  package: xpkg.upbound.io/upbound/provider-gcp:v0.28.0
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: false

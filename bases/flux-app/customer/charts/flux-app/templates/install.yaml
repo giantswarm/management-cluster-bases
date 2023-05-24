@@ -1,0 +1,1141 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: helm-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: helm-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: image-automation-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: image-automation-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: image-reflector-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: image-reflector-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {{ include "kustomizeControllerSA.annotations" . }} 
+  labels:
+    app.kubernetes.io/component: kustomize-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: kustomize-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: notification-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: source-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: source-controller
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: "runtime/default"
+  {{- end }}
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: {{ printf "%s-pvc-psp" (include "name" .) }}
+spec:
+  allowPrivilegeEscalation: false
+  fsGroup:
+    ranges:
+      - max: 65535
+        min: 1
+    rule: MustRunAs
+  privileged: false
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+      - max: 65535
+        min: 1
+    rule: MustRunAs
+  volumes:
+    - emptyDir
+    - secret
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: crd-controller
+rules:
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - notification.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - image.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - secrets
+      - configmaps
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - policy
+    resourceNames:
+      - {{ printf "%s-pvc-psp" (include "name" .) }}
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+{{- if .Values.clusterRoles.install }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: flux-edit
+rules:
+  - apiGroups:
+      - notification.toolkit.fluxcd.io
+      - source.toolkit.fluxcd.io
+      - helm.toolkit.fluxcd.io
+      - image.toolkit.fluxcd.io
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: flux-view
+rules:
+  - apiGroups:
+      - notification.toolkit.fluxcd.io
+      - source.toolkit.fluxcd.io
+      - helm.toolkit.fluxcd.io
+      - image.toolkit.fluxcd.io
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: cluster-reconciler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: kustomize-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: helm-controller
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: crd-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: crd-controller
+subjects:
+  - kind: ServiceAccount
+    name: kustomize-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: helm-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: source-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: notification-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: image-reflector-controller
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: image-automation-controller
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: notification-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: source-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: source-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: source-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: webhook-receiver
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http-webhook
+  selector:
+    app: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    giantswarm.io/monitoring-path: /metrics
+    giantswarm.io/monitoring-port: "8080"
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/monitoring: "true"
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: {{ .Release.Name  }}-monitoring
+  namespace: {{ .Release.Namespace }}
+spec:
+  clusterIP: None
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: {{ .Values.upstreamMetricsPort }}
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: helm-controller
+    app.kubernetes.io/component: helm-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: helm-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: helm-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        giantswarm.io/service_type: managed
+        helm.sh/chart: {{ include "chart" . }}
+    spec:
+      containers:
+        - args:
+            - --events-addr=http://notification-controller.{{ .Release.Namespace }}.svc.{{ .Values.cluster.domain }}./
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: '{{ .Values.images.registry }}/{{ .Values.images.helmController.image }}:v0.31.2'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources: 
+{{ include "resources.helmController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.seccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: helm-controller
+      terminationGracePeriodSeconds: 600
+      volumes:
+        - emptyDir: {}
+          name: temp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: image-automation-controller
+    app.kubernetes.io/component: image-automation-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: image-automation-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-automation-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: image-automation-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        giantswarm.io/service_type: managed
+        helm.sh/chart: {{ include "chart" . }}
+    spec:
+      containers:
+        - args:
+            - --events-addr=http://notification-controller.{{ .Release.Namespace }}.svc.{{ .Values.cluster.domain }}./
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+            - --feature-gates={{ include "imageAutomationController.featureGates" . }}
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: '{{ .Values.images.registry }}/{{ .Values.images.imageAutomationController.image }}:v0.31.0'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources: 
+{{ include "resources.imageAutomationController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.podSeccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: image-automation-controller
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - emptyDir: {}
+          name: temp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: image-reflector-controller
+    app.kubernetes.io/component: image-reflector-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: image-reflector-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-reflector-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: image-reflector-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        giantswarm.io/service_type: managed
+        helm.sh/chart: {{ include "chart" . }}
+    spec:
+      containers:
+        - args:
+            - --events-addr=http://notification-controller.{{ .Release.Namespace }}.svc.{{ .Values.cluster.domain }}./
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: '{{ .Values.images.registry }}/{{ .Values.images.imageReflectorController.image }}:v0.26.1'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources: 
+{{ include "resources.imageReflectorController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+            - mountPath: /data
+              name: data
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.podSeccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: image-reflector-controller
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - emptyDir: {}
+          name: temp
+        - emptyDir: {}
+          name: data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kustomize-controller
+    app.kubernetes.io/component: kustomize-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: kustomize-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kustomize-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  template:
+    metadata:
+      annotations: {{ include "podTemplateAnnotations.kustomizeController" . }}
+      labels: {{ include "podTemplateLabels.kustomizeController" . }}
+    spec:
+      containers:
+        - args:
+            - --events-addr=http://notification-controller.{{ .Release.Namespace }}.svc.{{ .Values.cluster.domain }}./
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: '{{ .Values.images.registry }}/{{ .Values.images.kustomizeController.image }}:v0.35.1'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources: 
+{{ include "resources.kustomizeController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.podSeccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: kustomize-controller
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - emptyDir: {}
+          name: temp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notification-controller
+    app.kubernetes.io/component: notification-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: notification-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: notification-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        giantswarm.io/service_type: managed
+        helm.sh/chart: {{ include "chart" . }}
+    spec:
+      containers:
+        - args:
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: '{{ .Values.images.registry }}/{{ .Values.images.notificationController.image }}:v0.33.0'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 9090
+              name: http
+              protocol: TCP
+            - containerPort: 9292
+              name: http-webhook
+              protocol: TCP
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources: 
+{{ include "resources.notificationController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.podSeccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: notification-controller
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - emptyDir: {}
+          name: temp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: source-controller
+    app.kubernetes.io/component: source-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    control-plane: controller
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: source-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: source-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        app: source-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/name: {{ include "name" . }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        giantswarm.io/service_type: managed
+        helm.sh/chart: {{ include "chart" . }}
+    spec:
+      containers:
+        - args:
+            - --events-addr=http://notification-controller.{{ .Release.Namespace }}.svc.{{ .Values.cluster.domain }}./
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+            - --storage-path=/data
+            - --storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc.{{ .Values.cluster.domain }}.
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: TUF_ROOT
+              value: /tmp/.sigstore
+          image: '{{ .Values.images.registry }}/{{ .Values.images.sourceController.image }}:v0.36.1'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 9090
+              name: http
+              protocol: TCP
+            - containerPort: 8080
+              name: http-prom
+              protocol: TCP
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources: 
+{{ include "resources.sourceController" . | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+            {{- with .Values.seccompProfile }}
+            seccompProfile:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /tmp
+              name: tmp
+      priorityClassName: {{ include "priorityClass.name" . }}
+      securityContext:
+        fsGroup: 1337
+        {{- if ge (int .Capabilities.KubeVersion.Minor) 19 }}
+        {{- with .Values.podSeccompProfile }}
+        seccompProfile:
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      serviceAccountName: source-controller
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - emptyDir: {}
+          name: data
+        - emptyDir: {}
+          name: tmp
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: allow-egress
+  namespace: {{ .Release.Namespace }}
+spec:
+  egress:
+    - {}
+  ingress:
+    - from:
+        - podSelector: {}
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: allow-scraping
+  namespace: {{ .Release.Namespace }}
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 8080
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  policyTypes:
+    - Egress
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "name" . }}
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    giantswarm.io/service_type: managed
+    helm.sh/chart: {{ include "chart" . }}
+  name: allow-webhooks
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingress:
+    - from:
+        - namespaceSelector: {}
+  podSelector:
+    matchLabels:
+      app: notification-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      app.kubernetes.io/name: {{ include "name" . }}
+  policyTypes:
+    - Ingress

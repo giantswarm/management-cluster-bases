@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: provider-data
+  namespace: flux-giantswarm
+data:
+  name: capz
+  collection_url: https://github.com/giantswarm/capz-app-collection
+  branch: main

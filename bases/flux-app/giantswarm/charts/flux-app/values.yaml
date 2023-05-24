@@ -1,0 +1,151 @@
+images:
+  registry: docker.io
+  helmController:
+    image: giantswarm/fluxcd-helm-controller
+  sourceController:
+    image: giantswarm/fluxcd-source-controller
+  kustomizeController:
+    image: giantswarm/fluxcd-kustomize-controller
+  notificationController:
+    image: giantswarm/fluxcd-notification-controller
+  imageAutomationController:
+    image: giantswarm/fluxcd-image-automation-controller
+  imageReflectorController:
+    image: giantswarm/fluxcd-image-reflector-controller
+
+# allows to change cluster related configurations
+cluster:
+  domain: cluster.local
+
+clusterRoles:
+  install: true
+
+# only GitRepository for now
+sources: []
+
+# Kustomizations Example
+#
+# kustomizations:
+# - name: my-kustomization
+#   source_name: my-git-source
+#   path: ./the-path
+#   postBuild:
+#     substitute:
+#       environment: "my-env"
+#     substituteFrom:
+#       - kind: ConfigMap
+#         name: my-env-vars
+#   prune: false
+#   interval: 10m0s
+#
+kustomizations: []
+
+sopsEncryption:
+  enabled: false
+  encryptionKeys: []
+
+crds:
+  install: true
+
+  # Add seccomp to pod security context
+  podSeccompProfile:
+    type: RuntimeDefault
+
+  # Add seccomp to container security context
+  seccompProfile:
+    type: RuntimeDefault
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "250m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+resources:
+  helmController:
+    limits:
+      cpu: 500m
+      # Set max allowed memory limit for VPA due to high memory usage.
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  imageAutomationController:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  imageReflectorController:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  kustomizeController:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  notificationController:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  sourceController:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+upstreamMetricsPort: http-prom
+
+# allows VPA to be used if its installed in the cluster
+verticalPodAutoscaler:
+  enabled: false
+  # enables bypassing "autoscaling.k8s.io/v1" check; use with care
+  force: false
+
+# Annotations to add on to the kustomize controller service account
+# Allows for adding custom annotations such as those required for use of
+# KMS keys.
+kustomizeServiceAccount:
+  annotations: {}
+
+# Provides the ability to add custom labels and annotations to
+kustomizeController:
+  podTemplate:
+    annotations: {}
+    labels: {}
+
+# Interface to provide extra configuration to the Image Automation Controller
+imageAutomationController:
+  # featureGates is the []string type, listing feature gates name to disable,
+  # which are otherwise enabled by default.
+  #
+  # featureGatesToDisable:
+  #   - GitForcePushBranch
+  #   - ForceGoGitImplementation
+  featureGatesToDisable: []
+
+priorityClass:
+  name: ""
+  value: 1000000000
+
+# Add seccomp to pod security context
+podSeccompProfile:
+  type: RuntimeDefault
+
+# Add seccomp to container security context
+seccompProfile:
+  type: RuntimeDefault

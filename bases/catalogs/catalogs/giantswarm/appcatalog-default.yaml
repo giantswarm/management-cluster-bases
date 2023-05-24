@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-default
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-default
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "default"
+      title: "Giant Swarm Default Catalog"
+      catalogType: "stable"
+      catalogVisibility: "internal"
+      description: >
+        This catalog holds Apps managed by Giant Swarm that are installed by
+        default and not chosen by customers.
+      logoURL: "/images/repo_icons/giantswarm.png"
+      storage:
+        URL: "https://giantswarm.github.io/default-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/default-catalog/"
+      config:
+        configMap:
+          values:
+            helm:
+              kubernetes:
+                waitTimeout: 120s
+            exporter:
+              namespace: "kube-system"
+            externalDNSIP: 8.8.8.8
+            image:
+              registry: "quay.io"
+            # TODO: Moving the number of coreDNS replicas into app setting and
+            # need a better handling extra small cluster
+            # Issues: https://github.com/giantswarm/giantswarm/issues/9316
+            minReplicas: 3
+            tiller:
+              namespace: "giantswarm"
+            NetExporter:
+              DNSCheck:
+                TCP:
+                  Disabled: false
+              Hosts: "giantswarm.io.,kubernetes.default.svc.cluster.local."
+              NTPServers: "0.flatcar.pool.ntp.org,1.flatcar.pool.ntp.org"
+            # Mitigate rate limiting issues for external-dns
+            externalDNS:
+              interval: 5m
