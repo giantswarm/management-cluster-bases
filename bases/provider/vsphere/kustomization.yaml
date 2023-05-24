@@ -1,0 +1,28 @@
+bases:
+- ../../flux-app/customer
+- ../../flux-app/giantswarm
+- ../../flux-giantswarm-resources
+patches:
+  - target:
+      kind: GitRepository
+      name: collection
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/ref/branch
+        value: main
+replacements:
+  # Points collection GitRepository to correct URL
+  - source:
+      kind: ConfigMap
+      name: provider-data
+      fieldPath: data.collection_url
+    targets:
+      - select:
+          kind: GitRepository
+          name: collection
+          namespace: flux-giantswarm
+        fieldPaths:
+          - spec.url
+resources:
+- configmap-provider-data.yaml

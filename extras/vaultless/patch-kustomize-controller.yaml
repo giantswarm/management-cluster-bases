@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kustomize-controller
+  namespace: flux-giantswarm
+spec:
+  template:
+    spec:
+      initContainers:
+      - args:
+        - cp $(which helm) /helm-bin/helmV3 && chmod +x /helm-bin/helmV3
+        command:
+        - sh
+        - -c
+        imagePullPolicy: IfNotPresent
+        name: ensure-helm
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /helm-bin
+          name: helm-bin
+      - args:
+        - cp konfigure /giantswarm-bin && chmod +x /giantswarm-bin/konfigure
+        command: ["sh", "-c"]
+        name: ensure-konfigure
+        volumeMounts:
+        - mountPath: /giantswarm-bin
+          name: giantswarm-bin
+      - args:
+        - /giantswarm-bin/konfigure fetchkeys --sops-keys-dir /sopsenv
+        command: ["sh", "-c"]
+        name: ensure-sopsenv
+        volumeMounts:
+        - mountPath: /giantswarm-bin
+          name: giantswarm-bin
+        - mountPath: /sopsenv
+          name: sopsenv
+      - $patch: delete
+        name: ensure-vault-token
+      containers:
+      - name: manager
+        env:
+          - $patch: replace
+          - name: KONFIGURE_MODE
+            value: "kustomizepatch"
+          - name: KONFIGURE_INSTALLATION
+            valueFrom:
+              configMapKeyRef:
+                key: NAME
+                name: management-cluster-metadata
+          - name: KONFIGURE_GITREPO
+            value: "flux-giantswarm/giantswarm-config"
+          - name: KONFIGURE_SOURCE_SERVICE
+            value: "source-controller.flux-giantswarm.svc"
+          - name: KONFIGURE_SOPS_KEYS_DIR
+            value: "/sopsenv"
+          - name: VAULT_ADDR
+            value: "not_used"
+          - name: VAULT_CAPATH
+            value: /etc/ssl/certs/ca-certificates.crt
+          - name: VAULT_TOKEN
+            value: "not_used"
+          - name: RUNTIME_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        volumeMounts:
+        - mountPath: /plugins/konfigure
+          name: giantswarm-bin
+          subPath: konfigure
+        - mountPath: /usr/bin/helmV3
+          name: helm-bin
+          subPath: helmV3
+        - mountPath: /tmp/konfigure-cache
+          name: cache
+        - mountPath: /etc/ssl/certs/ca-certificates.crt
+          name: ca-certs
+        - mountPath: /etc/ssl/certs/
+          name: ssl-certs
+        - mountPath: /sopsenv
+          name: sopsenv
+      volumes:
+      - hostPath:
+          path: /etc/ssl/certs/ca-certificates.crt
+          type: ""
+        name: ca-certs
+      - hostPath:
+          path: /etc/ssl/certs/
+          type: ""
+        name: ssl-certs
+      - name: helm-bin
+        emptyDir: {}
+      - name: giantswarm-bin
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      - name: sopsenv
+        emptyDir:
+          medium: "Memory"
