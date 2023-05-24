@@ -1,0 +1,16 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: rest-api-collection
+  namespace: flux-giantswarm
+spec:
+  interval: 5m
+  path: ./flux-manifests
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: rest-api-collection
+    namespace: flux-giantswarm
+  retryInterval: 1m
+  targetNamespace: giantswarm
+  timeout: 3m

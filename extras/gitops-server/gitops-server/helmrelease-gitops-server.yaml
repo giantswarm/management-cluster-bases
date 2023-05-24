@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: gitops-server
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: gitops-server
+      version: 0.1.2
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+  interval: 1h0m0s
+  targetNamespace: flux-system
+  values:
+    giantswarm:
+      images:
+        server:
+          tag: v0.23.0
+    envVars:
+      - name: CLUSTER_USER_AUTH
+        value: "false"
+    additionalArgs:
+      - "--auth-methods=oidc"
+    logLevel: debug
+    oidcSecret:
+      create: true
+      clientID: nlPGzTIWzFAMiyujUB0k70CIg4Bfrd0x
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-giantswarm

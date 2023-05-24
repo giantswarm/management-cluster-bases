@@ -1,0 +1,40 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-cluster-test
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-cluster-test
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "cluster-test"
+      title: "Giant Swarm Test Cluster Catalog"
+      catalogType: "test"
+      catalogVisibility: "internal"
+      description: "This catalog holds testing revisions of helm charts defining clusters and their pre-installed apps."
+      logoURL: "/images/repo_icons/giantswarm.png"
+      storage:
+        URL: "https://giantswarm.github.io/cluster-test-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/cluster-test-catalog/"

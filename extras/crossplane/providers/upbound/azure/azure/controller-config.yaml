@@ -1,0 +1,11 @@
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: upbound-provider-azure
+  namespace: crossplane
+spec:
+  args:
+    - --debug
+  image: docker.io/giantswarm/upbound-provider-azure:v0.31.0
+  serviceAccountName: upbound-provider-azure

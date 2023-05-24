@@ -1,0 +1,40 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appcatalog-giantswarm-operations-platform-test
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: appcatalog
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-control-plane-catalog
+        namespace: flux-giantswarm
+      version: 0.10.1
+  install:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  interval: 24h
+  releaseName: appcatalog-giantswarm-operations-platform-test
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 3m
+  upgrade:
+    remediation:
+      retries: 20
+      remediateLastFailure: False
+  values:
+    appCatalog:
+      name: "giantswarm-operations-platform-test"
+      title: "Giant Swarm Operations Platform Test"
+      catalogType: "test"
+      catalogVisibility: "internal"
+      description: "This catalog holds test versions of the apps in Giant Swarm Operations Platform. No guarantees, no SLA! Here be dragons! Giant Swarm developers only."
+      logoURL: "/images/repo_icons/managed.png"
+      storage:
+        URL: "https://giantswarm.github.io/giantswarm-operations-platform-test-catalog/"
+      repositories:
+        - type: oci
+          URL: "oci://giantswarmpublic.azurecr.io/giantswarm-operations-platform-test-catalog/"
