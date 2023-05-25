@@ -1,0 +1,130 @@
+name: Generate Installations Diffs
+
+on:
+  workflow_call:
+
+env:
+  dyff_ver: "1.5.4"
+  kustomize_ver: "5.0.0"
+
+jobs:
+  # This job is for checking for the `/no_print_diffs` comment in the PR. When it is found,
+  # the `get-installations` job is skipped, what makes `get-diff` skipped as well. No
+  # diffs are generated then.
+  check-diff-state:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Find suspend comment
+        uses: peter-evans/find-comment@v2
+        continue-on-error: true
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: /no_diffs_printing
+    outputs:
+      suspenddiff: ${{ steps.fc.outputs.comment-id }}
+  get-diff:
+    needs: check-diff-state
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && needs.check-diff-state.outputs.suspenddiff == 0
+    steps:
+      - name: install kustomize
+        uses: giantswarm/install-binary-action@v1
+        with:
+          binary: kustomize
+          download_url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${version}/kustomize_v${version}_linux_amd64.tar.gz"
+          smoke_test: "${binary} version"
+          tarball_binary_path: "${binary}"
+          version: ${{ env.kustomize_ver }}
+      - run: which kustomize
+      - name: install dyff
+        uses: giantswarm/install-binary-action@v1
+        with:
+          binary: dyff
+          download_url: "https://github.com/homeport/dyff/releases/download/v${version}/dyff_${version}_linux_amd64.tar.gz"
+          smoke_test: "${binary} version"
+          tarball_binary_path: "${binary}"
+          version: ${{ env.dyff_ver }}
+      - run: which dyff
+      - run: ls -la /opt/hostedtoolcache
+      - uses: actions/checkout@v3
+      - name: build and save installations
+        run: |
+          for MC in $(ls management-clusters/)
+          do
+            mkdir /tmp/${MC}
+
+            kustomize build \
+            --enable-helm \
+            --load-restrictor=LoadRestrictionsNone \
+            management-clusters/${MC} > /tmp/${MC}/new.yaml
+          done
+      - uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          path: 'old'
+      - name: template all for the old branch
+        run: |
+          for MC in $(ls old/management-clusters/)
+          do
+            [ -d /tmp/${MC} ] || mkdir /tmp/${MC}
+
+            kustomize build \
+            --enable-helm \
+            --load-restrictor=LoadRestrictionsNone \
+            old/management-clusters/${MC} 2>/dev/null > /tmp/${MC}/old.yaml
+          done
+      - name: get the diffs
+        id: diff
+        run: |
+          for MC in $(ls management-clusters/)
+          do
+            [ -f /tmp/${MC}/old.yaml ] || echo "---" > /tmp/${MC}/old.yaml
+            dyff between -i -b -g /tmp/${MC}/old.yaml /tmp/${MC}/new.yaml > /tmp/diff.tmp
+            if ! [[ "$(cat /tmp/diff.tmp)" =~ ^$ ]]
+            then
+              echo "==## ${MC} ##==" >> /tmp/diff.results
+              cat /tmp/diff.tmp >> /tmp/diff.results
+              echo >> /tmp/diff.results
+            fi
+          done
+          if [ -f /tmp/diff.results ]
+          then
+            echo 'stdout<<EOF' >> $GITHUB_OUTPUT
+            cat /tmp/diff.results >> $GITHUB_OUTPUT
+            echo 'EOF' >> $GITHUB_OUTPUT
+          else
+            $(exit 0)
+          fi
+      - name: Find diff comment
+        uses: peter-evans/find-comment@v2
+        continue-on-error: true
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Rendered manifest diff
+      - name: Delete old comment
+        uses: jungwinter/comment@v1
+        continue-on-error: true
+        with:
+          type: delete
+          comment_id: ${{ steps.fc.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create or update validation comment
+        uses: peter-evans/create-or-update-comment@v2
+        if: ${{ steps.diff.outputs.stdout != '' }}
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <details>
+            <summary> Rendered manifest diff </summary>
+            <!-- mandatory empty line -->
+
+            ```diff
+            ${{ steps.diff.outputs.stdout }}
+            ```
+
+            </details>
+            <!-- mandatory empty line -->
