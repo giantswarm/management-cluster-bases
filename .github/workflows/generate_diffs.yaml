@@ -8,7 +8,7 @@ env:
   kustomize_ver: "5.0.0"
 
 jobs:
-  # This job is for checking for the `/no_print_diffs` comment in the PR. If it is found,
+  # This job is for checking for the `/no_diffs_printing` comment in the PR. If it is found,
   # the `get-installations` job is skipped, what makes `get-diff` skipped as well. No
   # diffs are generated then.
   check-diff-state:
