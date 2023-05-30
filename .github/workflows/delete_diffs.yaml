@@ -1,4 +1,4 @@
-name: Delete Installation Diffs
+name: Delete installation diffs
 
 on:
   workflow_call:
