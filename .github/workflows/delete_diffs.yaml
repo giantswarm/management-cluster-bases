@@ -1,0 +1,28 @@
+name: Delete installation diffs
+
+on:
+  workflow_call:
+
+jobs:
+  # If a comment with the keyword `/deletediffs` is added to the PR,
+  # the job gets all the installations and feeds them to the next job
+  # that removes the installations diffs from the PR.
+  delete-diffs:
+    runs-on: [ubuntu-latest]
+    if: contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/deletediffs')
+    steps:
+      - name: Find diff comments
+        uses: peter-evans/find-comment@v2
+        continue-on-error: true
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Rendered manifest diff
+      - name: Delete diff comments
+        uses: jungwinter/comment@v1
+        continue-on-error: true
+        with:
+          type: delete
+          comment_id: ${{ steps.fc.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}

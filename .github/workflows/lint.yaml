@@ -1,0 +1,21 @@
+name: Validate manifests
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Lint kustomization.yaml
+        uses: docker://quay.io/giantswarm/yamllint:1.26
+        with:
+          args: management-clusters/
+      - name: "Build manifest in 'output/'"
+        run: |
+          ls management-clusters/ | xargs -n1 -I '{}' make build-{}
+      - name: Lint generated manifests
+        uses: docker://quay.io/giantswarm/yamllint:1.26
+        with:
+          args: output/
