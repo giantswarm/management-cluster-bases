@@ -4,8 +4,9 @@ on:
   workflow_call:
 
 jobs:
-  # If comment with `delete_diffs` has been added the job gets all the installations, and feeds them
-  # to the next job that removes the installations diffs from the PR.
+  # If a comment with the keyword `delete_diffs` is added to the PR,
+  # the job gets all the installations and feeds them to the next job
+  # that removes the installations diffs from the PR.
   delete-diffs:
     runs-on: [ubuntu-latest]
     if: contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/deletediffs')
