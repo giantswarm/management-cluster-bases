@@ -1,4 +1,4 @@
-name: Generate Installations Diffs
+name: Generate installations diffs
 
 on:
   workflow_call:
