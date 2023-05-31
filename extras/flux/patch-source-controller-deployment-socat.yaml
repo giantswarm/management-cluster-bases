@@ -1,0 +1,12 @@
+- op: add
+  path: "/spec/template/spec/containers/-"
+  value:
+    name: proxy
+    image: alpine/socat:1.7.4.4
+    args:
+    - TCP4-LISTEN:8081,fork,reuseaddr
+    - PROXY:${proxy_hostname}:ssh.github.com:443,proxyport=${proxy_port}
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsUser: 100
