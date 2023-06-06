@@ -19,6 +19,7 @@ BUILD_FLUX_APP_TARGETS := build-flux-app-crds build-flux-app-customer build-flux
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
 FLEET_BRANCH ?= main
+FLEET_BRANCH_SOURCE_MCB ?= main
 
 .PHONY: build-flux-app-vaultless-helper
 ifeq ($(VAULTLESS),1)
@@ -26,8 +27,8 @@ build-flux-app-vaultless-helper: $(YQ)
 ifndef TMP_BASE
 	$(error $$TMP_BASE env var is not defined, this is a bug and has to be fixed in the Makefile.custom.mk)
 endif
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH_SOURCE_MCB}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH_SOURCE_MCB}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
 else
 build-flux-app-vaultless-helper:
 	@# noop
@@ -37,7 +38,7 @@ endif
 build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with default configuration
 	@echo "====> $@"
 	mkdir -p output
-	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone https://github.com/${BASE_REPOSITORY}//bases/catalogs?ref=${FLEET_BRANCH} -o output/catalogs-with-defaults.yaml
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone https://github.com/${BASE_REPOSITORY}//bases/catalogs?ref=${FLEET_BRANCH_SOURCE_MCB} -o output/catalogs-with-defaults.yaml
 
 .PHONY: $(BUILD_CATALOG_TARGETS)
 $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for management clusters
@@ -53,7 +54,7 @@ $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
-	git clone -b $(FLEET_BRANCH) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${FLEET_BRANCH}
+	git clone -b $(FLEET_BRANCH_SOURCE_MCB) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${FLEET_BRANCH_MCB}
 	mkdir -p output
 	rm -rf $(TMP_BASE)
 	cp -a /tmp/mcb.${FLEET_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
