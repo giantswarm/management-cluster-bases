@@ -54,11 +54,11 @@ $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
-	git clone -b $(FLEET_BRANCH_SOURCE_MCB) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${FLEET_BRANCH_MCB}
+	git clone -b $(FLEET_BRANCH_SOURCE_MCB) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}
 	mkdir -p output
 	rm -rf $(TMP_BASE)
-	cp -a /tmp/mcb.${FLEET_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
-	rm -rf /tmp/mcb.${FLEET_BRANCH}
+	cp -a /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}/bases/flux-app/${SUFFIX} $(TMP_BASE)
+	rm -rf /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}
 	@# This will run extra yq calls if VAULTLESS=1
 	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
 ifeq ($(DISABLE_KYVERNO),1)
