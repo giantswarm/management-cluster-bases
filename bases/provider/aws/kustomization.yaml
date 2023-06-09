@@ -17,6 +17,4 @@ replacements:
           - spec.url
 resources:
 - configmap-provider-data.yaml
-- loki.yaml
-patchesStrategicMerge:
-- hello-loki.svc.yaml
+# - loki.yaml
