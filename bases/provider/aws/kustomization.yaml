@@ -17,3 +17,4 @@ replacements:
           - spec.url
 resources:
 - configmap-provider-data.yaml
+- hello-loki.svc.yaml
