@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flux-gitops-informer-configuration
+  namespace: flux-giantswarm
+data:
+  reconciliationRequestData: {{ now | unixEpoch }}
