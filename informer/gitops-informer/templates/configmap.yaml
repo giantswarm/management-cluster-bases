@@ -4,4 +4,4 @@ metadata:
   name: flux-gitops-informer-configuration
   namespace: flux-giantswarm
 data:
-  reconciliationRequestData: {{ now | unixEpoch }}
+  reconciliationRequestData: "{{ now | unixEpoch }}"
