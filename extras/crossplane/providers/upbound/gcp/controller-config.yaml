@@ -7,5 +7,5 @@ metadata:
 spec:
   args:
     - --debug
-  image: docker.io/giantswarm/upbound-provider-gcp:v0.28.0
+  image: docker.io/giantswarm/upbound-provider-gcp:v0.33.0
   serviceAccountName: upbound-provider-gcp
