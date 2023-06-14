@@ -8,7 +8,7 @@ spec:
   controllerConfigRef:
     name: upbound-provider-azure
   ignoreCrossplaneConstraints: false
-  package: xpkg.upbound.io/upbound/provider-azure:v0.31.0
+  package: xpkg.upbound.io/upbound/provider-azure:v0.33.0
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
