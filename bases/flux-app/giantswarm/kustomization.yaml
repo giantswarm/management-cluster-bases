@@ -163,3 +163,4 @@ resources:
 - resource-namespace.yaml
 - resource-rbac.yaml
 - resource-refresh-vault-token.yaml
+- resource-kyverno-policy-exception.yaml
