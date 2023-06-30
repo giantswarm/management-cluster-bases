@@ -20,3 +20,5 @@ To learn more about how GitOps works with Giant Swarm, check our [GitOps documen
   - `flux-giantswarm-resources`: resources created in the `flux-giantswarm` namespace during the management cluster bootstrapping process
   - `provider`: definitions for all the infrastructure providers we serve.
 - `extras`: collection of patches, additional resources, and mix-ins used by several management clusters.
+
+Test.
