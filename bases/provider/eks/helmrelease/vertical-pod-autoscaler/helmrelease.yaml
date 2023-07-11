@@ -1,0 +1,27 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-vertical-pod-autoscaler
+  namespace: org-sample
+spec:
+  releaseName: vertical-pod-autoscaler
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: vertical-pod-autoscaler-app
+      version: 4.0.0
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-default-catalog
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    ## Not sure about the location of the config
+    ciliumNetworkPolicy:
+      enabled: false
