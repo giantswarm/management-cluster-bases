@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-eks
+  labels:
+    app: helloworld-eks
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: helloworld-eks
+  template:
+    metadata:
+      labels:
+        app: helloworld-eks
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - helloworld-eks
+            topologyKey: "kubernetes.io/hostname"
+      securityContext:
+        runAsUser: 1000
+      containers:
+      - name: helloworld
+        image: quay.io/giantswarm/helloworld:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 50Mi
