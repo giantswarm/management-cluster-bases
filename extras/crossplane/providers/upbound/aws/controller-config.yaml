@@ -7,6 +7,4 @@ metadata:
 spec:
   args:
     - --debug
-    - --max-reconcile-rate=100
-  image: docker.io/giantswarm/upbound-provider-aws:v0.35.0
-  serviceAccountName: upbound-provider-aws
+  serviceAccountName: upbound-provider
