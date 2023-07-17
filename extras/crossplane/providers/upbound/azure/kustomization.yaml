@@ -1,3 +1,4 @@
 resources:
 - controller-config.yaml
 - provider.yaml
+- service-account.yaml
