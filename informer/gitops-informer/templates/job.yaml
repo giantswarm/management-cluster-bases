@@ -4,7 +4,10 @@ metadata:
   name: config-change-informer
   namespace: flux-giantswarm
 spec:
-  ttlSecondsAfterFinished: 30
+  # This is important to keep very low or set to 0
+  # Problem with 0 is that it is very hard to catch it for debugging
+  # Low value is good because than jobs won't collide with each other as `spec.template` is immutable n jobs
+  ttlSecondsAfterFinished: 0
   template:
     spec:
       containers:
