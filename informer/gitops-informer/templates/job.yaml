@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: config-change-informer
+  namespace: flux-giantswarm
+spec:
+  ttlSecondsAfterFinished: 0
+  template:
+    spec:
+      containers:
+        - name: kubectl
+          image: giantswarm/docker-kubectl:1.23.6
+          args: ["-n", "flux-giantswarm", "label", "--overwrite", "kustomization", "flux", "reconcile.fluxcd.io/requestedAt={{ now | unixEpoch }}"]
+          imagePullPolicy: IfNotPresent
+      serviceAccountName: "kustomize-controller"
+      restartPolicy: Never
+  backoffLimit: 3
