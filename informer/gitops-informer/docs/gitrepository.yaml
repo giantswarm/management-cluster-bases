@@ -1,0 +1,15 @@
+# This is ideally created via something else
+# We will need it for config split, probably will be added to MCB flux-resources
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: management-cluster-bases
+  namespace: flux-giantswarm
+spec:
+  gitImplementation: go-git
+  interval: 30s
+  ref:
+    branch: experiment-with-trigger
+  timeout: 60s
+  url: https://github.com/giantswarm/management-cluster-bases

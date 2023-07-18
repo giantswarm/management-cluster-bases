@@ -1,0 +1,21 @@
+# This is the heart of it, triggers on revision change for the MCB source
+# and updates the `flux-gitops-informer` Helm release that will redeploy
+# a job that bump the reconciliation request label of the needed kustomizations
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: flux-gitops-informer
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: ./informer/gitops-informer
+      interval: 1m
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: management-cluster-bases
+        namespace: flux-giantswarm
+      version: 0.1.0
+  interval: 1m

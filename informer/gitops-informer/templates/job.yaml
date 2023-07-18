@@ -13,6 +13,7 @@ spec:
       containers:
         - name: kubectl
           image: giantswarm/docker-kubectl:1.23.6
+          # We need to figure out . make it configurable which KS and/or other resources needs to be updated
           args: ["-n", "flux-giantswarm", "label", "--overwrite", "kustomization", "flux", "reconcile.fluxcd.io/requestedAt={{ now | unixEpoch }}"]
           imagePullPolicy: IfNotPresent
       serviceAccountName: "kustomize-controller"
