@@ -4,7 +4,7 @@ metadata:
   name: config-change-informer
   namespace: flux-giantswarm
 spec:
-  ttlSecondsAfterFinished: 0
+  ttlSecondsAfterFinished: 60
   template:
     spec:
       containers:
