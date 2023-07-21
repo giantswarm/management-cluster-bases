@@ -54,7 +54,7 @@ patches:
       - op: replace
         path: /spec/controllerConfigRef/name
         value: provider-aws-${PROVIDER}
-      - op: replace
+      - op: add
         path: /spec/package
         value: xpkg.upbound.io/upbound/provider-aws-${PROVIDER}:v0.37.0
     target:

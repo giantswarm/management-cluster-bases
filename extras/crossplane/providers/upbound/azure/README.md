@@ -30,7 +30,7 @@ patches:
       - op: replace
         path: /spec/controllerConfigRef/name
         value: provider-azure-${PROVIDER}
-      - op: replace
+      - op: add
         path: /spec/package
         value: xpkg.upbound.io/upbound/provider-azure-${PROVIDER}:v0.37.0
     target:
