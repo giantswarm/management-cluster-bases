@@ -8,3 +8,6 @@ spec:
   args:
     - --debug
   serviceAccountName: upbound-provider
+  metadata:
+    annotations: {}
+    labels: {}

@@ -8,7 +8,6 @@ spec:
   controllerConfigRef:
     name: upbound-provider-gcp
   ignoreCrossplaneConstraints: false
-  package: xpkg.upbound.io/upbound/provider-gcp:v0.33.0
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0

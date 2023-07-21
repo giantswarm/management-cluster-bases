@@ -7,4 +7,4 @@ metadata:
 spec:
   args:
     - --debug
-  serviceAccountName: upbound-provider
+  serviceAccountName: "replaced by kustomization"
