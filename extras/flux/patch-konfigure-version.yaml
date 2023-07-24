@@ -1,28 +1,14 @@
+# This is the main thing here that should point to the new `konfigure` version.
 - op: replace
   path: "/spec/template/spec/initContainers/1/image"
   value: "giantswarm/konfigure:0.14.3"
-- op: replace
-  path: "/spec/template/spec/containers/0/env"
+# This is safer to add the new env vars instead of relying on the positions in the list because of
+# possible other patches like the vaultless one, but assumes that the new `konfigure` will just ignore
+# the old environment variables.
+- op: add
+  path: "/spec/template/spec/containers/0/env/-"
   value:
-    - name: KONFIGURE_MODE
-      value: "kustomizepatch"
-    - name: KONFIGURE_SOURCE_SERVICE
-      value: "source-controller.flux-giantswarm.svc"
     - name: KONFIGURE_MCB_SOURCE
-      value: management-cluster-bases
+      value: flux-giantswarm/management-cluster-bases
     - name: KONFIGURE_CMC_SOURCE
-      value: management-clusters-fleet
-    - name: KONFIGURE_SOPS_KEYS_DIR
-      value: "/sopsenv"
-    - name: VAULT_ADDR
-      valueFrom:
-        configMapKeyRef:
-          key: VAULT_ADDR
-          name: management-cluster-metadata
-    - name: VAULT_CAPATH
-      value: /etc/ssl/certs/ca-certificates.crt
-    - name: VAULT_TOKEN
-      valueFrom:
-        secretKeyRef:
-          key: token
-          name: flux-vault-token
+      value: flux-giantswarm/management-clusters-fleet
