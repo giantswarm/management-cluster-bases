@@ -1,0 +1,28 @@
+- op: replace
+  path: "/spec/template/spec/initContainers/1/image"
+  value: "giantswarm/konfigure:0.14.3"
+- op: replace
+  path: "/spec/template/spec/containers/0/env"
+  value:
+    - name: KONFIGURE_MODE
+      value: "kustomizepatch"
+    - name: KONFIGURE_SOURCE_SERVICE
+      value: "source-controller.flux-giantswarm.svc"
+    - name: KONFIGURE_MCB_SOURCE
+      value: management-cluster-bases
+    - name: KONFIGURE_CMC_SOURCE
+      value: management-clusters-fleet
+    - name: KONFIGURE_SOPS_KEYS_DIR
+      value: "/sopsenv"
+    - name: VAULT_ADDR
+      valueFrom:
+        configMapKeyRef:
+          key: VAULT_ADDR
+          name: management-cluster-metadata
+    - name: VAULT_CAPATH
+      value: /etc/ssl/certs/ca-certificates.crt
+    - name: VAULT_TOKEN
+      valueFrom:
+        secretKeyRef:
+          key: token
+          name: flux-vault-token
