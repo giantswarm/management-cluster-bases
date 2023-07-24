@@ -20,3 +20,17 @@ To learn more about how GitOps works with Giant Swarm, check our [GitOps documen
   - `flux-giantswarm-resources`: resources created in the `flux-giantswarm` namespace during the management cluster bootstrapping process
   - `provider`: definitions for all the infrastructure providers we serve.
 - `extras`: collection of patches, additional resources, and mix-ins used by several management clusters.
+
+## Tools
+
+In order to upgrade Flux App and `konfigure` bump the versions in `Makefile.custom.mk` and run the following command:
+
+```shell
+make ensure-versions
+```
+
+To build the catalogs with their default values:
+
+```shell
+make build-catalogs-with-defaults
+```
