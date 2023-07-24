@@ -107,12 +107,3 @@ $(YQ): ## Download yq locally if necessary.
 	mkdir -p $(dir $@)
 	curl -sfL https://github.com/mikefarah/yq/releases/download/v$(YQ_VERSION)/yq_$(OS)_$(ARCH) > $@
 	chmod +x $@
-
-download-upstream-install:
-	@echo "====> $@"
-	mkdir -p output
-	curl -sfL "https://github.com/fluxcd/flux2/releases/download/$(FLUX_VERSION)/install.yaml" > output/flux-$(FLUX_VERSION).install.yaml
-
-download-upstream-crds: download-upstream-install $(YQ)
-	@echo "====> $@"
-	$(YQ) eval-all 'select(.kind == "CustomResourceDefinition")' output/flux-$(FLUX_VERSION).install.yaml > output/flux-$(FLUX_VERSION).crds.yaml
