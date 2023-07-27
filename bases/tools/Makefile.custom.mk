@@ -8,18 +8,19 @@ HELM := ./bin/helm
 YQ := ./bin/yq
 YQ_VERSION := 4.31.2
 
-GNUSED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
+GNU_SED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
 OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
 ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
-BUILD_FLUX_APP_TARGETS := build-flux-app-crds build-flux-app-customer build-flux-app-giantswarm
+BUILD_CRD_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard bases/crds/*))))
+
+BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
-FLEET_BRANCH ?= main
-FLEET_BRANCH_SOURCE_MCB ?= main
+MCB_BRANCH ?= main
 
 .PHONY: build-flux-app-vaultless-helper
 ifeq ($(VAULTLESS),1)
@@ -27,24 +28,31 @@ build-flux-app-vaultless-helper: $(YQ)
 ifndef TMP_BASE
 	$(error $$TMP_BASE env var is not defined, this is a bug and has to be fixed in the Makefile.custom.mk)
 endif
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH_SOURCE_MCB}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${FLEET_BRANCH_SOURCE_MCB}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
 else
 build-flux-app-vaultless-helper:
 	@# noop
 endif
 
+# TODO Change https://github.com/giantswarm/apptestctl/blame/90942be9c1c2fd58f765bc191d8ef5889717eb4b/hack/sync-crds.sh to use these instead (ATS will need make too tho)
 .PHONY: build-catalogs-with-defaults
 build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with default configuration
 	@echo "====> $@"
 	mkdir -p output
-	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone https://github.com/${BASE_REPOSITORY}//bases/catalogs?ref=${FLEET_BRANCH_SOURCE_MCB} -o output/catalogs-with-defaults.yaml
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone https://github.com/${BASE_REPOSITORY}//bases/catalogs?ref=${MCB_BRANCH} -o output/catalogs-with-defaults.yaml
 
 .PHONY: $(BUILD_CATALOG_TARGETS)
 $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for management clusters
 	@echo "====> $@"
 	mkdir -p output
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
+
+.PHONY: $(BUILD_CRD_TARGETS)
+$(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
+	@echo "====> $@"
+	mkdir -p output
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
 
 .PHONY: $(BUILD_FLUX_APP_TARGETS)
 build-flux-app-crds: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/crds.
@@ -54,11 +62,11 @@ $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
-	git clone -b $(FLEET_BRANCH_SOURCE_MCB) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}
+	rm -rf /tmp/mcb.${MCB_BRANCH}
+	git clone -b $(MCB_BRANCH) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${MCB_BRANCH}
 	mkdir -p output
 	rm -rf $(TMP_BASE)
-	cp -a /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}/bases/flux-app/${SUFFIX} $(TMP_BASE)
-	rm -rf /tmp/mcb.${FLEET_BRANCH_SOURCE_MCB}
+	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
 	@# This will run extra yq calls if VAULTLESS=1
 	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
 ifeq ($(DISABLE_KYVERNO),1)

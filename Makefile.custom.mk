@@ -24,8 +24,8 @@ all: ensure-versions
 ensure-versions: $(YQ) download-upstream-crds
 	@echo "====> $@"
 	head output/flux-$(FLUX_VERSION).crds.yaml
-	cp output/flux-$(FLUX_VERSION).crds.yaml bases/flux-app/crds/crds.yaml
-	head bases/flux-app/crds/crds.yaml
+	cp output/flux-$(FLUX_VERSION).crds.yaml bases/crds/flux-app/crds.yaml
+	head bases/crds/flux-app/crds.yaml
 
 ifeq ($(GNU_SED),0)
 	sed -i "0,/version:/{s!repo: .*!repo: $(FLUX_APP_REPOSITORY)!g}" bases/flux-app/customer/kustomization.yaml
