@@ -15,7 +15,7 @@ ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
-BUILD_CRD_TARGETS := build-bootstrap-crds build-flux-app-crds build-giantswarm-crds
+BUILD_CRD_TARGETS := build-all-crds build-bootstrap-crds build-flux-app-crds build-giantswarm-crds
 
 BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
@@ -49,6 +49,7 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
 
 .PHONY: $(BUILD_CRD_TARGETS)
+build-all-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/all
 build-bootstrap-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/bootstrap
 build-flux-app-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app
 build-giantswarm-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/giantswarm
