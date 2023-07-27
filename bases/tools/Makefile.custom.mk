@@ -15,7 +15,7 @@ ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
-BUILD_CRD_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard bases/crds/*))))
+#BUILD_CRD_TARGETS := $(addsuffix -crds, $(addprefix build-,$(notdir $(wildcard bases/crds/*))))
 
 BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
@@ -48,14 +48,13 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 	mkdir -p output
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
 
-.PHONY: $(BUILD_CRD_TARGETS)
-$(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
-	@echo "====> $@"
-	mkdir -p output
-	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
+#.PHONY: $(BUILD_CRD_TARGETS)
+#$(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
+#	@echo "====> $@"
+#	mkdir -p output
+#	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
 
 .PHONY: $(BUILD_FLUX_APP_TARGETS)
-build-flux-app-crds: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/crds.
 build-flux-app-customer: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/customer. Can take DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
 build-flux-app-giantswarm: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/giantswarm. Can take DISABLE_VPA=1.
 $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
