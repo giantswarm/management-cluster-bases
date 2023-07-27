@@ -22,6 +22,10 @@ BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 BASE_REPOSITORY := giantswarm/management-cluster-bases
 MCB_BRANCH ?= main
 
+.PHONY: list
+list:
+	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
+
 .PHONY: build-flux-app-vaultless-helper
 ifeq ($(VAULTLESS),1)
 build-flux-app-vaultless-helper: $(YQ)
