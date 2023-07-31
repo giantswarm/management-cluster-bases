@@ -25,13 +25,5 @@ spec:
       retries: 10
       remediateLastFailure: false
   values:
-    giantswarm:
-      kubernetes:
-        provider:
-          kind: "replaced in kustomization"
-      crossplane:
-        providers:
-          contribAws:
-            enabled: false
     metrics:
       enabled: true
