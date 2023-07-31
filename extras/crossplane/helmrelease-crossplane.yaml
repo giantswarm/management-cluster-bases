@@ -16,22 +16,14 @@ spec:
   install:
     remediation:
       retries: 10
-      remediateLastFailure: False
+      remediateLastFailure: false
   interval: 1m
   targetNamespace: crossplane
   timeout: 10m
   upgrade:
     remediation:
       retries: 10
-      remediateLastFailure: False
+      remediateLastFailure: false
   values:
-    giantswarm:
-      kubernetes:
-        provider:
-          kind: "replaced in kustomization"
-      crossplane:
-        providers:
-          contribAws:
-            enabled: false
     metrics:
       enabled: true

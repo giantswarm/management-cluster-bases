@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER_URL}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "ForAnyValue:StringEquals": {
+          "${OIDC_PROVIDER_URL}:sub": [
+            "system:serviceaccount:crossplane:upbound-provider-aws-ec2",
+            "system:serviceaccount:crossplane:upbound-provider-aws-kms",
+            "system:serviceaccount:crossplane:upbound-provider-aws-rds"
+          ]
+        }
+      }
+    }
+  ]
+}
