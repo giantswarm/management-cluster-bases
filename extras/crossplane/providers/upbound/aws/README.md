@@ -37,7 +37,7 @@ crossplane-providers/
 > **Note** Once the `crossplane-providers/PROVIDER/kustomization.yaml` file has
 > been created, it is safe to delete the `crossplane-providers/kustomization.yaml`
 > file as this will be handled transparently by the
-> [`crussplane-providers`](https://github.com/giantswarm/management-cluster-bases/blob/main/extras/crossplane/providers-kustomization.yaml)
+> [`crossplane-providers`](https://github.com/giantswarm/management-cluster-bases/blob/main/extras/crossplane/providers-kustomization.yaml)
 > flux `kustomization`.
 >
 > If you do not delete this file, you must ensure that your provider is added
