@@ -1,4 +1,3 @@
-# Keeping it here for compatibility with the flux-app-* makefile targets
+# Keeping it here for backward compatibility
 resources:
   - crds.yaml
-

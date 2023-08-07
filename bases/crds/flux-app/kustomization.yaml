@@ -1,4 +1,2 @@
-# Keeping it here for compatibility with the flux-app-* makefile targets
 resources:
   - crds.yaml
-

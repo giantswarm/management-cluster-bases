@@ -6,6 +6,8 @@ metadata:
   namespace: flux-giantswarm
 spec:
   interval: 1h
+  # Should be created in the CMC repository listing all the essential CRDs,
+  # for example shared package in this repo of bases/crds/all (recommended)
   path: "./bases/crds"
   # Think about changing prune settings twice. Or three times. In fact, don't
   # change it at all. You are risking deleting customer Workload Clusters and
