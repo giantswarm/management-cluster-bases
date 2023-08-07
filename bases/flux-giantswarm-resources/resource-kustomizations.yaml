@@ -2,13 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: crds
+  name: flux-crds
   namespace: flux-giantswarm
 spec:
   interval: 1h
-  # Should be created in the CMC repository listing all the essential CRDs,
-  # for example shared package in this repo of bases/crds/all (recommended)
-  path: "./bases/crds"
+  path: "./bases/flux-app/crds"
   # Think about changing prune settings twice. Or three times. In fact, don't
   # change it at all. You are risking deleting customer Workload Clusters and
   # more.
@@ -28,7 +26,7 @@ metadata:
   namespace: flux-giantswarm
 spec:
   dependsOn:
-    - name: crds
+    - name: flux-crds
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}"
