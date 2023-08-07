@@ -1,4 +1,3 @@
 resources:
-  - ../bootstrap
   - ../flux-app
   - ../giantswarm
