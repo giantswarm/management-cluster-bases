@@ -1,4 +1,3 @@
 - op: replace
   path: /spec/dependsOn/0
-  value:
-    - "crds"
+  value: "crds"
