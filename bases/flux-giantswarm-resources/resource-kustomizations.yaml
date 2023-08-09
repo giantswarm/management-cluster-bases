@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: flux-crds
+  name: crds
   namespace: flux-giantswarm
 spec:
   interval: 1h
-  path: "./bases/flux-app/crds"
+  path: "./bases/crds"
   # Think about changing prune settings twice. Or three times. In fact, don't
   # change it at all. You are risking deleting customer Workload Clusters and
   # more.
@@ -26,7 +26,7 @@ metadata:
   namespace: flux-giantswarm
 spec:
   dependsOn:
-    - name: flux-crds
+    - name: crds
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}"
