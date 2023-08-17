@@ -4,3 +4,4 @@ resources:
   - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_apps.yaml
   - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_catalogs.yaml
   - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_charts.yaml
+  - https://raw.githubusercontent.com/giantswarm/rbac-operator/main/config/crd/auth.giantswarm.io_rolebindingtemplates.yaml
