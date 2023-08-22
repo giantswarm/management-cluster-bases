@@ -1,7 +1,16 @@
 resources:
-  - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_appcatalogentries.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_appcatalogs.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_apps.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_catalogs.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions-application/master/config/crd/application.giantswarm.io_charts.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_appcatalogentries.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_appcatalogs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_apps.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_catalogs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_charts.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_certconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_chartconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_configs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_drainerconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_sparks.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_storageconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/monitoring.giantswarm.io_silences.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/release.giantswarm.io_releases.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/security.giantswarm.io_organizations.yaml
   - https://raw.githubusercontent.com/giantswarm/rbac-operator/main/config/crd/auth.giantswarm.io_rolebindingtemplates.yaml
