@@ -1,0 +1,5 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-azure/templates/core.giantswarm.io_azureclusterconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-azure/templates/exp.cluster.x-k8s.io_machinepools.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-azure/templates/exp.infrastructure.cluster.x-k8s.io_azuremachinepools.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-azure/templates/provider.giantswarm.io_azureconfigs.yaml

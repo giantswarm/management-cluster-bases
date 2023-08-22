@@ -1,0 +1,4 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-kvm/templates/core.giantswarm.io_flannelconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-kvm/templates/core.giantswarm.io_kvmclusterconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-kvm/templates/provider.giantswarm.io_kvmconfigs.yaml
