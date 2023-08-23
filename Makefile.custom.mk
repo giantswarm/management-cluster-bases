@@ -7,11 +7,11 @@ YQ := ./bin/yq
 YQ_VERSION := 4.31.2
 
 FLUX_APP_REPOSITORY := https://giantswarm.github.io/giantswarm-catalog/
-FLUX_APP_VERSION := v0.23.1
-FLUX_VERSION := v0.41.2
+FLUX_APP_VERSION := v1.0.0
+FLUX_VERSION := v2.0.1
 
 KONFIGURE_IMAGE_TAG := 0.14.4
-KUSTOMIZE_CONTROLLER_IMAGE_TAG := v0.35.1
+KUSTOMIZE_CONTROLLER_IMAGE_TAG := v1.0.1
 
 GNU_SED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
 OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
