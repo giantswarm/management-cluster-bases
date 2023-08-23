@@ -60,7 +60,7 @@ patches:
       name: crossplane
       namespace: flux-giantswarm
   - patch: |
-      apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
       kind: Kustomization
       metadata:
         name: crossplane-providers
