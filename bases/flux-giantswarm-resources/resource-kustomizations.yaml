@@ -6,7 +6,8 @@ metadata:
   namespace: flux-giantswarm
 spec:
   interval: 1h
-  path: "./bases/crds"
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/crds"
   # Think about changing prune settings twice. Or three times. In fact, don't
   # change it at all. You are risking deleting customer Workload Clusters and
   # more.
