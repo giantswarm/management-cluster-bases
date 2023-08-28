@@ -72,3 +72,16 @@ download-upstream-install:
 download-upstream-crds: download-upstream-install $(YQ)
 	@echo "====> $@"
 	$(YQ) eval-all 'select(.kind == "CustomResourceDefinition")' output/flux-$(FLUX_VERSION).install.yaml > output/flux-$(FLUX_VERSION).crds.yaml
+
+BUILD_CRD_TARGETS := build-common-crds build-flux-app-crds build-giantswarm-crds
+
+.PHONY: $(BUILD_CRD_TARGETS)
+build-common-crds:  ## Builds bases/crds/common
+build-flux-app-crds:  ## Builds bases/crds/flux-app
+build-giantswarm-crds:  ## Builds bases/crds/giantswarm
+$(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
+	@echo "====> $@"
+
+	mkdir -p output
+
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
