@@ -20,7 +20,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: main
+    branch: flux-2
   secretRef:
     name: github-giantswarm-https-credentials
   timeout: 60s
