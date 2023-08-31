@@ -62,4 +62,4 @@ spec:
                 TCP:
                   Disabled: false
               Hosts: "giantswarm.io.,kubernetes.default.svc.cluster.local."
-              NTPServers: "0.flatcar.pool.ntp.org,1.flatcar.pool.ntp.org"
+              NTPServers: "0.flatcar.pool.ntp.org,1.flatcar.pool.ntp.org."
