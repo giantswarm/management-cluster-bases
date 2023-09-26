@@ -1,0 +1,14 @@
+# This is the main thing here that should point to the new `konfigure` version.
+- op: replace
+  path: "/spec/template/spec/initContainers/1/image"
+  value: "giantswarm/konfigure:0.14.3"
+# This is safer to add the new env vars instead of relying on the positions in the list because of
+# possible other patches like the vaultless one, but assumes that the new `konfigure` will just ignore
+# the old environment variables.
+- op: add
+  path: "/spec/template/spec/containers/0/env/-"
+  value:
+    - name: KONFIGURE_MCB_SOURCE
+      value: flux-giantswarm/management-cluster-bases
+    - name: KONFIGURE_CMC_SOURCE
+      value: flux-giantswarm/management-clusters-fleet
