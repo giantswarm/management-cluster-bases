@@ -1,0 +1,4 @@
+resources:
+- helmrelease-backstage.yaml
+- namespace-backstage.yaml
+- values-kustomization.yaml
