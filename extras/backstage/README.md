@@ -49,52 +49,33 @@ Replace all instances of `MC_NAME` with the name of your management cluster.
 ```yaml
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/backstage/?ref=main
+  - ../backstage
 patches:
   - patch: |
-      apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-      kind: Kustomization
+      apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
       metadata:
-        name: backstage-values
+        name: backstage
         namespace: flux-giantswarm
       spec:
-        path: "./management-clusters/MC_NAME/backstage-values"
+        valuesFrom:
+          - kind: ConfigMap
+            name: backstage-user-values
+            valuesKey: values
+          - kind: Secret
+            name: backstage-user-secrets
+            valuesKey: values
+          - kind: Secret
+            name: backstage-github-app-credentials-secret
+            valuesKey: values
     target:
-      kind: Kustomization
-      name: backstage-values
+      kind: HelmRelease
+      name: backstage
       namespace: flux-giantswarm
 ```
 
-Next, we need to create the `backstage-values` subdirectory with ConfigMap and Secrets
-referenced in `helmrelease-backstage.yaml`.
-
-```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: backstage
-  namespace: flux-giantswarm
-spec:
-  ...
-  valuesFrom:
-    - kind: ConfigMap
-      name: backstage-user-values
-      valuesKey: values
-    - kind: Secret
-      name: backstage-user-secrets
-      valuesKey: values
-    - kind: Secret
-      name: backstage-github-app-credentials-secret
-      valuesKey: values
-```
-
-```bash
-mkdir management-clusters/MC_NAME/backstage-values
-touch management-clusters/MC_NAME/backstage-values/configmap-backstage.yaml
-touch management-clusters/MC_NAME/backstage-values/secret-backstage.yaml
-touch management-clusters/MC_NAME/backstage-values/github-credentials-secret-backstage.yaml
-```
-
-Put actual values into ConfigMap and Secrets. Secret files should be encrypted.
+Next, we need to create the `backstage` subdirectory referenced in the `kustomization.yaml`
+with ConfigMap and Secrets. Secret files should be encrypted.
 
 Commit these changes to git and raise a PR to have this merged into the main
 branch. Once your PR is accepted and merged, backstage will deploy to your

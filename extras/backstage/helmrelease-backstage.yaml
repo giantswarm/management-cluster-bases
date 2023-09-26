@@ -24,13 +24,3 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: false
-  valuesFrom:
-    - kind: ConfigMap
-      name: backstage-user-values
-      valuesKey: values
-    - kind: Secret
-      name: backstage-user-secrets
-      valuesKey: values
-    - kind: Secret
-      name: backstage-github-app-credentials-secret
-      valuesKey: values
