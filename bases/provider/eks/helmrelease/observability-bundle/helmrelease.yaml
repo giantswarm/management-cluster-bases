@@ -1,0 +1,107 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-prometheus-operator-crd
+  namespace: org-sample
+spec:
+  releaseName: prometheus-operator-crd
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: prometheus-operator-crd
+      version: 6.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-default-catalog
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-prometheus-operator-app
+  namespace: org-sample
+spec:
+  releaseName: prometheus-operator-app
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: prometheus-operator-app
+      version: 6.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-default-catalog
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    ## Not sure about the location of the config
+    prometheus-operator-app:
+      defaultRules:
+        create: false
+      coreDns:
+        enabled: true
+        # On EKS, coredns container is using the kube-dns label
+        service:
+          selector:
+            k8s-app: kube-dns
+      alertmanager:
+        enabled: false
+      grafana:
+        enabled: false
+      prometheus:
+        enabled: false
+      kubeEtcd:
+        enabled: false
+      kubeScheduler:
+        enabled: false
+      kubeControllerManager:
+        enabled: false
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-prometheus-agent-app
+  namespace: org-sample
+spec:
+  releaseName: prometheus-agent
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: prometheus-agent
+      version: 0.6.2
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-default-catalog
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: sample-customer-remote-write-secret
+      valuesKey: values
+    - kind: ConfigMap
+      name: sample-customer-remote-write-config
+      valuesKey: values
+  values:
+    prometheus-agent:
+      ## Empty value because the giantswarm-critical priority class is missing on EKS imported clusters
+      priorityClassName: ""
+---
+## Ignoring promtail for now as CAPI is not a target
