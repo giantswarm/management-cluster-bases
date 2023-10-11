@@ -5,8 +5,8 @@ metadata:
   namespace: org-sample
 spec:
   releaseName: podinfo
-  targetNamespace: podinfo
-  storageNamespace: podinfo
+  targetNamespace: default
+  storageNamespace: default
   kubeConfig:
     secretRef:
       name: sample-customer-kubeconfig
