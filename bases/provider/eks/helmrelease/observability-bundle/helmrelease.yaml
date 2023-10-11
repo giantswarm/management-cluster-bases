@@ -37,7 +37,7 @@ spec:
   chart:
     spec:
       chart: prometheus-operator-app
-      version: 6.1.0
+      version: 6.2.1
       sourceRef:
         kind: HelmRepository
         name: giantswarm-default-catalog
@@ -84,7 +84,7 @@ spec:
   chart:
     spec:
       chart: prometheus-agent
-      version: 0.6.2
+      version: 0.6.5
       sourceRef:
         kind: HelmRepository
         name: giantswarm-default-catalog
