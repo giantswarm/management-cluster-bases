@@ -1,2 +1,5 @@
-bin
-output
+bin/*
+output/
+
+bases/flux-app/**/charts/
+bases/tools/bin/*
