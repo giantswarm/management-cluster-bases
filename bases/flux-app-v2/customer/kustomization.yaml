@@ -1,0 +1,138 @@
+bases: []
+helmCharts:
+  - name: flux-app
+    includeCRDs: false
+    namespace: flux-system
+    repo: https://giantswarm.github.io/giantswarm-catalog/
+    releaseName: customer-flux
+    version: v1.0.0
+    valuesInline:
+      images:
+        registry: docker.io
+      clusterRoles:
+        install: false
+      crds:
+        install: false
+      verticalPodAutoscaler:
+        enabled: true
+        force: true
+images:
+  - name: docker.io/giantswarm/fluxcd-helm-controller
+    newName: giantswarm/fluxcd-helm-controller
+  - name: docker.io/giantswarm/fluxcd-image-automation-controller
+    newName: giantswarm/fluxcd-image-automation-controller
+  - name: docker.io/giantswarm/fluxcd-image-reflector-controller
+    newName: giantswarm/fluxcd-image-reflector-controller
+  - name: docker.io/giantswarm/fluxcd-notification-controller
+    newName: giantswarm/fluxcd-notification-controller
+  - name: docker.io/giantswarm/fluxcd-source-controller
+    newName: giantswarm/fluxcd-source-controller
+  - name: docker.io/giantswarm/fluxcd-kustomize-controller
+    newName: giantswarm/fluxcd-kustomize-controller
+  - name: docker.io/giantswarm/k8s-jwt-to-vault-token
+    newName: giantswarm/k8s-jwt-to-vault-token
+patches:
+- target:
+    kind: ClusterRoleBinding
+    name: crd-controller
+  patch: |-
+    - op: replace
+      path: /kind
+      value: RoleBinding
+    - op: add
+      path: /metadata/namespace
+      value: flux-system
+- target:
+    kind: ClusterRoleBinding
+    name: cluster-reconciler
+  patch: |-
+    - op: replace
+      path: /kind
+      value: RoleBinding
+    - op: add
+      path: /metadata/namespace
+      value: flux-system
+- target:
+    kind: Deployment
+    name: helm-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+        - --concurrent=12
+- target:
+    kind: Deployment
+    name: image-automation-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+- target:
+    kind: Deployment
+    name: image-reflector-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+- target:
+    kind: Deployment
+    name: kustomize-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+- target:
+    kind: Deployment
+    name: notification-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+- target:
+    kind: Deployment
+    name: source-controller
+    namespace: flux-system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/args
+      value:
+        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+        - --watch-all-namespaces
+        - --log-level=info
+        - --log-encoding=json
+        - --enable-leader-election
+        - --storage-path=/data
+        - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
+resources:
+  - resource-kyverno-policies.yaml
+  - resource-namespace.yaml
+  - resource-rbac.yaml

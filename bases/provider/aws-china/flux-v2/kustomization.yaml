@@ -1,0 +1,68 @@
+patches:
+  - target:
+      group: source.toolkit.fluxcd.io
+      version: v1beta2
+      kind: 'GitRepository'
+      name: '.*'
+      namespace: "flux-giantswarm"
+    patch: |-
+      - op: replace
+        path: "/apiVersion"
+        value: source.toolkit.fluxcd.io/v1
+  - target:
+      group: kustomize.toolkit.fluxcd.io
+      version: v1beta2
+      kind: 'Kustomization'
+      name: '.*'
+      namespace: "flux-giantswarm"
+    patch: |-
+      - op: replace
+        path: "/apiVersion"
+        value: kustomize.toolkit.fluxcd.io/v1
+images:
+  - name: giantswarm/fluxcd-helm-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller
+  - name: giantswarm/fluxcd-image-automation-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-image-automation-controller
+  - name: giantswarm/fluxcd-image-reflector-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-image-reflector-controller
+  - name: giantswarm/fluxcd-notification-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-notification-controller
+  - name: giantswarm/fluxcd-source-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-source-controller
+  - name: giantswarm/kustomize-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/kustomize-controller
+  - name: giantswarm/k8s-jwt-to-vault-token
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token
+  - name: giantswarm/konfigure
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/konfigure
+  - name: giantswarm/docker-kubectl
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/docker-kubectl
+  - name: giantswarm/alpine-helm
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/alpine-helm
+  - name: giantswarm/external-secrets
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/external-secrets
+  - name: giantswarm/fluxcd-kustomize-controller
+    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-kustomize-controller
+patchesStrategicMerge:
+  - ../patch-helm-controller.yaml
+  - ../patch-kustomize-controller.yaml
+  - ../patch-source-controller.yaml
+replacements:
+  # Points collection GitRepository to correct URL
+  - source:
+      kind: ConfigMap
+      name: provider-data
+      fieldPath: data.collection_url
+    targets:
+      - select:
+          kind: GitRepository
+          name: collection
+          namespace: flux-giantswarm
+        fieldPaths:
+          - spec.url
+resources:
+  - ../../../flux-app-v2/customer
+  - ../../../flux-app-v2/giantswarm
+  - ../../../flux-giantswarm-resources
+  - ../configmap-provider-data.yaml
