@@ -1,10 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 patches:
   - target:
       group: source.toolkit.fluxcd.io
       version: v1beta2
       kind: 'GitRepository'
       name: '.*'
-      namespace: "flux-giantswarm"
+      namespace: 'flux-giantswarm'
     patch: |-
       - op: replace
         path: "/apiVersion"
@@ -14,7 +16,7 @@ patches:
       version: v1beta2
       kind: 'Kustomization'
       name: '.*'
-      namespace: "flux-giantswarm"
+      namespace: 'flux-giantswarm'
     patch: |-
       - op: replace
         path: "/apiVersion"

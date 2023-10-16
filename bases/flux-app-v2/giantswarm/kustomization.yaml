@@ -1,4 +1,5 @@
-bases: []
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 helmCharts:
   - name: flux-app
     includeCRDs: false
@@ -156,9 +157,8 @@ patches:
         - --enable-leader-election
         - --storage-path=/data
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
-patchesStrategicMerge:
-- patch-pvc-psp.yaml
-- patch-kustomize-controller.yaml
+- path: patch-pvc-psp.yaml
+- path: patch-kustomize-controller.yaml
 resources:
 - resource-namespace.yaml
 - resource-rbac.yaml
