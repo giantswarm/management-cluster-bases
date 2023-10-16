@@ -46,4 +46,4 @@ resources:
   - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
-  - ../configmap-provider-data.yaml
+  - configmap-provider-data.yaml

@@ -21,9 +21,9 @@ patches:
       - op: replace
         path: "/apiVersion"
         value: kustomize.toolkit.fluxcd.io/v1
-  - path: ../patch-helm-controller.yaml
-  - path: ../patch-kustomize-controller.yaml
-  - path: ../patch-source-controller.yaml
+  - path: patch-helm-controller.yaml
+  - path: patch-kustomize-controller.yaml
+  - path: patch-source-controller.yaml
 images:
   - name: giantswarm/fluxcd-helm-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller
