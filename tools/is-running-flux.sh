@@ -15,6 +15,9 @@ if [[ "$VERSION" == "v1" ]]; then
   EXPECTED_KUSTOMIZE_CONTROLLER_VERSION="v0.35.1"
   EXPECTED_NOTIFICATION_CONTROLLER_VERSION="v0.33.0"
   EXPECTED_SOURCE_CONTROLLER_VERSION="v0.36.1"
+
+  EXPECTED_GITREPO_API_VERSION="source.toolkit.fluxcd.io/v1beta2"
+  EXPECTED_KUSTOMIZATION_API_VERSION="kustomize.toolkit.fluxcd.io/v1beta2"
 elif [[ "$VERSION" == "v2" ]]; then
   echo "Checking for version: ${VERSION}"
 
@@ -24,6 +27,9 @@ elif [[ "$VERSION" == "v2" ]]; then
   EXPECTED_KUSTOMIZE_CONTROLLER_VERSION="v1.0.1"
   EXPECTED_NOTIFICATION_CONTROLLER_VERSION="v1.0.0"
   EXPECTED_SOURCE_CONTROLLER_VERSION="v1.0.1"
+
+  EXPECTED_GITREPO_API_VERSION="source.toolkit.fluxcd.io/v1"
+  EXPECTED_KUSTOMIZATION_API_VERSION="kustomize.toolkit.fluxcd.io/v1"
 else
   echo "Unknown version! Either pass 'v1' or 'v2'!"
   exit 1
@@ -59,6 +65,34 @@ check_controller_version "flux-giantswarm" "app=image-reflector-controller" "${E
 check_controller_version "flux-giantswarm" "app=kustomize-controller" "${EXPECTED_KUSTOMIZE_CONTROLLER_VERSION}"
 check_controller_version "flux-giantswarm" "app=notification-controller" "${EXPECTED_NOTIFICATION_CONTROLLER_VERSION}"
 check_controller_version "flux-giantswarm" "app=source-controller" "${EXPECTED_SOURCE_CONTROLLER_VERSION}"
+
+echo ""
+echo "# Checking Flux git repositories in 'flux-giantswarm' for API version of '${EXPECTED_GITREPO_API_VERSION}'..."
+echo ""
+
+IFS=$'\n'
+for gitrepo in $(kubectl get gitrepositories -A -o custom-columns="NAMESPACE":.metadata.namespace,"NAME":.metadata.name,"STATUS":'.status.conditions[].type',"KIND":.kind,"APIVERSION":.apiVersion --no-headers); do
+  if [[ "${gitrepo}" == *${EXPECTED_GITREPO_API_VERSION} ]]
+    then
+      echo -e "${GREEN}${gitrepo}${NC}";
+    else
+      echo -e "${RED}${gitrepo}${NC}";
+    fi
+done
+
+echo ""
+echo "# Checking Flux kustomizations in 'flux-giantswarm' for API version of '${EXPECTED_KUSTOMIZATION_API_VERSION}'..."
+echo ""
+
+IFS=$'\n'
+for ks in $(kubectl get kustomizations -A -o custom-columns="NAMESPACE":.metadata.namespace,"NAME":.metadata.name,"STATUS":'.status.conditions[].type',"KIND":.kind,"APIVERSION":.apiVersion --no-headers); do
+  if [[ "${ks}" == *${EXPECTED_KUSTOMIZATION_API_VERSION} ]]
+  then
+    echo -e "${GREEN}${ks}${NC}";
+  else
+    echo -e "${RED}${ks}${NC}";
+  fi
+done
 
 echo ""
 echo "# Checking: 'flux-system' pods..."
