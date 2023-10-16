@@ -50,6 +50,9 @@ echo ""
 echo "# Checking: 'flux-giantswarm' pods..."
 echo ""
 
+kubectl get pods -n "flux-giantswarm" --no-headers
+echo ""
+
 check_controller_version "flux-giantswarm" "app=helm-controller" "${EXPECTED_HELM_CONTROLLER_VERSION}"
 check_controller_version "flux-giantswarm" "app=image-automation-controller" "${EXPECTED_IMAGE_AUTOMATION_CONTROLLER_VERSION}"
 check_controller_version "flux-giantswarm" "app=image-reflector-controller" "${EXPECTED_IMAGE_REFLECTOR_CONTROLLER_VERSION}"
@@ -59,6 +62,9 @@ check_controller_version "flux-giantswarm" "app=source-controller" "${EXPECTED_S
 
 echo ""
 echo "# Checking: 'flux-system' pods..."
+echo ""
+
+kubectl get pods -n "flux-system" --no-headers
 echo ""
 
 check_controller_version "flux-system" "app=helm-controller" "${EXPECTED_HELM_CONTROLLER_VERSION}"
