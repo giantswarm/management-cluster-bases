@@ -125,7 +125,7 @@ $(KONFIGURE): ## Download konfigure locally if necessary.
 	@echo "====> $@"
 	mkdir -p $(dir $@)
 	curl -sfL "https://github.com/giantswarm/konfigure/releases/download/$(KONFIGURE_VERSION)/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH).tar.gz" | tar zxv -C $(dir $@)
-	mv $@/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH)/konfigure $@ 
+	mv ./bin/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH)/konfigure $@
 	chmod +x $@
 
 $(HELM): ## Download helm locally if necessary.
