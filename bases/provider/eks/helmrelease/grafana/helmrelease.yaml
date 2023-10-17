@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-grafana
+  namespace: org-sample
+spec:
+  releaseName: grafana
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: grafana
+      version: 6.59.4
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-default-catalog
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
