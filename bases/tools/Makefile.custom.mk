@@ -3,6 +3,9 @@
 KUSTOMIZE := ./bin/kustomize
 KUSTOMIZE_VERSION ?= v4.5.7
 
+KONFIGURE := ./bin/konfigure
+KONFIGURE_VERSION ?= v0.15.0
+
 HELM := ./bin/helm
 
 YQ := ./bin/yq
@@ -96,7 +99,7 @@ endif
 	rm -rf $(TMP_BASE)
 
 .PHONY: $(BUILD_MC_TARGETS)
-$(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
+$(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ) $(KONFIGURE)
 	@echo "====> $@"
 	mkdir -p output
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@) > output/$(subst build-,,$@).prep.yaml
@@ -113,6 +116,12 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	rm output/$(subst build-,,$@).prep.yaml
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
+	@echo "====> $@"
+	mkdir -p $(dir $@)
+	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
+	chmod +x $@
+
+$(KONFIGURE): ## Download kustomize locally if necessary.
 	@echo "====> $@"
 	mkdir -p $(dir $@)
 	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
