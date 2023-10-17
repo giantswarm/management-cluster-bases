@@ -98,6 +98,7 @@ endif
 .PHONY: $(BUILD_MC_TARGETS)
 $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
+	mkdir -p output
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@) > output/$(subst build-,,$@).prep.yaml
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
