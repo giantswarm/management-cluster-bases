@@ -121,10 +121,10 @@ $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
 	chmod +x $@
 
-$(KONFIGURE): ## Download kustomize locally if necessary.
+$(KONFIGURE): ## Download konfigure locally if necessary.
 	@echo "====> $@"
 	mkdir -p $(dir $@)
-	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
+	curl -sfL "https://github.com/giantswarm/konfigure/releases/download/$(KONFIGURE_VERSION)/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH).tar.gz" | tar zxv -C $(dir $@)
 	chmod +x $@
 
 $(HELM): ## Download helm locally if necessary.
