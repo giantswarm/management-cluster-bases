@@ -3,9 +3,6 @@
 KUSTOMIZE := ./bin/kustomize
 KUSTOMIZE_VERSION ?= v4.5.7
 
-KONFIGURE := ./bin/konfigure
-KONFIGURE_VERSION ?= v0.15.0
-
 HELM := ./bin/helm
 
 YQ := ./bin/yq
@@ -99,7 +96,7 @@ endif
 	rm -rf $(TMP_BASE)
 
 .PHONY: $(BUILD_MC_TARGETS)
-$(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ) $(KONFIGURE)
+$(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@) > output/$(subst build-,,$@).prep.yaml
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
@@ -120,13 +117,6 @@ $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
 	chmod +x $@
 
-$(KONFIGURE): ## Download konfigure locally if necessary.
-	@echo "====> $@"
-	mkdir -p $(dir $@)
-	curl -sfL "https://github.com/giantswarm/konfigure/releases/download/$(KONFIGURE_VERSION)/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH).tar.gz" | tar zxv -C $(dir $@)
-	mv ./bin/konfigure-$(KONFIGURE_VERSION)-$(OS)-$(ARCH)/konfigure $@
-	chmod +x $@
-
 $(HELM): ## Download helm locally if necessary.
 	@echo "====> $@"
 	curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | HELM_INSTALL_DIR=$(dir $@) USE_SUDO=false bash
@@ -136,6 +126,3 @@ $(YQ): ## Download yq locally if necessary.
 	mkdir -p $(dir $@)
 	curl -sfL https://github.com/mikefarah/yq/releases/download/v$(YQ_VERSION)/yq_$(OS)_$(ARCH) > $@
 	chmod +x $@
-
-$(KONFIGURE_PREPROCESS):
-	echo $@
