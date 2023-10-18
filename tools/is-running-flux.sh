@@ -70,15 +70,15 @@ echo ""
 echo "# Checking Flux git repositories in 'flux-giantswarm' for API version of '${EXPECTED_GITREPO_API_VERSION}'..."
 echo ""
 
-IFS=$'\n'
-for gitrepo in $(kubectl get gitrepositories -A -o custom-columns="NAMESPACE":.metadata.namespace,"NAME":.metadata.name,"STATUS":'.status.conditions[].type',"KIND":.kind,"APIVERSION":.apiVersion --no-headers); do
-  if [[ "${gitrepo}" == *${EXPECTED_GITREPO_API_VERSION} ]]
-    then
-      echo -e "${GREEN}${gitrepo}${NC}";
-    else
-      echo -e "${RED}${gitrepo}${NC}";
-    fi
-done
+#IFS=$'\n'
+#for gitrepo in $(kubectl get gitrepositories -A -o custom-columns="NAMESPACE":.metadata.namespace,"NAME":.metadata.name,"STATUS":'.status.conditions[].type',"KIND":.kind,"APIVERSION":.apiVersion --no-headers); do
+#  if [[ "${gitrepo}" == *${EXPECTED_GITREPO_API_VERSION} ]]
+#    then
+#      echo -e "${GREEN}${gitrepo}${NC}";
+#    else
+#      echo -e "${RED}${gitrepo}${NC}";
+#    fi
+#done
 
 echo ""
 echo "# Checking Flux kustomizations in 'flux-giantswarm' for API version of '${EXPECTED_KUSTOMIZATION_API_VERSION}'..."
