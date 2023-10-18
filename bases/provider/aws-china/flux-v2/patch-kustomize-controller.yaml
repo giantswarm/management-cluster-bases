@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kustomize-controller
+  namespace: flux-giantswarm
+spec:
+  template:
+    spec:
+      hostAliases:
+      - ip: "192.168.190.100"
+        hostnames:
+        - "github.com"
+      - ip: "192.168.190.101"
+        hostnames:
+        - "giantswarm.github.io"
+      - ip: "192.168.190.103"
+        hostnames:
+        - "raw.githubusercontent.com"

@@ -2,4 +2,5 @@ bin/*
 output/
 
 bases/flux-app/**/charts/
+bases/flux-app-v2/**/charts/
 bases/tools/bin/*

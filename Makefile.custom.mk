@@ -23,6 +23,11 @@ all: ensure-versions
 .PHONY: ensure-versions
 ensure-versions: $(YQ) download-upstream-crds
 	@echo "====> $@"
+
+	# Make sure there are no locally cached charts
+	rm -rf bases/flux-app/customer/charts
+	rm -rf bases/flux-app/giantswarm/charts
+
 	head output/flux-$(FLUX_VERSION).crds.yaml
 	cp output/flux-$(FLUX_VERSION).crds.yaml bases/crds/flux-app/crds.yaml
 	head bases/crds/flux-app/crds.yaml
