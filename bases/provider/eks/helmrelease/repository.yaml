@@ -1,8 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: giantswarm-default-catalog
-  namespace: org-sample
-spec:
-  interval: 5m0s
-  url: https://giantswarm.github.io/default-catalog/
