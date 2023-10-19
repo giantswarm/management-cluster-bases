@@ -17,6 +17,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: giantswarm-catalog
+        namespace: flux-giantswarm
   interval: 50m
   install:
     remediation:
