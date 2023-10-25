@@ -6,3 +6,5 @@ resources:
 - observability-bundle
 - vertical-pod-autoscaler
 - grafana
+- loki 
+- promtail
