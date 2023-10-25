@@ -22,3 +22,7 @@ spec:
   install:
     remediation:
       retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: sample-customer-loki-config
+      valuesKey: values
