@@ -42,7 +42,7 @@ function check_controller_version() {
 
   echo "## Checking for pod in '${namespace}' with label '${label}'..."
 
-  actual_image="$(kubectl -n "${namespace}" get pod -l "${label}" -o yaml | yq '.items[].spec.containers[].image')"
+  actual_image="$(kubectl -n "${namespace}" get pod -l "${label}" -o yaml | yq '.items[].spec.containers[] | select(.name == "manager") | .image')"
   actual_tag="$(echo "$actual_image" | cut -d ":" -f 2)"
 
   if [[ "${actual_tag}" == "${expected_version}" ]]; then
