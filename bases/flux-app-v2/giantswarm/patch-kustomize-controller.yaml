@@ -29,7 +29,7 @@ spec:
       - args:
         - cp konfigure /giantswarm-bin && chmod +x /giantswarm-bin/konfigure
         command: ["sh", "-c"]
-        image: giantswarm/konfigure:0.14.4
+        image: giantswarm/konfigure:0.15.1
         name: ensure-konfigure
         securityContext:
           allowPrivilegeEscalation: false
