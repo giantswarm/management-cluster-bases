@@ -51,11 +51,17 @@ Check the generated diff on the pull request. It should contain including but no
 
 ### Merge to main branch and update `kustomize-controller` deployment
 
-After merging to `main` branch, the `flux-giantswarm/kustomize-controller` deployment will need to be manually updated
+After merging to `main` branch, the `flux-giantswarm/kustomize-controller` deployment will need to be updated
 on the MC to use the `v1.0.1` image of `giantswarm/kustomize-controller:v1.0.1` for 2 containers:
 
 - the `ensure-sopsenv` init container
 - the `manager` container
+
+Run the following script to automate it:
+
+```shell
+./tools/bump-flux-giantswarm-ks-controller.sh
+```
 
 This is needed because the Flux git repositories will get updated to v1 once the Flux v2 CRDs are rolled out and the
 `.status.artifact.checksum` field gets removed from the CRs making the Flux v1 `kustomize-controller` fail on fetching
