@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+patches:
+  - path: patch-delete-refresh-vault-token-cron-job.yaml
+  - path: patch-delete-refresh-vault-token-role.yaml
+  - path: patch-delete-refresh-vault-token-role-binding.yaml
+  - path: patch-delete-refresh-vault-token-service-account.yaml
+  - path: patch-kustomize-controller.yaml

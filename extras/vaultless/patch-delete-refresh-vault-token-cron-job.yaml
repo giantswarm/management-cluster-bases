@@ -1,0 +1,6 @@
+$patch: delete
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: refresh-vault-token
+  namespace: flux-giantswarm
