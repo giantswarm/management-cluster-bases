@@ -81,6 +81,19 @@ To equate the same behaviour inside `App` CR the ConfigMap would be an
 `extraConfig` of priority `98`, the secret `99` and finally the `userConfig.configMap`
 and `userConfig.secret` values would be layered in.
 
+### Catalog secrets
+
+One thing to be noted with the `HelmRelease` process that differs from the app
+platform is the treatment of `catalog` secrets and configmaps.
+
+Under the app platform, there may be values coming from the catalog that apply
+as a base layer upon which everything else is merged (e.g. catalog has 
+priority 0)
+
+This capability is lost with `HelmRelease` objects and these must contain all
+configuration options as `values` and `valuesFrom` references as part of the 
+spec.
+
 ### Deployment
 
 When deploying `App` CRs, you have the option of specifying `inCluster` true to

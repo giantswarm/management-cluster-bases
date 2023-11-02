@@ -2,13 +2,17 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upbound-provider-aws
+  name: upbound-provider-family-aws
   namespace: crossplane
+  labels:
+    provider-family: aws
+    provider-family-member: aws-family
 spec:
-  controllerConfigRef:
-    name: upbound-provider-aws
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-family-aws:v${awsversion:=0.43.0}
+  runtimeConfigRef:
+    name: upbound-provider-family-aws

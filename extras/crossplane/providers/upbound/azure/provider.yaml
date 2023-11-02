@@ -2,13 +2,17 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upbound-provider-azure
+  name: upbound-provider-family-azure
   namespace: crossplane
+  labels:
+    provider-family: azure
+    provider-family-member: azure-family
 spec:
-  controllerConfigRef:
-    name: upbound-provider-azure
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-family-azure:v${azureversion:=0.38.0}
+  runtimeConfigRef:
+    name: upbound-provider-family-azure

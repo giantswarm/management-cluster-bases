@@ -1,0 +1,40 @@
+---
+# DeploymentRuntimeConfig for AWS resources
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: upbound-provider-family-aws
+  labels:
+    provider-family: aws
+    provider-family-member: aws-family
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          serviceAccountName: upbound-provider-family-aws
+          containers:
+            - name: package-runtime
+              args:
+                - --debug
+---
+# DeploymentRuntimeConfig for AWS resources
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: upbound-provider-aws
+  labels:
+    provider-family: aws
+    provider-family-member: aws-provider
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          serviceAccountName: replaced by kustomization
+          containers:
+            - name: package-runtime
+              args:
+                - --debug
