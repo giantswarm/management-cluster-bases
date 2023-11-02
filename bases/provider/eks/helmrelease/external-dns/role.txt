@@ -1,0 +1,44 @@
+## For now, the role sample-customer-Route53Manager-Role needs to be created manually.
+## Obtain the oidc id from: k get clusters.eks.aws.upbound.io sample-customer -o jsonpath='{.status.atProvider.identity[0].oidc[0].issuer}'
+
+### Trust relationships
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::242036376510:oidc-provider/oidc.eks.eu-central-1.amazonaws.com/id/<OIDC_ID"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "oidc.eks.eu-central-1.amazonaws.com/id/<OIDC_ID>:sub": "system:serviceaccount:kube-system:external-dns",
+                    "oidc.eks.eu-central-1.amazonaws.com/id/<OIDC_ID>:aud": "sts.amazonaws.com"
+                }
+            }
+        }
+    ]
+}
+
+### Inline policy: control-plane-sample-customer
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "route53:ChangeResourceRecordSets",
+            "Resource": [
+                "arn:aws:route53:::hostedzone/*"
+            ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}

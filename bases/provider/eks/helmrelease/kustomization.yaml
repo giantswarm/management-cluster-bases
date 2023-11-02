@@ -9,3 +9,4 @@ resources:
 - loki
 - promtail
 - ingress-nginx
+- external-dns
