@@ -13,9 +13,9 @@ simplified process to installing new providers inside your cluster.
 For detailed instructions on the provider(s) for your environment please see the
 relevant documentation:
 
-- [upbound-provider-aws](./aws)
-- [upbound-provider-azure](./azure)
-- [upbound-provider-gcp](./gcp)
+- [upbound-provider-aws](./aws/docs/README.md)
+- [upbound-provider-azure](./azure/docs/README.md)
+- [upbound-provider-gcp](./gcp/docs/README.md)
 
 ## Enabling alpha functionality
 

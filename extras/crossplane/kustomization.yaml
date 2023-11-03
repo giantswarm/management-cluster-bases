@@ -4,3 +4,5 @@ resources:
 - namespace-crossplane.yaml
 - podmonitor-crossplane.yaml
 - providers-kustomization.yaml
+- claims-kustomization.yaml
+- composition-kustomization.yaml

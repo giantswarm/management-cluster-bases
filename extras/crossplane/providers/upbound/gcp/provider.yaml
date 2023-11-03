@@ -2,13 +2,17 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upbound-provider-gcp
+  name: upbound-provider-family-gcp
   namespace: crossplane
+  labels:
+    provider-family: gcp
+    provider-family-member: gcp-family
 spec:
-  controllerConfigRef:
-    name: upbound-provider-gcp
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-family-gcp:v${gcpversion:=0.38.0}
+  runtimeConfigRef:
+    name: upbound-provider-family-gcp
