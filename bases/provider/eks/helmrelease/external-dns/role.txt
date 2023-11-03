@@ -8,7 +8,7 @@
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::242036376510:oidc-provider/oidc.eks.eu-central-1.amazonaws.com/id/<OIDC_ID"
+                "Federated": "arn:aws:iam::242036376510:oidc-provider/oidc.eks.eu-central-1.amazonaws.com/id/<OIDC_ID>"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
