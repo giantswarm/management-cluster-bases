@@ -12,7 +12,7 @@ spec:
       name: sample-customer-kubeconfig
   chart:
     spec:
-      chart: fluent-logshipping-app-app
+      chart: fluent-logshipping-app
       version: 3.0.2
       sourceRef:
         kind: HelmRepository
