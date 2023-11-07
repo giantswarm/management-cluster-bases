@@ -22,3 +22,6 @@ spec:
   install:
     remediation:
       retries: 3
+  values:
+    baseDomain: sample-customer.gaws.gigantic.io
+    provider: capa
