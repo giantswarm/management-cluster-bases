@@ -31,7 +31,7 @@ spec:
       annotations:
         eks.amazonaws.com/role-arn: arn:aws:iam::242036376510:role/sample-customer-Route53Manager-Role
     domainFilters:
-      - sample-customer.gaws.giantswarm.io
+      - sample-customer.gaws.gigantic.io
     txtOwnerId: giantswarm-io-external-dns
     txtPrefix: sample-customer
     annotationFilter: giantswarm.io/external-dns=managed
