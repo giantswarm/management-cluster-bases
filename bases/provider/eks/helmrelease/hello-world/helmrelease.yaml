@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-hello-world
+  namespace: org-sample
+spec:
+  releaseName: hello-world
+  targetNamespace: hello-world
+  storageNamespace: hello-world
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: hello-world
+      version: '2.2.0'
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+        namespace: default
+  interval: 30m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  values:
+    ingress:
+      annotations: {}
+      hosts:
+      - host: ingress.sample-customer.gaws.gigantic.io
+        paths:
+        - path: /
+          pathType: ImplementationSpecific
+      tls: []
+    autoscaling:
+      enabled: false

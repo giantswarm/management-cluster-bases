@@ -11,3 +11,4 @@ resources:
 - promtail
 - ingress-nginx
 - external-dns
+- hello-world
