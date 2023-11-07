@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - example-helmrelease-app
 - metrics-server
+- fluent-logshipping-app
 - observability-bundle
 - vertical-pod-autoscaler
 - grafana
