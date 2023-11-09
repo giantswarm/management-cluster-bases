@@ -15,9 +15,9 @@ ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
-BUILD_CRD_TARGETS := build-common-crds build-flux-app-crds build-giantswarm-crds
+BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-crds build-flux-app-v2-crds build-giantswarm-crds
 
-BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
+BUILD_FLUX_APP_TARGETS := build-flux-app-v1-customer build-flux-app-v2-customer build-flux-app-v1-giantswarm build-flux-app-v2-giantswarm
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
 MCB_BRANCH ?= main
@@ -50,7 +50,9 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 
 .PHONY: $(BUILD_CRD_TARGETS)
 build-common-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common
+build-common-flux-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common-flux-v2
 build-flux-app-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app
+build-flux-app-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app-v2
 build-giantswarm-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/giantswarm
 $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	@echo "====> $@"
@@ -63,8 +65,11 @@ $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone /tmp/mcb.${MCB_BRANCH}/bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
 
 .PHONY: $(BUILD_FLUX_APP_TARGETS)
-build-flux-app-customer: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/customer. Can take DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
-build-flux-app-giantswarm: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/giantswarm. Can take DISABLE_VPA=1.
+build-flux-app-v1-customer: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/customer. Can take DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
+build-flux-app-v1-giantswarm: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app/giantswarm. Can take DISABLE_VPA=1.
+build-flux-app-v2-customer: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app-v2/customer. Can take DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
+build-flux-app-v2-giantswarm: ## Builds https://github.com/giantswarm/management-cluster-bases//bases/flux-app-v2/giantswarm. Can take DISABLE_VPA=1.
+$(BUILD_FLUX_APP_TARGETS): VERSION = $(lastword $(lastword $(subst -, ,$@)))
 $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
@@ -77,7 +82,11 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 
 	rm -rf $(TMP_BASE)
 
+ifeq ($(VERSION), "v1")
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
+else
+	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-${VERSION}/${SUFFIX} $(TMP_BASE)
+endif
 
 	@# This will run extra yq calls if VAULTLESS=1
 	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
@@ -92,7 +101,7 @@ ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
 endif
-	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-$(SUFFIX).yaml
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-$(VERSION)-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
 
 .PHONY: $(BUILD_MC_TARGETS)

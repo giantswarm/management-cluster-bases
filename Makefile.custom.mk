@@ -78,11 +78,13 @@ download-upstream-crds: download-upstream-install $(YQ)
 	@echo "====> $@"
 	$(YQ) eval-all 'select(.kind == "CustomResourceDefinition")' output/flux-$(FLUX_VERSION).install.yaml > output/flux-$(FLUX_VERSION).crds.yaml
 
-BUILD_CRD_TARGETS := build-common-crds build-flux-app-crds build-giantswarm-crds
+BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-crds build-flux-app-v2-crds build-giantswarm-crds
 
 .PHONY: $(BUILD_CRD_TARGETS)
 build-common-crds:  ## Builds bases/crds/common
+build-common-flux-v2-crds:  ## Builds bases/crds/common-flux-v2
 build-flux-app-crds:  ## Builds bases/crds/flux-app
+build-flux-app-v2-crds:  ## Builds bases/crds/flux-app-v2
 build-giantswarm-crds:  ## Builds bases/crds/giantswarm
 $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	@echo "====> $@"
