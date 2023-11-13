@@ -99,7 +99,7 @@ ifeq ($(FORCE_CRDS),1)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
 endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
-	#rm -rf $(TMP_BASE)
+	rm -rf $(TMP_BASE)
 
 .PHONY: $(BUILD_MC_TARGETS)
 $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
