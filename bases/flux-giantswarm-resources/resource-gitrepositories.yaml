@@ -1,4 +1,4 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: collection
@@ -12,7 +12,7 @@ spec:
   timeout: 5m
   url: "{replaced in bases/provider/<PROVIDER>/kustomization.yaml}"
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: management-clusters-fleet
@@ -20,13 +20,13 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: main
+    branch: flux-2
   secretRef:
     name: github-giantswarm-https-credentials
   timeout: 60s
   url: https://github.com/giantswarm/management-clusters-fleet
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: giantswarm-config

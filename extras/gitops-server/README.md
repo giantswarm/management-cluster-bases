@@ -63,7 +63,7 @@ Create a patch for the `flux-extras` Kustomization in the installation directory
 
 ```sh
 $ cat <<EOF > management-clusters/MC_NAME/patch-kustomization-flux-extras.yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: flux-extras

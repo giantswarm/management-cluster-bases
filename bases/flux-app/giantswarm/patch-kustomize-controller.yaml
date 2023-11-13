@@ -42,7 +42,7 @@ spec:
       - args:
         - /giantswarm-bin/konfigure fetchkeys --sops-keys-dir /sopsenv
         command: ["sh", "-c"]
-        image: giantswarm/kustomize-controller:v0.35.1
+        image: giantswarm/kustomize-controller:v1.0.1
         name: ensure-sopsenv
         securityContext:
           allowPrivilegeEscalation: false
