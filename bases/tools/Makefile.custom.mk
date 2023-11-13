@@ -1,7 +1,7 @@
 # Check https://github.com/fluxcd/flux2/blob/main/.github/runners/prereq.sh if
 # you're updating kustomize versions.
 KUSTOMIZE := ./bin/kustomize
-KUSTOMIZE_VERSION ?= v4.5.7
+KUSTOMIZE_VERSION ?= v5.0.3
 
 HELM := ./bin/helm
 

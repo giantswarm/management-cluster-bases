@@ -157,8 +157,10 @@ patches:
         - --enable-leader-election
         - --storage-path=/data
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
-- path: patch-pvc-psp.yaml
-- path: patch-kustomize-controller.yaml
+# Keeping this because of vaultless helper + upstream bug in kustomize to apply patch files with multiple documents
+patchesStrategicMerge:
+- patch-pvc-psp.yaml
+- patch-kustomize-controller.yaml
 resources:
 - resource-namespace.yaml
 - resource-rbac.yaml
