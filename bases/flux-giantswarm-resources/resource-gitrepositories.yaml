@@ -39,3 +39,52 @@ spec:
     name: github-giantswarm-https-credentials
   timeout: 60s
   url: https://github.com/giantswarm/config
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: default-configs
+  namespace: flux-giantswarm
+spec:
+  interval: 30s
+  ref:
+    branch: main
+  secretRef:
+    name: default-configs-ssh-credentials
+  timeout: 60s
+  url: https://github.com/giantswarm/default-configs
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: include-configs
+  namespace: flux-giantswarm
+spec:
+  interval: 30s
+  ref:
+    branch: main
+  secretRef:
+    name: include-configs-ssh-credentials
+  timeout: 60s
+  url: https://github.com/giantswarm/include-configs
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: giantswarm-configs-new
+  namespace: flux-giantswarm
+spec:
+  include:
+    - repository:
+        name: default-configs
+      toPath: default
+    - repository:
+        name: include-configs
+      toPath: include
+  interval: 30s
+  ref:
+    branch: main
+  secretRef:
+    name: configs-ssh-credentials
+  timeout: 60s
+  url: ssh://git@ssh.github.com:${github_port}/giantswarm/${customer_codename}-configs.git
