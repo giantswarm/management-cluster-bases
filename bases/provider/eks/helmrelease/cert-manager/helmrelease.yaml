@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sample-customer-cert-manager
+  namespace: org-sample
+spec:
+  releaseName: cert-manager
+  targetNamespace: kube-system
+  storageNamespace: kube-system
+  kubeConfig:
+    secretRef:
+      name: sample-customer-kubeconfig
+  chart:
+    spec:
+      chart: cert-manager-app
+      version: 3.5.3
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+        namespace: default
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
