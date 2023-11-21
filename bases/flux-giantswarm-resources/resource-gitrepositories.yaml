@@ -43,30 +43,16 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: default-configs
+  name: shared-configs
   namespace: flux-giantswarm
 spec:
   interval: 30s
   ref:
     branch: main
   secretRef:
-    name: default-configs-ssh-credentials
+    name: shared-configs-ssh-credentials
   timeout: 60s
-  url: https://github.com/giantswarm/default-configs
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: GitRepository
-metadata:
-  name: include-configs
-  namespace: flux-giantswarm
-spec:
-  interval: 30s
-  ref:
-    branch: main
-  secretRef:
-    name: include-configs-ssh-credentials
-  timeout: 60s
-  url: https://github.com/giantswarm/include-configs
+  url: ssh://git@ssh.github.com:${github_port}/giantswarm/shared-configs
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
@@ -76,10 +62,12 @@ metadata:
 spec:
   include:
     - repository:
-        name: default-configs
+        name: shared-configs
+      fromPath: default
       toPath: default
     - repository:
-        name: include-configs
+        name: shared-configs
+      fromPath: include
       toPath: include
   interval: 30s
   ref:
