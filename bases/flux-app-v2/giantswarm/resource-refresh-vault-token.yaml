@@ -33,7 +33,21 @@ spec:
                 - -lapp=kustomize-controller
               image: docker.io/giantswarm/docker-kubectl:1.18.8
               name: restart-kustomize-controller
+              securityContext:
+                readOnlyRootFilesystem: true
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                seccompProfile:
+                  type: RuntimeDefault
           serviceAccountName: refresh-vault-token
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 2000
+            seccompProfile:
+              type: RuntimeDefault
           restartPolicy: OnFailure
 ---
 apiVersion: rbac.authorization.k8s.io/v1
