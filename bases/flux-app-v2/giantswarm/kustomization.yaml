@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-catalog/
     releaseName: flux-giantswarm
-    version: v1.2.0
+    version: v1.0.0
     valuesInline:
       images:
         registry: docker.io
@@ -45,6 +45,20 @@ patches:
     - op: replace
       path: /rules/10/resourceNames/0
       value: flux-app-pvc-psp-giantswarm
+- target:
+    kind: PodSecurityPolicy
+    name: flux-app-pvc-psp
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: flux-app-pvc-psp-giantswarm
+- target:
+    kind: ClusterRoleBinding
+    name: cluster-reconciler
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: cluster-reconciler-giantswarm
 - target:
     kind: ClusterRoleBinding
     name: crd-controller
@@ -145,6 +159,7 @@ patches:
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 # Keeping this because of vaultless helper + upstream bug in kustomize to apply patch files with multiple documents
 patchesStrategicMerge:
+- patch-pvc-psp.yaml
 - patch-kustomize-controller.yaml
 resources:
 - resource-namespace.yaml

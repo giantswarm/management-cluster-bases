@@ -607,7 +607,7 @@ spec:
                   description: Insecure allows connecting to a non-TLS HTTP Endpoint.
                   type: boolean
                 interval:
-                  description: Interval at which the Bucket Endpoint is checked for updates. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: Interval at which to check the Endpoint for updates.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 provider:
@@ -826,18 +826,9 @@ spec:
                     type: object
                   type: array
                 interval:
-                  description: Interval at which the GitRepository URL is checked for updates. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: Interval at which to check the GitRepository for updates.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
-                proxySecretRef:
-                  description: ProxySecretRef specifies the Secret containing the proxy configuration to use while communicating with the Git server.
-                  properties:
-                    name:
-                      description: Name of the referent.
-                      type: string
-                  required:
-                    - name
-                  type: object
                 recurseSubmodules:
                   description: RecurseSubmodules enables the initialization of all submodules within the GitRepository as cloned from the URL, using their default settings.
                   type: boolean
@@ -885,13 +876,9 @@ spec:
                   description: Verification specifies the configuration to verify the Git commit signature(s).
                   properties:
                     mode:
-                      default: HEAD
-                      description: "Mode specifies which Git object(s) should be verified. \n The variants \"head\" and \"HEAD\" both imply the same thing, i.e. verify the commit that the HEAD of the Git repository points to. The variant \"head\" solely exists to ensure backwards compatibility."
+                      description: Mode specifies what Git object should be verified, currently ('head').
                       enum:
                         - head
-                        - HEAD
-                        - Tag
-                        - TagAndHEAD
                       type: string
                     secretRef:
                       description: SecretRef specifies the Secret containing the public keys of trusted Git authors.
@@ -903,6 +890,7 @@ spec:
                         - name
                       type: object
                   required:
+                    - mode
                     - secretRef
                   type: object
               required:
@@ -1068,9 +1056,6 @@ spec:
                 observedRecurseSubmodules:
                   description: ObservedRecurseSubmodules is the observed resource submodules configuration used to produce the current Artifact.
                   type: boolean
-                sourceVerificationMode:
-                  description: SourceVerificationMode is the last used verification mode indicating which Git object(s) have been verified.
-                  type: string
               type: object
           type: object
       served: true
@@ -1945,7 +1930,7 @@ spec:
                   description: Chart is the name or path the Helm chart is available at in the SourceRef.
                   type: string
                 interval:
-                  description: Interval at which the HelmChart SourceRef is checked for updates. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: Interval is the interval at which to check the Source for updates.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 reconcileStrategy:
@@ -2335,7 +2320,7 @@ spec:
                       type: string
                   type: object
                 interval:
-                  description: Interval at which to reconcile the Helm release. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: Interval at which to reconcile the Helm release.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 kubeConfig:
@@ -3008,17 +2993,8 @@ spec:
                   required:
                     - namespaceSelectors
                   type: object
-                certSecretRef:
-                  description: "CertSecretRef can be given the name of a Secret containing either or both of \n - a PEM-encoded client certificate (`tls.crt`) and private key (`tls.key`); - a PEM-encoded CA certificate (`ca.crt`) \n and whichever are supplied, will be used for connecting to the registry. The client cert and key are useful if you are authenticating with a certificate; the CA cert is useful if you are using a self-signed server certificate. The Secret must be of type `Opaque` or `kubernetes.io/tls`. \n It takes precedence over the values specified in the Secret referred to by `.spec.secretRef`."
-                  properties:
-                    name:
-                      description: Name of the referent.
-                      type: string
-                  required:
-                    - name
-                  type: object
                 interval:
-                  description: Interval at which the HelmRepository URL is checked for updates. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: Interval at which to check the URL for updates.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 passCredentials:
@@ -3034,7 +3010,7 @@ spec:
                     - gcp
                   type: string
                 secretRef:
-                  description: SecretRef specifies the Secret containing authentication credentials for the HelmRepository. For HTTP/S basic auth the secret must contain 'username' and 'password' fields. Support for TLS auth using the 'certFile' and 'keyFile', and/or 'caFile' keys is deprecated. Please use `.spec.certSecretRef` instead.
+                  description: SecretRef specifies the Secret containing authentication credentials for the HelmRepository. For HTTP/S basic auth the secret must contain 'username' and 'password' fields. For TLS the secret must contain a 'certFile' and 'keyFile', and/or 'caFile' fields.
                   properties:
                     name:
                       description: Name of the referent.
@@ -3688,7 +3664,7 @@ spec:
                     - namespaceSelectors
                   type: object
                 certSecretRef:
-                  description: "CertSecretRef can be given the name of a Secret containing either or both of \n - a PEM-encoded client certificate (`tls.crt`) and private key (`tls.key`); - a PEM-encoded CA certificate (`ca.crt`) \n and whichever are supplied, will be used for connecting to the registry. The client cert and key are useful if you are authenticating with a certificate; the CA cert is useful if you are using a self-signed server certificate. The Secret must be of type `Opaque` or `kubernetes.io/tls`. \n Note: Support for the `caFile`, `certFile` and `keyFile` keys has been deprecated."
+                  description: "CertSecretRef can be given the name of a secret containing either or both of \n - a PEM-encoded client certificate (`certFile`) and private key (`keyFile`); - a PEM-encoded CA certificate (`caFile`) \n and whichever are supplied, will be used for connecting to the registry. The client cert and key are useful if you are authenticating with a certificate; the CA cert is useful if you are using a self-signed server certificate."
                   properties:
                     name:
                       description: Name of the referent.
@@ -3933,14 +3909,8 @@ spec:
                         branch:
                           description: Branch specifies that commits should be pushed to the branch named. The branch is created using `.spec.checkout.branch` as the starting point, if it doesn't already exist.
                           type: string
-                        options:
-                          additionalProperties:
-                            type: string
-                          description: 'Options specifies the push options that are sent to the Git server when performing a push operation. For details, see: https://git-scm.com/docs/git-push#Documentation/git-push.txt---push-optionltoptiongt'
-                          type: object
-                        refspec:
-                          description: 'Refspec specifies the Git Refspec to use for a push operation. If both Branch and Refspec are provided, then the commit is pushed to the branch and also using the specified refspec. For more details about Git Refspecs, see: https://git-scm.com/book/en/v2/Git-Internals-The-Refspec'
-                          type: string
+                      required:
+                        - branch
                       type: object
                   required:
                     - commit
@@ -4216,7 +4186,7 @@ spec:
                     type: object
                   type: array
                 interval:
-                  description: The interval at which to reconcile the Kustomization. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: The interval at which to reconcile the Kustomization.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 kubeConfig:
@@ -5361,7 +5331,7 @@ spec:
               description: OCIRepositorySpec defines the desired state of OCIRepository
               properties:
                 certSecretRef:
-                  description: "CertSecretRef can be given the name of a Secret containing either or both of \n - a PEM-encoded client certificate (`tls.crt`) and private key (`tls.key`); - a PEM-encoded CA certificate (`ca.crt`) \n and whichever are supplied, will be used for connecting to the registry. The client cert and key are useful if you are authenticating with a certificate; the CA cert is useful if you are using a self-signed server certificate. The Secret must be of type `Opaque` or `kubernetes.io/tls`. \n Note: Support for the `caFile`, `certFile` and `keyFile` keys have been deprecated."
+                  description: "CertSecretRef can be given the name of a secret containing either or both of \n - a PEM-encoded client certificate (`certFile`) and private key (`keyFile`); - a PEM-encoded CA certificate (`caFile`) \n and whichever are supplied, will be used for connecting to the registry. The client cert and key are useful if you are authenticating with a certificate; the CA cert is useful if you are using a self-signed server certificate."
                   properties:
                     name:
                       description: Name of the referent.
@@ -5376,7 +5346,7 @@ spec:
                   description: Insecure allows connecting to a non-TLS HTTP container registry.
                   type: boolean
                 interval:
-                  description: Interval at which the OCIRepository URL is checked for updates. This interval is approximate and may be subject to jitter to ensure efficient use of resources.
+                  description: The interval at which to check for image updates.
                   pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                   type: string
                 layerSelector:
@@ -5784,7 +5754,7 @@ spec:
                   maxLength: 2048
                   type: string
                 certSecretRef:
-                  description: "CertSecretRef specifies the Secret containing a PEM-encoded CA certificate (in the `ca.crt` key). \n Note: Support for the `caFile` key has been deprecated."
+                  description: CertSecretRef specifies the Secret containing a PEM-encoded CA certificate (`caFile`).
                   properties:
                     name:
                       description: Name of the referent.
@@ -5848,7 +5818,6 @@ spec:
                     - grafana
                     - githubdispatch
                     - pagerduty
-                    - datadog
                   type: string
                 username:
                   description: Username specifies the name under which events are posted.
@@ -5926,9 +5895,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
   labels:
+    app.kubernetes.io/component: notification-controller
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
-    app.kubernetes.io/component: notification-controller
   name: receivers.notification.toolkit.fluxcd.io
 spec:
   group: notification.toolkit.fluxcd.io
@@ -6458,4 +6427,3 @@ spec:
       storage: false
       subresources:
         status: {}
-
