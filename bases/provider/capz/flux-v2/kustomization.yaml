@@ -29,4 +29,3 @@ resources:
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
   - configmap-provider-data.yaml
-  - policy-exception.yaml
