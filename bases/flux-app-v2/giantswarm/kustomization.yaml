@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-test-catalog/
     releaseName: flux-giantswarm
-    version: 1.2.0-a9c9b420fbf43a826e3a8669ac95d4d8151dd7d2
+    version: 1.2.0-b0ca583571058cef268619aad49204b4d89bdf25
     valuesInline:
       images:
         registry: gsoci.azurecr.io
