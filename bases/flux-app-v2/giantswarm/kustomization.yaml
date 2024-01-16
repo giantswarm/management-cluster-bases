@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-test-catalog/
     releaseName: flux-giantswarm
-    version: 1.2.0-61ecafba42409698ea92c4d2d83311f3118a7b05
+    version: 1.2.0-a9c9b420fbf43a826e3a8669ac95d4d8151dd7d2
     valuesInline:
       images:
         registry: gsoci.azurecr.io
@@ -17,6 +17,7 @@ helmCharts:
       verticalPodAutoscaler:
         enabled: true
         force: true
+      namePostfix: giantswarm
 images:
   - name: gsoci.azurecr.io/giantswarm/fluxcd-helm-controller
     newName: giantswarm/fluxcd-helm-controller
