@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-test-catalog/
     releaseName: flux-giantswarm
-    version: v1.2.0-26ad376335886e97ccc7d2138901712a8a38f721
+    version: 1.2.0-8bed4fd0f2f775af6cae2ba303ee3bdf0b29f8ff
     valuesInline:
       images:
         registry: gsoci.azurecr.io
@@ -42,16 +42,6 @@ patches:
     - op: replace
       path: /metadata/name
       value: crd-controller-giantswarm
-    - op: replace
-      path: /rules/10/resourceNames/0
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: PodSecurityPolicy
-    name: flux-app-pvc-psp
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: flux-app-pvc-psp-giantswarm
 - target:
     kind: ClusterRoleBinding
     name: cluster-reconciler
