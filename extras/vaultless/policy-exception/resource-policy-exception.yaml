@@ -15,7 +15,7 @@ metadata:
 spec:
   force: false
   interval: 5m
-  path: ./management-clusters/bases/resources/policy-exception
+  path: ./bases/resources/policy-exception
   prune: false
   retryInterval: 30s
   sourceRef:
