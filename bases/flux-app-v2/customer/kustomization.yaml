@@ -9,7 +9,7 @@ helmCharts:
     version: v1.0.0
     valuesInline:
       images:
-        registry: docker.io
+        registry: gsoci.azurecr.io
       clusterRoles:
         install: false
       crds:
