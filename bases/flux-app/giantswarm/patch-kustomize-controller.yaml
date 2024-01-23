@@ -65,7 +65,7 @@ spec:
             configMapKeyRef:
               key: VAULT_ADDR
               name: management-cluster-metadata
-        image: docker.io/giantswarm/k8s-jwt-to-vault-token:0.1.0
+        image: dgsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token:0.1.0
         imagePullPolicy: Always
         name: ensure-vault-token
         securityContext:
