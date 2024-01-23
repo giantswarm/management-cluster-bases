@@ -42,6 +42,6 @@ spec:
         configMap:
           values:
             image:
-              registry: "quay.io"
+              registry: "gsoci.azurecr.io"
             tiller:
               namespace: "giantswarm"

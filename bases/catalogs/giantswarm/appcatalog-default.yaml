@@ -50,7 +50,7 @@ spec:
               namespace: "kube-system"
             externalDNSIP: 8.8.8.8
             image:
-              registry: "quay.io"
+              registry: "gsoci.azurecr.io"
             # TODO: Moving the number of coreDNS replicas into app setting and
             # need a better handling extra small cluster
             # Issues: https://github.com/giantswarm/giantswarm/issues/9316
