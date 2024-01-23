@@ -22,7 +22,7 @@ spec:
                   configMapKeyRef:
                     key: VAULT_ADDR
                     name: management-cluster-metadata
-              image: docker.io/giantswarm/k8s-jwt-to-vault-token:0.1.0
+              image: gsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token:0.1.0
               imagePullPolicy: Always
               name: ensure-vault-token
           containers:
@@ -31,7 +31,7 @@ spec:
                 - pods
                 - --namespace=flux-giantswarm
                 - -lapp=kustomize-controller
-              image: docker.io/giantswarm/docker-kubectl:1.18.8
+              image: gsoci.azurecr.io/giantswarm/docker-kubectl:1.18.8
               name: restart-kustomize-controller
           serviceAccountName: refresh-vault-token
           restartPolicy: OnFailure
