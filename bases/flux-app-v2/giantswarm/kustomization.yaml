@@ -36,40 +36,6 @@ images:
     newName: giantswarm/docker-kubectl
 patches:
 - target:
-    kind: ClusterRole
-    name: crd-controller
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: crd-controller-giantswarm
-    - op: replace
-      path: /rules/10/resourceNames/0
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: PodSecurityPolicy
-    name: flux-app-pvc-psp
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: ClusterRoleBinding
-    name: cluster-reconciler
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: cluster-reconciler-giantswarm
-- target:
-    kind: ClusterRoleBinding
-    name: crd-controller
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: crd-controller-giantswarm
-    - op: replace
-      path: /roleRef/name
-      value: crd-controller-giantswarm
-- target:
     kind: CustomResourceDefinition
     name: ".*"
   patch: |-

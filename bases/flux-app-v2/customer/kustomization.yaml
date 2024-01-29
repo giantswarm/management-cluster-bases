@@ -35,7 +35,7 @@ images:
 patches:
 - target:
     kind: ClusterRoleBinding
-    name: crd-controller
+    name: crd-controller-customer-flux
   patch: |-
     - op: replace
       path: /kind
@@ -45,7 +45,7 @@ patches:
       value: flux-system
 - target:
     kind: ClusterRoleBinding
-    name: cluster-reconciler
+    name: cluster-reconciler-customer-flux
   patch: |-
     - op: replace
       path: /kind
