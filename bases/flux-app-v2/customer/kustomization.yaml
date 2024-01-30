@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-system
     repo: https://giantswarm.github.io/giantswarm-test-catalog/
     releaseName: customer-flux
-    version: 1.2.0-add1f06de86bb91159e4e9f216335b88e9d6c227
+    version: 1.2.0-9e4261f2211972d6febf8bf6726f19684b4fbe16
     valuesInline:
       images:
         registry: gsoci.azurecr.io
@@ -35,7 +35,7 @@ images:
 patches:
 - target:
     kind: ClusterRoleBinding
-    name: crd-controller
+    name: crd-controller-customer-flux
   patch: |-
     - op: replace
       path: /kind
@@ -45,7 +45,7 @@ patches:
       value: flux-system
 - target:
     kind: ClusterRoleBinding
-    name: cluster-reconciler
+    name: cluster-reconciler-customer-flux
   patch: |-
     - op: replace
       path: /kind
