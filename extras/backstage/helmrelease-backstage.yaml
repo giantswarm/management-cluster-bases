@@ -22,21 +22,21 @@ spec:
   interval: 1m
   postRenderers:
     - kustomize:
-      patchesStrategicMerge:
-        - apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            labels:
-              backstage.io/kubernetes-id: backstage
-            name: backstage
-          spec:
-            selector:
-              matchLabels:
+        patches:
+          - apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              labels:
                 backstage.io/kubernetes-id: backstage
-            template:
-              metadata:
-                labels:
+              name: backstage
+            spec:
+              selector:
+                matchLabels:
                   backstage.io/kubernetes-id: backstage
+              template:
+                metadata:
+                  labels:
+                    backstage.io/kubernetes-id: backstage
   targetNamespace: backstage
   timeout: 10m
   upgrade:
