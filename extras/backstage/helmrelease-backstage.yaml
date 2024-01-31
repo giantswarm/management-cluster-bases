@@ -23,20 +23,21 @@ spec:
   postRenderers:
     - kustomize:
         patches:
-          - apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              labels:
-                backstage.io/kubernetes-id: backstage
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
               name: backstage
-            spec:
-              selector:
-                matchLabels:
-                  backstage.io/kubernetes-id: backstage
-              template:
-                metadata:
-                  labels:
-                    backstage.io/kubernetes-id: backstage
+            patch: |-
+              - op: add
+                path: /metadata/labels/backstage.io~1kubernetes-id
+                value: backstage
+              - op: add
+                path: /spec/selector/matchLabels/backstage.io~1kubernetes-id
+                value: backstage
+              - op: add
+                path: /spec/template/metadata/labels/backstage.io~1kubernetes-id
+                value: backstage
   targetNamespace: backstage
   timeout: 10m
   upgrade:
