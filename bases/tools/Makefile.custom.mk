@@ -98,6 +98,9 @@ ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
 endif
+ifeq ($(SUFFIX),customer)
+	$(YQ) e -i '.helmCharts[0].valuesInline.cilium.enforce |= false' $(TMP_BASE)/kustomization.yaml
+endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
 
