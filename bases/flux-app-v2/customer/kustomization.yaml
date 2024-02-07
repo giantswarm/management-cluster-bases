@@ -12,6 +12,9 @@ helmCharts:
         registry: gsoci.azurecr.io
       cilium:
         enforce: true
+      policyException:
+        enforce: true
+        namespace: flux-system
       clusterRoles:
         install: false
       crds:

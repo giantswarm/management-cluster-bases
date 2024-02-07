@@ -14,6 +14,7 @@ helmCharts:
         enforce: true
       policyException:
         enforce: true
+        namespace: flux-giantswarm
       clusterRoles:
         install: false
       crds:
