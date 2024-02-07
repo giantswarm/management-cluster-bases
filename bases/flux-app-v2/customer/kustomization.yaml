@@ -13,8 +13,7 @@ helmCharts:
       cilium:
         enforce: true
       policyException:
-        enforce: true
-        namespace: flux-system
+        enforce: false
       clusterRoles:
         install: false
       crds:
