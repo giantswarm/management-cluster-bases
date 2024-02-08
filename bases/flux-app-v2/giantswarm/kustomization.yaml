@@ -4,9 +4,9 @@ helmCharts:
   - name: flux-app
     includeCRDs: false
     namespace: flux-giantswarm
-    repo: https://giantswarm.github.io/giantswarm-test-catalog/
+    repo: https://giantswarm.github.io/giantswarm-catalog/
     releaseName: flux-giantswarm
-    version: 1.2.0-bb54d6389b4be6d5e9dac43bbbcb1eff19a0c07d
+    version: 1.3.0
     valuesInline:
       images:
         registry: gsoci.azurecr.io
