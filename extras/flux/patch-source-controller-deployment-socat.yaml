@@ -3,10 +3,15 @@
   value:
     name: proxy
     image: alpine/socat:1.7.4.4
-    args:
-    - TCP4-LISTEN:8081,fork,reuseaddr
-    - PROXY:${proxy_hostname}:ssh.github.com:443,proxyport=${proxy_port}
     securityContext:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       runAsUser: 100
+    command:
+      - /bin/sh
+      - -c
+      - |
+        PROXY_HOSTNAME=$(echo ${HTTP_PROXY#http://} | cut -d":" -f1)
+        PROXY_PORT=$(echo ${HTTP_PROXY#http://} | cut -d":" -f2)
+
+        socat TCP4-LISTEN:8081,fork,reuseaddr PROXY:${PROXY_HOSTNAME}:ssh.github.com:443,proxyport=${PROXY_PORT}
