@@ -7,16 +7,14 @@
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       runAsUser: 100
-    args:
-    - ${proxy_hostname}:${proxy_port}
     command:
       - /bin/sh
       - -c
       - |
         # Fallback to static argument if injected env var doesn't exist
-        export HTTP_PROXY=${HTTP_PROXY:=$1}
+        export HTTP_PROXY=\${HTTP_PROXY:=${proxy_hostname}:${proxy_port}}
 
-        export PROXY_HOSTNAME=$(echo ${HTTP_PROXY#http://} | cut -d":" -f1)
-        export PROXY_PORT=$(echo ${HTTP_PROXY#http://} | cut -d":" -f2)
+        export PROXY_HOSTNAME=$(echo \${HTTP_PROXY#http://} | cut -d":" -f1)
+        export PROXY_PORT=$(echo \${HTTP_PROXY#http://} | cut -d":" -f2)
 
-        socat TCP4-LISTEN:8081,fork,reuseaddr PROXY:${PROXY_HOSTNAME}:ssh.github.com:443,proxyport=${PROXY_PORT}
+        socat TCP4-LISTEN:8081,fork,reuseaddr PROXY:\${PROXY_HOSTNAME}:ssh.github.com:443,proxyport=\${PROXY_PORT}
