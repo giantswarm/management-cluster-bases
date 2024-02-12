@@ -12,6 +12,8 @@ helmCharts:
         registry: gsoci.azurecr.io
       cilium:
         enforce: true
+      podMonitors:
+        enabled: true
       policyException:
         enforce: true
         namespace: flux-giantswarm
