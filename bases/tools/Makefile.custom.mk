@@ -101,7 +101,7 @@ endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enforce) = false' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
 endif
 endif
