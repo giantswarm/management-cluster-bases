@@ -13,7 +13,7 @@ helmCharts:
       cilium:
         enforce: true
       podMonitors:
-        enabled: false
+        enabled: true
       policyException:
         enforce: true
         # It is restricted where policy exceptions can be created so lets put this one next to the deployer as well
