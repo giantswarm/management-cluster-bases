@@ -24,7 +24,6 @@ helmCharts:
       verticalPodAutoscaler:
         enabled: true
         force: true
-      namePostfix: giantswarm
 images:
   - name: gsoci.azurecr.io/giantswarm/fluxcd-helm-controller
     newName: giantswarm/fluxcd-helm-controller
