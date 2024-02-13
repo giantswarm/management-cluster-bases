@@ -6,10 +6,18 @@ helmCharts:
     namespace: flux-system
     repo: https://giantswarm.github.io/giantswarm-catalog/
     releaseName: customer-flux
-    version: v1.0.0
+    version: 1.3.1
     valuesInline:
       images:
         registry: gsoci.azurecr.io
+      cilium:
+        enforce: true
+      podMonitors:
+        enabled: true
+      policyException:
+        enforce: true
+        # It is restricted where policy exceptions can be created so lets put this one next to the deployer as well
+        namespace: flux-giantswarm
       clusterRoles:
         install: false
       crds:
