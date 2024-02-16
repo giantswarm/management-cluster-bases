@@ -123,6 +123,8 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	echo "export envsubst_scope=\$$(cat output/$(subst build-,,$@).envsubst)" >> output/$(subst build-,,$@).env
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
+	@if [[ $(GNU_SED) == 0 ]]; then sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml; fi
+	@if [[ $(GNU_SED) != 0 ]]; then sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml; fi
 	rm output/$(subst build-,,$@).prep.yaml
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
