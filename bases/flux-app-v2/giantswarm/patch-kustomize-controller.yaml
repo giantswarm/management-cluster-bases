@@ -12,7 +12,7 @@ spec:
         command:
         - sh
         - -c
-        image: giantswarm/alpine-helm:3.9.3
+        image: gsoci.azurecr.io/giantswarm/alpine-helm:3.9.3
         imagePullPolicy: IfNotPresent
         name: ensure-helm
         resources: {}
@@ -29,7 +29,7 @@ spec:
       - args:
         - cp konfigure /giantswarm-bin && chmod +x /giantswarm-bin/konfigure
         command: ["sh", "-c"]
-        image: giantswarm/konfigure:0.15.1
+        image: gsoci.azurecr.io/giantswarm/konfigure:0.16.0
         name: ensure-konfigure
         securityContext:
           allowPrivilegeEscalation: false
@@ -42,7 +42,7 @@ spec:
       - args:
         - /giantswarm-bin/konfigure fetchkeys --sops-keys-dir /sopsenv
         command: ["sh", "-c"]
-        image: giantswarm/kustomize-controller:v1.0.1
+        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.1.1
         name: ensure-sopsenv
         securityContext:
           allowPrivilegeEscalation: false
