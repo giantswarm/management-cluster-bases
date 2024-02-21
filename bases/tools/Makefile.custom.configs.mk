@@ -5,3 +5,9 @@ assemble-config:
 	@mv $$TMPDIR/default ./
 	@mv $$TMPDIR/include ./
 	@rm -rf $$TMPDIR
+
+assemble-config-ssh:
+	@git clone --quiet git@github.com:giantswarm/shared-configs.git $$TMPDIR
+	@mv $$TMPDIR/default ./
+	@mv $$TMPDIR/include ./
+	@rm -rf $$TMPDIR
