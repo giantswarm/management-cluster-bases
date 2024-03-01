@@ -166,7 +166,6 @@ patches:
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 # Keeping this because of vaultless helper + upstream bug in kustomize to apply patch files with multiple documents
 patchesStrategicMerge:
-- patch-pvc-psp.yaml
 - patch-kustomize-controller.yaml
 resources:
 - resource-namespace.yaml
