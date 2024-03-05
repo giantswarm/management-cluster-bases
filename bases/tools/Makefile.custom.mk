@@ -20,7 +20,7 @@ BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-
 BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
-MCB_BRANCH ?= main
+MCB_BRANCH ?= bootstrap-1.25
 
 .PHONY: build-flux-app-vaultless-helper
 ifeq ($(VAULTLESS),1)
@@ -30,6 +30,7 @@ ifndef TMP_BASE
 endif
 	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/extras/flux/patch-remove-psp.yaml"]' $(TMP_BASE)/kustomization.yaml
 else
 build-flux-app-vaultless-helper:
 	@# noop
