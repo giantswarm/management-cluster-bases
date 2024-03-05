@@ -20,7 +20,7 @@ BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-
 BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
-MCB_BRANCH ?= bootstrap-1.25
+MCB_BRANCH ?= main
 
 .PHONY: build-flux-app-vaultless-helper
 ifeq ($(VAULTLESS),1)
