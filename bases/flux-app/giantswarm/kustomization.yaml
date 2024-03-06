@@ -41,16 +41,6 @@ patches:
     - op: replace
       path: /metadata/name
       value: crd-controller-giantswarm
-    - op: replace
-      path: /rules/10/resourceNames/0
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: PodSecurityPolicy
-    name: flux-app-pvc-psp
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: flux-app-pvc-psp-giantswarm
 - target:
     kind: ClusterRoleBinding
     name: cluster-reconciler
@@ -157,7 +147,6 @@ patches:
         - --storage-path=/data
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 patchesStrategicMerge:
-- patch-pvc-psp.yaml
 - patch-kustomize-controller.yaml
 resources:
 - resource-namespace.yaml
