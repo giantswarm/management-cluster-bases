@@ -30,6 +30,7 @@ ifndef TMP_BASE
 endif
 	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/flux/patch-remove-psp.yaml"]' $(TMP_BASE)/kustomization.yaml
 else
 build-flux-app-vaultless-helper:
 	@# noop
@@ -71,7 +72,7 @@ $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/flux/patch-remove-psp.yaml"]' $(TMP_BASE)/kustomization.yaml
+
 	rm -rf /tmp/mcb.${MCB_BRANCH}
 	git clone -b $(MCB_BRANCH) https://github.com/${BASE_REPOSITORY} /tmp/mcb.${MCB_BRANCH}
 
