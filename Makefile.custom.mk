@@ -25,30 +25,30 @@ ensure-versions: $(YQ) download-upstream-crds
 	@echo "====> $@"
 
 	# Make sure there are no locally cached charts
-	rm -rf bases/flux-app/customer/charts
-	rm -rf bases/flux-app/giantswarm/charts
+	rm -rf bases/flux-app-v2/customer/charts
+	rm -rf bases/flux-app-v2/giantswarm/charts
 
 	head output/flux-$(FLUX_VERSION).crds.yaml
-	cp output/flux-$(FLUX_VERSION).crds.yaml bases/crds/flux-app/crds.yaml
-	head bases/crds/flux-app/crds.yaml
+	cp output/flux-$(FLUX_VERSION).crds.yaml bases/crds/flux-app-v2/crds.yaml
+	head bases/crds/flux-app-v2/crds.yaml
 
 ifeq ($(GNU_SED),0)
-	sed -i "0,/version:/{s!repo: .*!repo: $(FLUX_APP_REPOSITORY)!g}" bases/flux-app/customer/kustomization.yaml
-	sed -i "0,/version:/{s!repo: .*!repo: $(FLUX_APP_REPOSITORY)!g}" bases/flux-app/giantswarm/kustomization.yaml
+	sed -i "0,/version:/{s!repo: .*!repo: $(FLUX_APP_REPOSITORY)!g}" bases/flux-app-v2/customer/kustomization.yaml
+	sed -i "0,/version:/{s!repo: .*!repo: $(FLUX_APP_REPOSITORY)!g}" bases/flux-app-v2/giantswarm/kustomization.yaml
 
-	sed -i "0,/version:/{s/version: .*/version: $(FLUX_APP_VERSION)/g}" bases/flux-app/customer/kustomization.yaml
-	sed -i "0,/version:/{s/version: .*/version: $(FLUX_APP_VERSION)/g}" bases/flux-app/giantswarm/kustomization.yaml
+	sed -i "0,/version:/{s/version: .*/version: $(FLUX_APP_VERSION)/g}" bases/flux-app-v2/customer/kustomization.yaml
+	sed -i "0,/version:/{s/version: .*/version: $(FLUX_APP_VERSION)/g}" bases/flux-app-v2/giantswarm/kustomization.yaml
 
-	sed -i "0,/image: giantswarm\/konfigure/{s/giantswarm\/konfigure:.*/giantswarm\/konfigure:$(KONFIGURE_IMAGE_TAG)/g}" bases/flux-app/giantswarm/patch-kustomize-controller.yaml
-	sed -i "0,/image: giantswarm\/kustomize-controller/{s/giantswarm\/kustomize-controller:.*/giantswarm\/kustomize-controller:$(KUSTOMIZE_CONTROLLER_IMAGE_TAG)/g}" bases/flux-app/giantswarm/patch-kustomize-controller.yaml
+	sed -i "0,/image: giantswarm\/konfigure/{s/giantswarm\/konfigure:.*/giantswarm\/konfigure:$(KONFIGURE_IMAGE_TAG)/g}" bases/flux-app-v2/giantswarm/patch-kustomize-controller.yaml
+	sed -i "0,/image: giantswarm\/kustomize-controller/{s/giantswarm\/kustomize-controller:.*/giantswarm\/kustomize-controller:$(KUSTOMIZE_CONTROLLER_IMAGE_TAG)/g}" bases/flux-app-v2/giantswarm/patch-kustomize-controller.yaml
 else
-	sed -i "" "1,/version:/ s/version: .*/version: $(FLUX_APP_VERSION)/g" bases/flux-app/customer/kustomization.yaml
-	sed -i "" "1,/version:/ s/version: .*/version: $(FLUX_APP_VERSION)/g" bases/flux-app/giantswarm/kustomization.yaml
+	sed -i "" "1,/version:/ s/version: .*/version: $(FLUX_APP_VERSION)/g" bases/flux-app-v2/customer/kustomization.yaml
+	sed -i "" "1,/version:/ s/version: .*/version: $(FLUX_APP_VERSION)/g" bases/flux-app-v2/giantswarm/kustomization.yaml
 
-	sed -i "" "1,/image: giantswarm\/konfigure/ s/giantswarm\/konfigure:.*/giantswarm\/konfigure:$(KONFIGURE_IMAGE_TAG)/g" bases/flux-app/giantswarm/patch-kustomize-controller.yaml
-	sed -i "" "1,/image: giantswarm\/kustomize-controller/ s/giantswarm\/kustomize-controller:.*/giantswarm\/kustomize-controller:$(KUSTOMIZE_CONTROLLER_IMAGE_TAG)/g" bases/flux-app/giantswarm/patch-kustomize-controller.yaml
+	sed -i "" "1,/image: giantswarm\/konfigure/ s/giantswarm\/konfigure:.*/giantswarm\/konfigure:$(KONFIGURE_IMAGE_TAG)/g" bases/flux-app-v2/giantswarm/patch-kustomize-controller.yaml
+	sed -i "" "1,/image: giantswarm\/kustomize-controller/ s/giantswarm\/kustomize-controller:.*/giantswarm\/kustomize-controller:$(KUSTOMIZE_CONTROLLER_IMAGE_TAG)/g" bases/flux-app-v2/giantswarm/patch-kustomize-controller.yaml
 endif
-	git clean -fxd bases/flux-app/
+	git clean -fxd bases/flux-app-v2/
 
 .PHONY: build-catalogs-with-defaults
 build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with default configuration
