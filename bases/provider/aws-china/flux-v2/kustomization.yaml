@@ -4,6 +4,7 @@ patches:
   - path: patch-helm-controller.yaml
   - path: patch-kustomize-controller.yaml
   - path: patch-source-controller.yaml
+  - path: patch-collection-gitrepository.yaml
 images:
   - name: giantswarm/fluxcd-helm-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller
@@ -33,5 +34,4 @@ resources:
   - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
-  - collection-gitrepository.yaml
   - configmap-provider-data.yaml

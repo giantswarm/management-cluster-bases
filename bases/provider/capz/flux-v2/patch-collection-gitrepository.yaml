@@ -4,10 +4,6 @@ metadata:
   name: collection
   namespace: flux-giantswarm
 spec:
-  interval: 30s
   ref:
     branch: main
-  secretRef:
-    name: github-giantswarm-https-credentials
-  timeout: 5m
   url: https://github.com/giantswarm/capz-app-collection

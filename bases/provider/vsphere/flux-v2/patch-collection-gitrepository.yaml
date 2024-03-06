@@ -1,13 +1,9 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: collection
   namespace: flux-giantswarm
 spec:
-  interval: 30s
   ref:
     branch: main
-  secretRef:
-    name: github-giantswarm-https-credentials
-  timeout: 5m
   url: https://github.com/giantswarm/vsphere-app-collection

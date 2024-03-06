@@ -1,6 +1,19 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
+  name: collection
+  namespace: flux-giantswarm
+spec:
+  interval: 30s
+  ref:
+    branch: master
+  secretRef:
+    name: github-giantswarm-https-credentials
+  timeout: 5m
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
   name: management-clusters-fleet
   namespace: flux-giantswarm
 spec:
