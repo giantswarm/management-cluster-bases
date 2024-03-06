@@ -36,7 +36,7 @@ spec:
   timeout: 60s
   url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/${customer_codename}-configs.git
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: shared-configs
