@@ -1,6 +1,8 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
+  labels:
+    application.giantswarm.io/team: honeybadger
   name: crossplane
   namespace: crossplane
 spec:
