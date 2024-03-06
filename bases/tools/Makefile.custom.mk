@@ -49,9 +49,7 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
 
 .PHONY: $(BUILD_CRD_TARGETS)
-build-common-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common
 build-common-flux-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common-flux-v2
-build-flux-app-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app
 build-flux-app-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app-v2
 build-giantswarm-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/giantswarm
 $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
@@ -79,11 +77,7 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 
 	rm -rf $(TMP_BASE)
 
-ifeq ($(FLUX_MAJOR_VERSION),1)
-	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
-else
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION}/${SUFFIX} $(TMP_BASE)
-endif
 
 	@# This will run extra yq calls if VAULTLESS=1
 	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
