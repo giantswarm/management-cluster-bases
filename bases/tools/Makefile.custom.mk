@@ -124,7 +124,7 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
-	rm output/$(subst build-,,$@).prep.yaml output/$(subst build-,,$@).env output/$(subst build-,,$@).envsubst
+	rm -f output/$(subst build-,,$@).prep.yaml output/$(subst build-,,$@).env output/$(subst build-,,$@).envsubst
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"
