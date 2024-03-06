@@ -4,6 +4,7 @@ patches:
   - path: patch-helm-controller.yaml
   - path: patch-kustomize-controller.yaml
   - path: patch-source-controller.yaml
+  - path: patch-collection-gitrepository.yaml
 images:
   - name: giantswarm/fluxcd-helm-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller
@@ -29,19 +30,6 @@ images:
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/external-secrets
   - name: giantswarm/fluxcd-kustomize-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-kustomize-controller
-replacements:
-  # Points collection GitRepository to correct URL
-  - source:
-      kind: ConfigMap
-      name: provider-data
-      fieldPath: data.collection_url
-    targets:
-      - select:
-          kind: GitRepository
-          name: collection
-          namespace: flux-giantswarm
-        fieldPaths:
-          - spec.url
 resources:
   - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm

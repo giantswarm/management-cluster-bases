@@ -1,4 +1,0 @@
-# This is to supersede the all kustomization file
-resources:
-  - ../flux-app
-  - ../giantswarm
