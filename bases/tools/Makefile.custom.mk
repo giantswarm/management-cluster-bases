@@ -115,7 +115,7 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	[ $(GNU_SED) -eq 0 ] && sed -i -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	[ $(GNU_SED) -eq 1 ] && sed -i "" -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	# extract variables from the `flux` Kustomization CR
-	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml > output/$(subst build-,,$@).env
+	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml >> output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' > output/$(subst build-,,$@).envsubst
 	# add the extracted scope to `.env` file
