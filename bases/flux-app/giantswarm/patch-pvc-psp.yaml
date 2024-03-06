@@ -1,0 +1,10 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: flux-app-pvc-psp
+  namespace: flux-giantswarm
+spec:
+  volumes:
+  - emptyDir
+  - hostPath
+  - secret

@@ -1,9 +1,7 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-patches:
-  - path: patch-helm-controller.yaml
-  - path: patch-kustomize-controller.yaml
-  - path: patch-source-controller.yaml
+bases:
+- ../../flux-app/customer
+- ../../flux-app/giantswarm
+- ../../flux-giantswarm-resources
 images:
   - name: giantswarm/fluxcd-helm-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller
@@ -29,6 +27,10 @@ images:
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/external-secrets
   - name: giantswarm/fluxcd-kustomize-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-kustomize-controller
+patchesStrategicMerge:
+  - patch-helm-controller.yaml
+  - patch-kustomize-controller.yaml
+  - patch-source-controller.yaml
 replacements:
   # Points collection GitRepository to correct URL
   - source:
@@ -43,7 +45,4 @@ replacements:
         fieldPaths:
           - spec.url
 resources:
-  - ../../../flux-app-v2/customer
-  - ../../../flux-app-v2/giantswarm
-  - ../../../flux-giantswarm-resources
-  - configmap-provider-data.yaml
+- configmap-provider-data.yaml

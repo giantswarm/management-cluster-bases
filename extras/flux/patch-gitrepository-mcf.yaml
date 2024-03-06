@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: management-clusters-fleet
+  namespace: flux-giantswarm
+spec:
+  secretRef:
+    name: giantswarm-clusters-ssh-credentials
+  url: ssh://git@ssh.github.com:443/giantswarm/${customer_codename}-management-clusters.git

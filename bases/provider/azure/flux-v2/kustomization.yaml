@@ -1,7 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-patches:
-  - path: patch-collection-gitrepository.yaml
+replacements:
+  # Points collection GitRepository to correct URL
+  - source:
+      kind: ConfigMap
+      name: provider-data
+      fieldPath: data.collection_url
+    targets:
+      - select:
+          kind: GitRepository
+          name: collection
+          namespace: flux-giantswarm
+        fieldPaths:
+          - spec.url
 resources:
   - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm

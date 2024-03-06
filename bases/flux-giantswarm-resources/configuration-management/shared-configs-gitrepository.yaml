@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: shared-configs
+  namespace: flux-giantswarm
+spec:
+  interval: 30s
+  ref:
+    branch: main
+  secretRef:
+    name: shared-configs-ssh-credentials
+  timeout: 60s
+  url: ssh://git@ssh.github.com:443/giantswarm/shared-configs

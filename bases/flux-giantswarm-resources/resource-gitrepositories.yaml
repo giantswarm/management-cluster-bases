@@ -10,6 +10,7 @@ spec:
   secretRef:
     name: github-giantswarm-https-credentials
   timeout: 5m
+  url: "{replaced in bases/provider/<PROVIDER>/kustomization.yaml}"
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -21,10 +22,9 @@ spec:
   ref:
     branch: main
   secretRef:
-    name: giantswarm-clusters-ssh-credentials
+    name: github-giantswarm-https-credentials
   timeout: 60s
-  # The `github_port` will be changed by postBuilds to 8081 for private clusters
-  url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/${customer_codename}-management-clusters.git
+  url: https://github.com/giantswarm/management-clusters-fleet
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -32,33 +32,10 @@ metadata:
   name: giantswarm-config
   namespace: flux-giantswarm
 spec:
-  include:
-    - repository:
-        name: shared-configs
-      fromPath: default
-      toPath: default
-    - repository:
-        name: shared-configs
-      fromPath: include
-      toPath: include
   interval: 30s
   ref:
     branch: main
   secretRef:
-    name: configs-ssh-credentials
+    name: github-giantswarm-https-credentials
   timeout: 60s
-  url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/${customer_codename}-configs.git
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: shared-configs
-  namespace: flux-giantswarm
-spec:
-  interval: 30s
-  ref:
-    branch: main
-  secretRef:
-    name: shared-configs-ssh-credentials
-  timeout: 60s
-  url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/shared-configs
+  url: https://github.com/giantswarm/config

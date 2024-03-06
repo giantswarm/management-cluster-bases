@@ -1,0 +1,18 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: giantswarm-config
+  namespace: flux-giantswarm
+spec:
+  include:
+    - repository:
+        name: shared-configs
+      fromPath: default
+      toPath: default
+    - repository:
+        name: shared-configs
+      fromPath: include
+      toPath: include
+  secretRef:
+    name: configs-ssh-credentials
+  url: ssh://git@ssh.github.com:443/giantswarm/${customer_codename}-configs.git

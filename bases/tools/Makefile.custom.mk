@@ -49,7 +49,9 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
 
 .PHONY: $(BUILD_CRD_TARGETS)
+build-common-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common
 build-common-flux-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common-flux-v2
+build-flux-app-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app
 build-flux-app-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app-v2
 build-giantswarm-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/giantswarm
 $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
@@ -77,7 +79,11 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 
 	rm -rf $(TMP_BASE)
 
+ifeq ($(FLUX_MAJOR_VERSION),1)
+	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app/${SUFFIX} $(TMP_BASE)
+else
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION}/${SUFFIX} $(TMP_BASE)
+endif
 
 	@# This will run extra yq calls if VAULTLESS=1
 	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
@@ -109,22 +115,16 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@) > output/$(subst build-,,$@).prep.yaml
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
-	# envsubst does not support shell format like ${var:=default_value} so we must extract it
-	grep -o -E '\$${[_[:alpha:]][_[:alpha:][:digit:]]+:=[[:alpha:][:digit:]]*}' output/$(subst build-,,$@).prep.yaml | tr -d '$${}:' |  xargs -I{} echo export {} | uniq >> output/$(subst build-,,$@).env
-	# remove variables with default values set
-	[ $(GNU_SED) -eq 0 ] && sed -i -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
-	[ $(GNU_SED) -eq 1 ] && sed -i "" -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	# extract variables from the `flux` Kustomization CR
-	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml >> output/$(subst build-,,$@).env
+	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml > output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
-	#$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' >> output/$(subst build-,,$@).envsubst
-	sed 's/export /$$$$/g' output/$(subst build-,,$@).env | cut -d'=' -f1 | tr '\n' ':' >> output/$(subst build-,,$@).envsubst
+	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' > output/$(subst build-,,$@).envsubst
 	# add the extracted scope to `.env` file
 	echo "export envsubst_scope=\$$(cat output/$(subst build-,,$@).envsubst)" >> output/$(subst build-,,$@).env
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
-	rm output/$(subst build-,,$@).prep.yaml rm output/$(subst build-,,$@).env rm output/$(subst build-,,$@).envsubst
+	rm output/$(subst build-,,$@).prep.yaml
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"

@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: collection
+  name: shared-configs
   namespace: flux-giantswarm
 spec:
-  url: https://github.com/giantswarm/gcp-app-collection
+  url: ssh://git@ssh.github.com:8081/giantswarm/shared-configs
