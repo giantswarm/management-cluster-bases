@@ -109,6 +109,11 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@) > output/$(subst build-,,$@).prep.yaml
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
+	# envsubst does not support shell format like ${var:=default_value} so we must extract it
+	grep -o -E '\$${[_[:alpha:]][_[:alpha:][:digit:]]+:=[[:alpha:][:digit:]]*}' /tmp/file | tr -d '$${}:' |  xargs -I{} echo export {} >> output/$(subst build-,,$@).env
+	# remove variables with default values set
+	[ $(GNU_SED) -eq 0 ] && sed -i -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
+	[ $(GNU_SED) -eq 1 ] && sed -i "" -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	# extract variables from the `flux` Kustomization CR
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml > output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
