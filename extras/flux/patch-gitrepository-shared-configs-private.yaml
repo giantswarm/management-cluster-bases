@@ -1,7 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: shared-configs
-  namespace: flux-giantswarm
-spec:
-  url: ssh://git@ssh.github.com:8081/giantswarm/shared-configs

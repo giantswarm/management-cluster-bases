@@ -29,21 +29,9 @@ images:
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/external-secrets
   - name: giantswarm/fluxcd-kustomize-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-kustomize-controller
-replacements:
-  # Points collection GitRepository to correct URL
-  - source:
-      kind: ConfigMap
-      name: provider-data
-      fieldPath: data.collection_url
-    targets:
-      - select:
-          kind: GitRepository
-          name: collection
-          namespace: flux-giantswarm
-        fieldPaths:
-          - spec.url
 resources:
   - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
+  - collection-gitrepository.yaml
   - configmap-provider-data.yaml

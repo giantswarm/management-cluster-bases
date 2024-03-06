@@ -5,4 +5,3 @@ metadata:
   namespace: flux-giantswarm
 data:
   name: vsphere
-  collection_url: https://github.com/giantswarm/vsphere-app-collection
