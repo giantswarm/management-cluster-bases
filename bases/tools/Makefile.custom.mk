@@ -110,20 +110,21 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
 	# envsubst does not support shell format like ${var:=default_value} so we must extract it
-	grep -o -E '\$${[_[:alpha:]][_[:alpha:][:digit:]]+:=[[:alpha:][:digit:]]*}' output/$(subst build-,,$@).prep.yaml | tr -d '$${}:' |  xargs -I{} echo export {} >> output/$(subst build-,,$@).env
+	grep -o -E '\$${[_[:alpha:]][_[:alpha:][:digit:]]+:=[[:alpha:][:digit:]]*}' output/$(subst build-,,$@).prep.yaml | tr -d '$${}:' |  xargs -I{} echo export {} | uniq >> output/$(subst build-,,$@).env
 	# remove variables with default values set
 	[ $(GNU_SED) -eq 0 ] && sed -i -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	[ $(GNU_SED) -eq 1 ] && sed -i "" -E "s/\{([_[:alpha:]][_[:alpha:][:digit:]]+):=[[:alpha:][:digit:]]*\}/\{\1\}/g" output/$(subst build-,,$@).prep.yaml || :
 	# extract variables from the `flux` Kustomization CR
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml >> output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
-	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' > output/$(subst build-,,$@).envsubst
+	#$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' >> output/$(subst build-,,$@).envsubst
+	sed 's/export /$$$$/g' output/$(subst build-,,$@).env | cut -d'=' -f1 | tr '\n' ':' >> output/$(subst build-,,$@).envsubst
 	# add the extracted scope to `.env` file
 	echo "export envsubst_scope=\$$(cat output/$(subst build-,,$@).envsubst)" >> output/$(subst build-,,$@).env
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
-	rm output/$(subst build-,,$@).prep.yaml
+	rm output/$(subst build-,,$@).prep.yaml rm output/$(subst build-,,$@).env rm output/$(subst build-,,$@).envsubst
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"
