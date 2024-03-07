@@ -1,13 +1,21 @@
-$patch: delete
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: flux-app-pvc-psp-giantswarm
-  namespace: flux-giantswarm
----
-$patch: delete
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: flux-app-pvc-psp
-  namespace: flux-system
+- op: add
+  path: /patchesJson6902
+  value:
+    - target:
+        group: policy
+        version: v1beta1
+        kind: PodSecurityPolicy
+        name: flux-app-pvc-psp-giantswarm
+        namespace: flux-giantswarm
+      patch: |-
+        - op: remove
+          path: /metadata
+    - target:
+        group: policy
+        version: v1beta1
+        kind: PodSecurityPolicy
+        name: flux-app-pvc-psp
+        namespace: flux-system
+      patch: |-
+        - op: remove
+          path: /metadata
