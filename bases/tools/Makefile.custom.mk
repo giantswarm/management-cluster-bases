@@ -100,6 +100,7 @@ ifeq ($(FORCE_CRDS),1)
 endif
 ifeq ($(ENFORCE_PSS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/kustomization.yaml
 endif
 ifdef BOOTSTRAP_CLUSTER
