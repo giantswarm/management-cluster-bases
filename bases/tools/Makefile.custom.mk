@@ -110,7 +110,7 @@ ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
 endif
 endif
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),) && ifeq ($(ENFORCE_PSS),1)
-	$(YQ) -i 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | del(.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller").patch | select(test("flux-app-pvc-psp-giantswarm")))' $(TMP_BASE)/kustomization.yaml
+	$(YQ) eval 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | (.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller")).patch = "- op: replace\n  path: /metadata/name\n  value: crd-controller-giantswarm"' -i  $(TMP_BASE)/kustomization.yaml
 endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
