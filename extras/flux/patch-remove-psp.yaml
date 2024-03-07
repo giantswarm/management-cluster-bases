@@ -1,26 +1,13 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: PatchJson6902
+$patch: delete
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
 metadata:
-  name: remove-psp
-patches:
-- op: add
-  path: /patchesJson6902
-  value:
-    - target:
-        group: policy
-        version: v1beta1
-        kind: PodSecurityPolicy
-        name: flux-app-pvc-psp-giantswarm
-        namespace: flux-giantswarm
-      patch: |-
-        - op: remove
-          path: /metadata
-    - target:
-        group: policy
-        version: v1beta1
-        kind: PodSecurityPolicy
-        name: flux-app-pvc-psp
-        namespace: flux-system
-      patch: |-
-        - op: remove
-          path: /metadata
+  name: flux-app-pvc-psp-giantswarm
+  namespace: flux-giantswarm
+---
+$patch: delete
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: flux-app-pvc-psp
+  namespace: flux-system
