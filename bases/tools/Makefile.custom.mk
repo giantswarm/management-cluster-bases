@@ -109,8 +109,8 @@ ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
 endif
 endif
-ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/flux/patch-remove-psp.yaml"]' $(TMP_BASE)/kustomization.yaml
+ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),) && ifeq ($(ENFORCE_PSS),1)
+	$(YQ) -i 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | del(.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller").patch | select(test("flux-app-pvc-psp-giantswarm")))' $(TMP_BASE)kustomization.yaml
 endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
