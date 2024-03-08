@@ -132,14 +132,10 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
 	$(if $(filter 1,$(ENFORCE_PSS)), \
-		$(YQ) eval 'select(.kind != "PodSecurityPolicy" or (.kind == "PodSecurityPolicy" and .metadata.name != "flux-app-pvc-psp" and .metadata.name != "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
-		$(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
-		$(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
-		$(YQ) eval 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values") | .data.values += "
-		global:
-		  podSecurityStandards:
-		    enforced: true
-		"' output/$(subst build-,,$@).yaml)
+	    $(YQ) eval 'select(.kind != "PodSecurityPolicy" or (.kind == "PodSecurityPolicy" and .metadata.name != "flux-app-pvc-psp" and .metadata.name != "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
+	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
+	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
+	    $(YQ) eval 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values") | .data.values += "\nglobal:\n  podSecurityStandards:\n    enforced: true\n"' -i output/$(subst build-,,$@).yaml)
 	rm output/$(subst build-,,$@).prep.yaml
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
