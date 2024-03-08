@@ -6,11 +6,7 @@ metadata:
   namespace: flux-giantswarm
 spec:
   interval: 1h
-  # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "bases/flux-app-v2/customer"
-  # Think about changing prune settings twice. Or three times. In fact, don't
-  # change it at all. You are risking deleting customer Workload Clusters and
-  # more.
   prune: false
   retryInterval: 30s
   timeout: 15m
