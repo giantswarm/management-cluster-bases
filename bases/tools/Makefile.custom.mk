@@ -123,7 +123,39 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
 	# extract variables from the `flux` Kustomization CR
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/flux/patch-remove-psp.yaml"]' output/$(subst build-,,$@).prep.yaml
+	ifeq ($(ENFORCE_PSS),1) # Add the first patch for flux-app-pvc-psp-giantswarm
+	$(YQ) eval '
+	  .patches += [{
+	    target: {
+	      group: "policy",
+	      version: "v1beta1",
+	      kind: "PodSecurityPolicy",
+	      name: "flux-app-pvc-psp-giantswarm",
+	      namespace: "flux-giantswarm"
+	    },
+	    patch: [{
+	      op: "remove",
+	      path: "/metadata/name"
+	    }]
+	  }]
+	' output/$(subst build-,,$@).prep.yaml
+	# Add the second patch for flux-app-pvc-psp
+	$(YQ) eval '
+	  .patches += [{
+	    target: {
+	      group: "policy",
+	      version: "v1beta1",
+	      kind: "PodSecurityPolicy",
+	      name: "flux-app-pvc-psp",
+	      namespace: "flux-system"
+	    },
+	    patch: [{
+	      op: "remove",
+	      path: "/metadata/name"
+	    }]
+	  }]
+	' output/$(subst build-,,$@).prep.yaml
+	endif
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml > output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' > output/$(subst build-,,$@).envsubst
