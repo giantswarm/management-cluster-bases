@@ -55,7 +55,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -69,7 +69,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -82,7 +82,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -95,7 +95,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -107,7 +107,7 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/args
       value:
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -120,7 +120,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election

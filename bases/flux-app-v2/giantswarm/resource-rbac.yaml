@@ -16,3 +16,32 @@ kind: ServiceAccount
 metadata:
   name: automation
   namespace: flux-giantswarm
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-pods-and-logs
+  namespace: flux-giantswarm
+rules:
+- apiGroups: [""]
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-flux-logs-automation
+  namespace: flux-giantswarm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: read-pods-and-logs
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: "automation"
+  namespace: "default"
