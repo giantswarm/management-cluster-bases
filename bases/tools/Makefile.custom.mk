@@ -135,7 +135,7 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 		$(YQ) eval 'select(.kind != "PodSecurityPolicy" or (.kind == "PodSecurityPolicy" and .metadata.name != "flux-app-pvc-psp" and .metadata.name != "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
 		$(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
 		$(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml \
-		$(YQ) eval 'select(.kind == "ConfigMap" and .metadata.name == "gmc-user-values") | .data.values += "
+		$(YQ) eval 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values") | .data.values += "
 		global:
 		  podSecurityStandards:
 		    enforced: true
