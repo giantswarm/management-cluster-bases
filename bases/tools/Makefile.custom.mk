@@ -109,8 +109,10 @@ ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
 endif
 endif
-ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),) &&  ($(ENFORCE_PSS),1)
+ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
+	ifeq ($(ENFORCE_PSS),1)
 	$(YQ) eval 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | (.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller")).patch = "- op: replace\n  path: /metadata/name\n  value: crd-controller-giantswarm"' -i  $(TMP_BASE)/kustomization.yaml
+	endif
 endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
@@ -123,37 +125,6 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	echo '---' >> output/$(subst build-,,$@).prep.yaml
 	$(KUSTOMIZE) build --enable-alpha-plugins --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" management-clusters/$(subst build-,,$@)/extras >> output/$(subst build-,,$@).prep.yaml
 	# extract variables from the `flux` Kustomization CR
-	$(YQ) eval '
-	  .patches += [{
-	    target: {
-	      group: "policy",
-	      version: "v1beta1",
-	      kind: "PodSecurityPolicy",
-	      name: "flux-app-pvc-psp-giantswarm",
-	      namespace: "flux-giantswarm"
-	    },
-	    patch: [{
-	      op: "remove",
-	      path: "/metadata/name"
-	    }]
-	  }]
-	' output/$(subst build-,,$@).prep.yaml
-	# Add the second patch for flux-app-pvc-psp
-	$(YQ) eval '
-	  .patches += [{
-	    target: {
-	      group: "policy",
-	      version: "v1beta1",
-	      kind: "PodSecurityPolicy",
-	      name: "flux-app-pvc-psp",
-	      namespace: "flux-system"
-	    },
-	    patch: [{
-	      op: "remove",
-	      path: "/metadata/name"
-	    }]
-	  }]
-	' output/$(subst build-,,$@).prep.yaml
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "export " + key + "=" + @sh' output/$(subst build-,,$@).prep.yaml > output/$(subst build-,,$@).env
 	# extract variables as scope for `envsubst` to not risk replacing too much
 	$(YQ) e 'select(.kind == "Kustomization") | select(.metadata.name == "flux") | .spec.postBuild.substitute.[] | "$$$$" + key' output/$(subst build-,,$@).prep.yaml | xargs | tr ' ' ':' > output/$(subst build-,,$@).envsubst
