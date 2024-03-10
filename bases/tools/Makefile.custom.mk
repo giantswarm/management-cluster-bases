@@ -135,7 +135,8 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	    $(YQ) eval 'select(.kind != "PodSecurityPolicy" or (.kind == "PodSecurityPolicy" and .metadata.name != "flux-app-pvc-psp" and .metadata.name != "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
-		$(YQ) e -i 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values").data.values += "\nglobal:\n  podSecurityStandards:\n    enforced: true\n"' output/$(subst build-,,$@).yaml)
+		$(YQ) e -i 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values").data.values += "\nglobal:\n  podSecurityStandards:\n    enforced: true\n"' output/$(subst build-,,$@).yaml; \
+		$(YQ) -i '.data.values = (.data.values | select(. != null) | sub("ubuntu-2004-kube-v1.24.10", "ubuntu-2004-kube-v1.25.13") | sub("v1.24.10\+vmware.1", "v1.25.13+vmware.1"))' output/$(subst build-,,$@).yaml)
 	rm output/$(subst build-,,$@).prep.yaml
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
