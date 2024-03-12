@@ -6,7 +6,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: crd-controller
+  name: crd-controller-giantswarm
 subjects:
 - kind: ServiceAccount
   name: helm-controller

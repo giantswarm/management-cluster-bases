@@ -127,6 +127,5 @@ patches:
         - --storage-path=/data
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 resources:
-  - resource-kyverno-policies.yaml
   - resource-namespace.yaml
   - resource-rbac.yaml
