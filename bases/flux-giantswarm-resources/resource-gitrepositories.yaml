@@ -4,10 +4,10 @@ metadata:
   name: customer-flux-provider
   namespace: flux-giantswarm
 spec:
-  interval: 30s
+  interval: 1h
   ref:
     branch: main
-  timeout: 1h
+  timeout: 5m
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
