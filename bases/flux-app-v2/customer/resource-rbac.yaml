@@ -1,20 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: flux-crd-controller
-  namespace: default
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: crd-controller
-subjects:
-- kind: ServiceAccount
-  name: automation
-  namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
   name: flux-crd-controller-sa
   namespace: default
 roleRef:
@@ -216,4 +202,3 @@ subjects:
   kind: ServiceAccount
   name: "automation"
   namespace: "default"
-
