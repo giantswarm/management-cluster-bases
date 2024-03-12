@@ -8,6 +8,7 @@ spec:
   ref:
     branch: main
   timeout: 5m
+  url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/management-cluster-bases.git
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
