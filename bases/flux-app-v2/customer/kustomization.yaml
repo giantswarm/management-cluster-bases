@@ -36,6 +36,9 @@ patches:
     - op: add
       path: /metadata/namespace
       value: flux-system
+    - op: replace
+      path: /roleRef/name
+      value: crd-controller-giantswarm
 - target:
     kind: ClusterRoleBinding
     name: cluster-reconciler
