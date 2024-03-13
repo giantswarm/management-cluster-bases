@@ -5,4 +5,3 @@ metadata:
   namespace: flux-giantswarm
 data:
   name: aws
-  collection_url: https://github.com/giantswarm/aws-app-collection

@@ -5,4 +5,3 @@ metadata:
   namespace: flux-giantswarm
 data:
   name: openstack
-  collection_url: https://github.com/giantswarm/openstack-app-collection

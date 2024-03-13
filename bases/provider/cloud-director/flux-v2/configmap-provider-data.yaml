@@ -5,5 +5,3 @@ metadata:
   namespace: flux-giantswarm
 data:
   name: cloud-director
-  collection_url: https://github.com/giantswarm/cloud-director-app-collection
-  branch: main

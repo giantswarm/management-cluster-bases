@@ -5,4 +5,3 @@ metadata:
   namespace: flux-giantswarm
 data:
   name: kvm
-  collection_url: https://github.com/giantswarm/kvm-app-collection

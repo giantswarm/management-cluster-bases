@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: collection
+  namespace: flux-giantswarm
+spec:
+  ref:
+    branch: main
+  url: https://github.com/giantswarm/capz-app-collection
