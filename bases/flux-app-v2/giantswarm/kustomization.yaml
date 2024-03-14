@@ -25,22 +25,22 @@ helmCharts:
         enabled: true
         force: true
 images:
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-helm-controller
-    newName: giantswarm/fluxcd-helm-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-image-automation-controller
-    newName: giantswarm/fluxcd-image-automation-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-image-reflector-controller
-    newName: giantswarm/fluxcd-image-reflector-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-notification-controller
-    newName: giantswarm/fluxcd-notification-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-source-controller
-    newName: giantswarm/fluxcd-source-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-kustomize-controller
-    newName: giantswarm/kustomize-controller
-  - name: gsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token
-    newName: giantswarm/k8s-jwt-to-vault-token
-  - name: gsoci.azurecr.io/giantswarm/docker-kubectl
-    newName: giantswarm/docker-kubectl
+  - name: giantswarm/fluxcd-helm-controller
+    newName: gsoci.azurecr.io/giantswarm/fluxcd-helm-controller
+  - name: giantswarm/fluxcd-image-automation-controller
+    newName: gsoci.azurecr.io/giantswarm/fluxcd-image-automation-controller
+  - name: giantswarm/fluxcd-image-reflector-controller
+    newName: gsoci.azurecr.io/giantswarm/fluxcd-image-reflector-controller
+  - name: giantswarm/fluxcd-notification-controller
+    newName: gsoci.azurecr.io/giantswarm/fluxcd-notification-controller
+  - name: giantswarm/fluxcd-source-controller
+    newName: gsoci.azurecr.io/giantswarm/fluxcd-source-controller
+  - name: giantswarm/fluxcd-kustomize-controller
+    newName: gsoci.azurecr.io/giantswarm/kustomize-controller
+  - name: giantswarm/k8s-jwt-to-vault-token
+    newName: gsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token
+  - name: giantswarm/docker-kubectl
+    newName: gsoci.azurecr.io/giantswarm/docker-kubectl
 patches:
 - target:
     kind: ClusterRole
