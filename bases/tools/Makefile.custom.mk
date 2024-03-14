@@ -92,12 +92,20 @@ ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
 endif
+ifeq ($(ENFORCE_PSS),1)
+	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/kustomization.yaml
+endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
 endif
+endif
+ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
+	$(if $(filter 1,$(ENFORCE_PSS)), \
+		$(YQ) eval 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | (.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller")).patch = "- op: replace\n  path: /metadata/name\n  value: crd-controller-giantswarm"' -i  $(TMP_BASE)/kustomization.yaml)
 endif
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
 	rm -rf $(TMP_BASE)
@@ -123,6 +131,11 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	echo "export envsubst_scope=\$$(cat output/$(subst build-,,$@).envsubst)" >> output/$(subst build-,,$@).env
 	# run the substitution
 	. output/$(subst build-,,$@).env && cat output/$(subst build-,,$@).prep.yaml | envsubst "$$envsubst_scope" > output/$(subst build-,,$@).yaml
+	$(if $(filter 1,$(ENFORCE_PSS)), \
+	    $(YQ) eval 'select(.kind != "PodSecurityPolicy" or (.kind == "PodSecurityPolicy" and .metadata.name != "flux-app-pvc-psp" and .metadata.name != "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
+	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
+	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml; \
+		  $(YQ) e -i 'select(.kind == "ConfigMap" and .metadata.name == "$(subst build-,,$@)-user-values").data.values += "\nglobal:\n  podSecurityStandards:\n    enforced: true\n"' output/$(subst build-,,$@).yaml)
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
 	rm -f output/$(subst build-,,$@).prep.yaml output/$(subst build-,,$@).env output/$(subst build-,,$@).envsubst
 
