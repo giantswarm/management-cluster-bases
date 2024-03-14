@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: zot
+spec:
+  chart:
+    spec:
+      chart: zot
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+        namespace: flux-giantswarm
+      version: 0.1.2
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 1m
+  targetNamespace: flux-giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    - kind: ConfigMap
+      name: __VALUES_CM_NAME__
+      valuesKey: values.yaml

@@ -1,0 +1,60 @@
+persistence: true
+pvc:
+  create: true
+  name: null
+  accessMode: ReadWriteOnce
+  storage: 30Gi
+global:
+  podSecurityStandards:
+    enforced: true
+configFiles:
+  config.json: |-
+    {
+        "storage":
+        {
+            "rootDirectory": "/var/lib/registry",
+            "dedupe": true,
+            "gc": true,
+            "gcDelay": "1h",
+            "gcInterval": "24h"
+        },
+        "http":
+        {
+            "address": "0.0.0.0",
+            "port": "5000"
+        },
+        "log":
+        {
+            "level": "debug"
+        },
+        "extensions": {
+          "sync": {
+            "registries": [
+              {
+                "urls": [
+                  "https://giantswarm.azurecr.io"
+                ],
+                "onDemand": true,
+                "tlsVerify": true,
+                "maxRetries": 3,
+                "retryDelay": "5m"
+              }
+            ]
+          },
+          "scrub": {
+            "enable": true
+          },
+          "search": {
+            "enable": true,
+            "cve": {
+                "updateInterval": "2h"
+            }
+          },
+          "metrics": {
+            "enable": true,
+            "prometheus": {
+                "path": "/metrics"
+            }
+          }
+        }
+    }
