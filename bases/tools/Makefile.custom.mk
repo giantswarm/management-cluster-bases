@@ -35,6 +35,8 @@ build-flux-app-vaultless-helper:
 	@# noop
 endif
 
+	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/flux/patch-remove-psp.yaml"]' $(TMP_BASE)/kustomization.yaml
+
 # TODO Change https://github.com/giantswarm/apptestctl/blame/90942be9c1c2fd58f765bc191d8ef5889717eb4b/hack/sync-crds.sh to use these instead (ATS will need make too tho)
 .PHONY: build-catalogs-with-defaults
 build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with default configuration
@@ -91,6 +93,10 @@ endif
 ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
+endif
+ifeq ($(ENFORCE_PSS),1)
+	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforce) = true' $(TMP_BASE)/kustomization.yaml
 endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
