@@ -75,7 +75,7 @@ spec:
             type: RuntimeDefault
       containers:
       - name: manager
-#        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.1.1
+        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.1.1
         env:
           - name: KONFIGURE_MODE
             value: "kustomizepatch"
