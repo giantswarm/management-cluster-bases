@@ -25,21 +25,6 @@ helmCharts:
       verticalPodAutoscaler:
         enabled: true
         force: true
-images:
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-helm-controller
-    newName: giantswarm/fluxcd-helm-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-image-automation-controller
-    newName: giantswarm/fluxcd-image-automation-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-image-reflector-controller
-    newName: giantswarm/fluxcd-image-reflector-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-notification-controller
-    newName: giantswarm/fluxcd-notification-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-source-controller
-    newName: giantswarm/fluxcd-source-controller
-  - name: gsoci.azurecr.io/giantswarm/fluxcd-kustomize-controller
-    newName: giantswarm/fluxcd-kustomize-controller
-  - name: gsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token
-    newName: giantswarm/k8s-jwt-to-vault-token
 patches:
 - target:
     kind: ClusterRoleBinding
