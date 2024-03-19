@@ -2,7 +2,7 @@
   path: "/spec/template/spec/containers/-"
   value:
     name: proxy
-    image: gsoci.azurecr.io/alpine/socat:1.7.4.4
+    image: gsoci.azurecr.io/giantswarm/socat:1.7.4.4
     securityContext:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
