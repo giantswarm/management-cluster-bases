@@ -1,9 +1,10 @@
 persistence: true
 pvc:
   create: true
-  name: null
   accessMode: ReadWriteOnce
   storage: 30Gi
+  policyException:
+    enforce: true
 global:
   podSecurityStandards:
     enforced: true
