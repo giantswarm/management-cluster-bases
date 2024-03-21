@@ -1,0 +1,15 @@
+resources:
+  - appcatalog-cluster.yaml
+  - appcatalog-cluster-test.yaml
+  - appcatalog-control-plane-catalog.yaml
+  - appcatalog-control-plane-test-catalog.yaml
+  - appcatalog-default.yaml
+  - appcatalog-default-test.yaml
+  - appcatalog-giantswarm.yaml
+  - appcatalog-giantswarm-operations-platform.yaml
+  - appcatalog-giantswarm-operations-platform-test.yaml
+  - appcatalog-giantswarm-playground.yaml
+  - appcatalog-giantswarm-playground-test.yaml
+  - appcatalog-giantswarm-test.yaml
+  - appcatalog-releases.yaml
+  - appcatalog-releases-test.yaml
