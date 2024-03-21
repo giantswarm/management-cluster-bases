@@ -14,8 +14,10 @@ replacements:
       kind: HelmRelease
     fieldPaths:
       - spec.valuesFrom.[name=__VALUES_CM_NAME__].name
+
 resources:
   - ./helm-release.yaml
+
 configMapGenerator:
 - name: zot-config
   files:

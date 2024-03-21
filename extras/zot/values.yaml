@@ -1,3 +1,17 @@
+service:
+  type: ClusterIP
+
+# To enable ingress, please add an additional
+# values file. See the README.md in this directory
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+
+serviceMonitor:
+  enabled: true
+
 persistence: true
 pvc:
   create: true
@@ -5,9 +19,11 @@ pvc:
   storage: 30Gi
   policyException:
     enforce: true
+
 global:
   podSecurityStandards:
     enforced: true
+
 configFiles:
   config.json: |-
     {
