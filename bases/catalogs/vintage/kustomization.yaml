@@ -12,19 +12,19 @@ patches:
             create: true
 resources:
 # External
-- external/appcatalog-helm-stable.yaml
+- ../external/appcatalog-helm-stable.yaml
 # Giant Swarm
-- giantswarm/appcatalog-cluster.yaml
-- giantswarm/appcatalog-cluster-test.yaml
-- giantswarm/appcatalog-control-plane-catalog.yaml
-- giantswarm/appcatalog-control-plane-test-catalog.yaml
-- giantswarm/appcatalog-default.yaml
-- giantswarm/appcatalog-default-test.yaml
-- giantswarm/appcatalog-giantswarm.yaml
-- giantswarm/appcatalog-giantswarm-operations-platform.yaml
-- giantswarm/appcatalog-giantswarm-operations-platform-test.yaml
-- giantswarm/appcatalog-giantswarm-playground.yaml
-- giantswarm/appcatalog-giantswarm-playground-test.yaml
-- giantswarm/appcatalog-giantswarm-test.yaml
-- giantswarm/appcatalog-releases.yaml
-- giantswarm/appcatalog-releases-test.yaml
+- ../giantswarm/appcatalog-cluster.yaml
+- ../giantswarm/appcatalog-cluster-test.yaml
+- ../giantswarm/appcatalog-control-plane-catalog.yaml
+- ../giantswarm/appcatalog-control-plane-test-catalog.yaml
+- ../giantswarm/appcatalog-default.yaml
+- ../giantswarm/appcatalog-default-test.yaml
+- ../giantswarm/appcatalog-giantswarm.yaml
+- ../giantswarm/appcatalog-giantswarm-operations-platform.yaml
+- ../giantswarm/appcatalog-giantswarm-operations-platform-test.yaml
+- ../giantswarm/appcatalog-giantswarm-playground.yaml
+- ../giantswarm/appcatalog-giantswarm-playground-test.yaml
+- ../giantswarm/appcatalog-giantswarm-test.yaml
+- ../giantswarm/appcatalog-releases.yaml
+- ../giantswarm/appcatalog-releases-test.yaml
