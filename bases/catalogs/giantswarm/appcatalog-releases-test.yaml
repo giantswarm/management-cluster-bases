@@ -9,9 +9,9 @@ spec:
       chart: appcatalog
       sourceRef:
         kind: HelmRepository
-        name: giantswarm-control-plane-test-catalog
+        name: giantswarm-control-plane-catalog
         namespace: flux-giantswarm
-      version: 0.10.1-59cc2b9b85459827bd7f19e2d9dd7e715a1be4f5
+      version: 1.0.0
   install:
     remediation:
       retries: 20
