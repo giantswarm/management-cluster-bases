@@ -11,7 +11,7 @@ spec:
         kind: HelmRepository
         name: giantswarm-control-plane-catalog
         namespace: flux-giantswarm
-      version: 0.10.1
+      version: 1.0.0
   install:
     remediation:
       retries: 20

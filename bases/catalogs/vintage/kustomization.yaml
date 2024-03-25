@@ -1,0 +1,17 @@
+# This catalogs kustomization is meant for Vintage clusters
+patches:
+  - target:
+      kind: HelmRelease
+      name: appcatalog-.*
+      namespace: flux-giantswarm
+    patch: |-
+      - op: add
+        path: /spec/values/vintage
+        value:
+          appCatalog:
+            create: true
+resources:
+# External
+- ../external
+# Giant Swarm
+- ../giantswarm
