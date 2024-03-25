@@ -33,7 +33,7 @@ configFiles:
             "registries": [
               {
                 "urls": [
-                  "https://giantswarm.azurecr.io"
+                  "https://gsoci.azurecr.io"
                 ],
                 "onDemand": true,
                 "tlsVerify": true,
