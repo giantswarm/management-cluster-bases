@@ -1,0 +1,2 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_appcatalogs.yaml
