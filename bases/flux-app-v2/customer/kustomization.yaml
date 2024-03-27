@@ -36,6 +36,9 @@ patches:
     - op: add
       path: /metadata/namespace
       value: flux-system
+    - op: replace
+      path: /roleRef/name
+      value: crd-controller-giantswarm
 - target:
     kind: ClusterRoleBinding
     name: cluster-reconciler
@@ -55,7 +58,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -69,7 +72,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -82,7 +85,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -95,7 +98,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -107,7 +110,7 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/args
       value:
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -120,13 +123,12 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
+        - --watch-all-namespaces=false
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
         - --storage-path=/data
         - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 resources:
-  - resource-kyverno-policies.yaml
   - resource-namespace.yaml
   - resource-rbac.yaml

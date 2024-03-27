@@ -31,7 +31,6 @@ images:
   - name: giantswarm/fluxcd-kustomize-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-kustomize-controller
 resources:
-  - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
   - configmap-provider-data.yaml

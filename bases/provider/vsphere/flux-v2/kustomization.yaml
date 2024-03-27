@@ -3,7 +3,6 @@ kind: Kustomization
 patches:
   - path: patch-collection-gitrepository.yaml
 resources:
-  - ../../../flux-app-v2/customer
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
   - configmap-provider-data.yaml
