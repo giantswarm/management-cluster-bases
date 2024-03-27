@@ -97,7 +97,7 @@ ifeq ($(ENFORCE_PSS),1)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/kustomization.yaml
 endif
 ifdef BOOTSTRAP_CLUSTER
-ifneq ($(filter build-flux-app-customer,$(MAKECMDGOALS)),)
+ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/kustomization.yaml
 	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
