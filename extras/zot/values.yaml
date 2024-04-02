@@ -45,7 +45,7 @@ configFiles:
                 {
                     "**":
                     {
-                          "anonymousPolicy": ["read"]
+                          "anonymousPolicy": []
                     }
                 }
             }
