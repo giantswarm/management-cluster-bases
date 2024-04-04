@@ -16,6 +16,7 @@ replacements:
       - spec.valuesFrom.[name=__VALUES_CM_NAME__].name
 
 resources:
+  - ./namespace.yaml
   - ./helm-release.yaml
 
 configMapGenerator:
