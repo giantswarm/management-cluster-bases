@@ -19,9 +19,10 @@ metadata:
   name: zot-secret-values
 stringData:
   values.yaml: |-
-    mountSecrets: true
-    secretFiles: |-
-$(cat "${WORKDIR}/passwords" | sed 's/^/      /')
+    mountSecret: true
+    secretFiles: 
+      htpasswd: |-
+$(cat "${WORKDIR}/passwords" | sed 's/^/        /')
     authHeader: ${AUTH_HEADER}
     serviceMonitor:
       basicAuth:
