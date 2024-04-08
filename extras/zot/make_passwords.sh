@@ -9,7 +9,7 @@ htpasswd -b -c "${WORKDIR}/admin" admin "${PASSWORD_ADMIN}"
 cat "${WORKDIR}/prom" > "${WORKDIR}/passwords"
 cat "${WORKDIR}/admin" >> "${WORKDIR}/passwords"
 
-AUTH_HEADER=$(cat "${WORKDIR}/admin" | base64)
+AUTH_HEADER=$(echo -n "admin:${PASSWORD_ADMIN}" | base64)
 >&2 printf "This is a secret snippet that you can add to zot:\n\n"
 
 cat << EOF
