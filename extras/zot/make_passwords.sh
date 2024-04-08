@@ -28,8 +28,6 @@ $(cat "${WORKDIR}/passwords" | sed 's/^/        /')
       basicAuth:
         username: prom
         password: ${PASSWORD_PROM}
-  # Here stored the admin password, so it's possible to find it,
-  # since it's not saved anywhere
   adminPassword: ${PASSWORD_ADMIN}
 
 EOF
