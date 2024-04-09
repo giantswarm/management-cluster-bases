@@ -76,7 +76,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -90,7 +90,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -103,7 +103,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -116,7 +116,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -128,7 +128,7 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/args
       value:
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -141,7 +141,7 @@ patches:
       path: /spec/template/spec/containers/0/args
       value:
         - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces=false
+        - --watch-all-namespaces
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
@@ -152,6 +152,7 @@ patchesStrategicMerge:
 - patch-pvc-psp.yaml
 - patch-kustomize-controller.yaml
 resources:
+- resource-kyverno-policies.yaml
 - resource-namespace.yaml
 - resource-rbac.yaml
 - resource-refresh-vault-token.yaml
