@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   ref:
-    branch: main
+    branch: single-flux
   timeout: 5m
   url: https://github.com/giantswarm/management-cluster-bases
 ---
