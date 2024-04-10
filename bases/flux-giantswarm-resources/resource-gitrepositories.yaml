@@ -1,18 +1,6 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: customer-flux-provider
-  namespace: flux-giantswarm
-spec:
-  interval: 1h
-  ref:
-    branch: main
-  timeout: 5m
-  url: https://github.com/giantswarm/management-cluster-bases
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
   name: collection
   namespace: flux-giantswarm
 spec:
