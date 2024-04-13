@@ -27,3 +27,5 @@ spec:
   values:
     metrics:
       enabled: true
+    webhooks:
+      enabled: false
