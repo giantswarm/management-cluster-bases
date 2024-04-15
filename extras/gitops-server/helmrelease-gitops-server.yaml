@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: giantswarm-catalog
   interval: 1h0m0s
-  targetNamespace: flux-system
+  targetNamespace: flux-giantswarm
   values:
     giantswarm:
       images:
