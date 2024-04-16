@@ -2,9 +2,9 @@
 
 WORKDIR=$(mktemp -d)
 read -p "Enter a password for the prom user: " PASSWORD_PROM
-htpasswd -b -c "${WORKDIR}/prom" prom "${PASSWORD_PROM}"
+htpasswd -bBn prom "${PASSWORD_PROM}" > "${WORKDIR}/prom"
 read -p "Enter a password for the admin user: " PASSWORD_ADMIN
-htpasswd -b -c "${WORKDIR}/admin" admin "${PASSWORD_ADMIN}"
+htpasswd -bBn admin "${PASSWORD_ADMIN}" > "${WORKDIR}/admin"
 
 cat "${WORKDIR}/prom" > "${WORKDIR}/passwords"
 cat "${WORKDIR}/admin" >> "${WORKDIR}/passwords"
@@ -17,13 +17,13 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: zot-secret-values
+  namespace: flux-giantswarm
 stringData:
   values.yaml: |-
     mountSecret: true
-    secretFiles: 
+    secretFiles:
       htpasswd: |-
 $(cat "${WORKDIR}/passwords" | sed 's/^/        /')
-    authHeader: ${AUTH_HEADER}
     serviceMonitor:
       basicAuth:
         username: prom
@@ -31,4 +31,3 @@ $(cat "${WORKDIR}/passwords" | sed 's/^/        /')
   adminPassword: ${PASSWORD_ADMIN}
 
 EOF
-
