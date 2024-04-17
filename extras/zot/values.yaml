@@ -9,6 +9,9 @@ ingress:
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
 
+strategy:
+  type: Recreate
+
 serviceMonitor:
   enabled: true
 
@@ -37,29 +40,29 @@ configFiles:
         },
         "http":
         {
-            "auth": 
+            "auth":
             {
-                "htpasswd": 
+                "htpasswd":
                 {
                   "path": "/secret/htpasswd"
                 }
             },
-            "accessControl": 
+            "accessControl":
             {
                 "metrics":
                 {
                   "users": ["prom"]
                 },
-                "repositories": 
+                "repositories":
                 {
-                  "**": 
+                  "**":
                   {
                       "anonymousPolicy": ["read"],
-                      "policies": 
+                      "policies":
                       [
                           {
                               "users": ["admin"],
-                              "actions": 
+                              "actions":
                               [
                                   "read",
                                   "create",
