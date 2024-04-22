@@ -5,7 +5,7 @@ metadata:
 spec:
   rules:
   - name: clusterconfig
-    context: 
+    context:
        - name: userconfig
          configMap:
            name: "{{ request.object.spec.userConfig.configMap.name }}"
@@ -47,14 +47,17 @@ spec:
             - apiVersion: application.giantswarm.io/v1alpha1
               kind: App
               name: "{{ request.object.metadata.name }}"
-              uid: "{{ request.object.metadata.uid }}" 
+              uid: "{{ request.object.metadata.uid }}"
         data:
+          # If postBuild substitution is not configured,
+          # set a default registry as a cache to avoid
+          # containerd errors
           values: |-
             global:
               components:
                 containerd:
                   containerRegistries:
                     gsoci.azurecr.io:
-                      - endpoint: https://zot.golem.gaws.gigantic.io
+                      - endpoint: ${zot_url:=https://gsoci.azurecr.io}
                       - endpoint: https://gsoci.azurecr.io
 
