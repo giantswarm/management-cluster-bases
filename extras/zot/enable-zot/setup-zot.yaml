@@ -1,0 +1,60 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: zot-cache-setup
+spec:
+  rules:
+  - name: clusterconfig
+    context: 
+       - name: userconfig
+         configMap:
+           name: "{{ request.object.spec.userConfig.configMap.name }}"
+           namespace: "{{ request.object.spec.userConfig.configMap.namespace }}"
+    match:
+      any:
+      - resources:
+          kinds:
+            - App
+          namespaces:
+            - 'org-*'
+          operations:
+            - CREATE
+    preconditions:
+      all:
+        - key: "{{ request.object.spec.catalog }}"
+          operator: Equals
+          value: cluster
+        - key: "{{ request.object.spec.name }}"
+          operator: Equals
+          value: cluster-aws
+        - key: "{{ userconfig.data.values }}"
+          operator: NotEquals
+          value: '*gsoci*'
+    generate:
+      synchronize: true
+      apiVersion: v1
+      kind: ConfigMap
+      name: "{{request.object.metadata.name}}-enable-zot"
+      namespace: "{{request.object.metadata.namespace}}"
+      data:
+        kind: ConfigMap
+        metadata:
+          # I'm adding a owner refenrece, because for some reason,
+          # even though `synchronize` is enabled, configmap is not
+          # getting removed after the app that is triggering its
+          # creation is gone
+          ownerReferences:
+            - apiVersion: application.giantswarm.io/v1alpha1
+              kind: App
+              name: "{{ request.object.metadata.name }}"
+              uid: "{{ request.object.metadata.uid }}" 
+        data:
+          values: |-
+            global:
+              components:
+                containerd:
+                  containerRegistries:
+                    gsoci.azurecr.io:
+                      - endpoint: https://zot.golem.gaws.gigantic.io
+                      - endpoint: https://gsoci.azurecr.io
+
