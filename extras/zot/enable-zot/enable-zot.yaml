@@ -28,9 +28,6 @@ spec:
         - key: "{{ request.object.spec.name }}"
           operator: Equals
           value: cluster-aws
-        - key: "{{ request.object.spec.name }}"
-          operator: Equals
-          value: cluster-aws
         - key: "{{ userconfig.data.values }}"
           operator: NotEquals
           value: '*gsoci*'
