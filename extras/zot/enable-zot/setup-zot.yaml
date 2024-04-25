@@ -38,16 +38,6 @@ spec:
       namespace: "{{request.object.metadata.namespace}}"
       data:
         kind: ConfigMap
-        metadata:
-          # I'm adding a owner refenrece, because for some reason,
-          # even though `synchronize` is enabled, configmap is not
-          # getting removed after the app that is triggering its
-          # creation is gone
-          ownerReferences:
-            - apiVersion: application.giantswarm.io/v1alpha1
-              kind: App
-              name: "{{ request.object.metadata.name }}"
-              uid: "{{ request.object.metadata.uid }}"
         data:
           # If postBuild substitution is not configured,
           # set a default registry as a cache to avoid
