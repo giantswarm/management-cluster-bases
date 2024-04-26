@@ -22,3 +22,7 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: False
+  values:
+    global:
+      podSecurityStandards:
+        enforced: true
