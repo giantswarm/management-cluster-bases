@@ -95,14 +95,8 @@ configFiles:
               }
             ]
           },
-          "scrub": {
-            "enable": true
-          },
           "search": {
-            "enable": true,
-            "cve": {
-                "updateInterval": "2h"
-            }
+            "enable": false
           },
           "metrics": {
             "enable": true,
