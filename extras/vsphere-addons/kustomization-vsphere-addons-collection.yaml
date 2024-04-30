@@ -9,7 +9,7 @@ spec:
   force: false
   interval: 5m
   path: ./flux-manifests
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: vsphere-addons-collection
