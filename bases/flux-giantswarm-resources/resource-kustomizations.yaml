@@ -57,6 +57,8 @@ spec:
     name: management-clusters-fleet
     namespace: flux-giantswarm
   postBuild:
+    substitute:
+      var_substitution_enabled: "true"
     substituteFrom:
     - kind: ConfigMap
       name: flux-extras-pssenforced
