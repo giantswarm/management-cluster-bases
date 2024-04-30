@@ -27,3 +27,6 @@ spec:
   values:
     metrics:
       enabled: true
+    global:
+      podSecurityStandards:
+        enforced: ${pssEnforced:=true}
