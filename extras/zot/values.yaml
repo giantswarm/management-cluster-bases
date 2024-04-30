@@ -95,6 +95,9 @@ configFiles:
               }
             ]
           },
+          "scrub": {
+            "enable": true
+          },
           "search": {
             "enable": false
           },
