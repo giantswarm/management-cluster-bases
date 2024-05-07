@@ -1,16 +1,15 @@
 # Zot kustomizations
 
-
 ## Additional values
 
-Zot is installed as a `HelmRelease` and it's using `ConfigMaps/Secrest` as values sources. By default, the main configmap with common values is created.
+Zot is installed as a `HelmRelease` and it's using `ConfigMaps/Secrets` as values sources. By default, the main configmap with common values is created.
 
-To override or add additional values, one should add a couple of patches to the kustomization on the cluster level. 
+To override or add additional values, one should add a couple of patches to the kustomization on the cluster level.
 
 ```yaml
 # This is the default installation
 resources:
-  - https://github.com/giantswarm/management-cluster-bases//extras/zot?ref=main
+  - https://github.com/giantswarm/management-cluster-bases/extras/zot-cache?ref=main
 ```
 
 Now, let's say, we need to add `Ingress`
@@ -33,7 +32,6 @@ Now, let's say, we need to add `Ingress`
         - secretName: zot-tls
           hosts:
             - zot.golem.gaws.gigantic.io
-
 ```
 
 2. We need to let flux know that these values should be used
@@ -52,7 +50,7 @@ Now, let's say, we need to add `Ingress`
 
 ```yaml
 resources:
-  - https://github.com/giantswarm/management-cluster-bases//extras/zot?ref=main
+  - https://github.com/giantswarm/management-cluster-bases//extras/zot-cache?ref=main
 patches:
   - target:
       version: v1
@@ -66,6 +64,7 @@ patches:
       name: zot
     path: ./patches/zot-release.yaml
 ```
+
 ## Auth
 
 Since pushing should not be enabled publicly, we need to use some kind of auth. The easiest approach is to go with the `BasicAuth`
@@ -83,7 +82,7 @@ secretFiles:
     prom:$2y$05$L86zqQDfH5y445dcMlwu6uHv.oXFgT6AiJCwpv3ehr7idc0rI3S2G
 ```
 
-Also, to let prometheus scrape metrics, you need to add a BasicAuth to service monitor. 
+Also, to let prometheus scrape metrics, you need to add a BasicAuth to service monitor.
 
 To get a snippet of a code that should be encrypted, you can use the script `./make_passwords.sh`
 

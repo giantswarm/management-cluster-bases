@@ -26,5 +26,5 @@ spec:
       remediateLastFailure: false
   valuesFrom:
     - kind: ConfigMap
-      name: __VALUES_CM_NAME__
+      name: zot-cache-values
       valuesKey: values.yaml
