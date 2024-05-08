@@ -2,10 +2,10 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: zot-cache-enable
+  name: zot-configure-cache
 spec:
   rules:
-    - name: clusterconfig
+    - name: configure-zot-cache-for-cluster-apps
       context:
         - name: userconfig
           configMap:
@@ -37,5 +37,5 @@ spec:
             path: "/spec/extraConfigs/-"
             value:
               kind: configMap
-              name: "{{ request.object.metadata.name }}-enable-zot"
-              namespace: "{{ request.object.metadata.namespace }}"
+              name: zot-use-cache-values
+              namespace: default
