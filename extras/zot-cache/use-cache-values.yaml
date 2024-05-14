@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: zot-use-cache-values
+  namespace: default
+data:
+  # If the postBuild substitution is not configured,
+  # set a default registry as a cache to avoid
+  # containerd errors
+  values: |-
+    global:
+      components:
+        containerd:
+          containerRegistries:
+            gsoci.azurecr.io:
+              - endpoint: ${zot_url:=https://gsoci.azurecr.io}
+              - endpoint: https://gsoci.azurecr.io

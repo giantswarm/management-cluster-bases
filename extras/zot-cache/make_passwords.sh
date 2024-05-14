@@ -31,3 +31,5 @@ $(cat "${WORKDIR}/passwords" | sed 's/^/        /')
   adminPassword: ${PASSWORD_ADMIN}
 
 EOF
+
+rm "${WORKDIR}/passwords"
