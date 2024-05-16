@@ -18,6 +18,7 @@ spec:
       retries: 10
       remediateLastFailure: false
   interval: 1m
+  releaseName: zot
   targetNamespace: zot
   timeout: 10m
   upgrade:
