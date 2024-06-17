@@ -23,6 +23,24 @@ pvc:
   policyException:
     enforce: true
 
+giantswarm:
+  verticalPodAutoscaler:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 300m
+    memory: 1024Mi
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+
+env:
+  - name: "GOGC"
+    value: "50"
+  - name: "GOMEMLIMIT"
+    value: "800MiB"
+
 global:
   podSecurityStandards:
     enforced: true
@@ -97,6 +115,9 @@ configFiles:
           },
           "scrub": {
             "enable": true
+          },
+          "ui": {
+            "enable": false
           },
           "search": {
             "enable": false
