@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
 
-WORKDIR=$(mktemp -d)
-read -p "Enter a password for the prom user: " PASSWORD_PROM
-htpasswd -bBn prom "${PASSWORD_PROM}" > "${WORKDIR}/prom"
-read -p "Enter a password for the admin user: " PASSWORD_ADMIN
-htpasswd -bBn admin "${PASSWORD_ADMIN}" > "${WORKDIR}/admin"
-
-cat "${WORKDIR}/prom" > "${WORKDIR}/passwords"
-cat "${WORKDIR}/admin" >> "${WORKDIR}/passwords"
-
-AUTH_HEADER=$(echo -n "admin:${PASSWORD_ADMIN}" | base64)
->&2 printf "This is a secret snippet that you can add to zot:\n\n"
+PASSWORD_PROM=$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+PASSWORD_ADMIN=$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
 
 cat << EOF
 apiVersion: v1
@@ -23,7 +14,10 @@ stringData:
     mountSecret: true
     secretFiles:
       htpasswd: |-
-$(cat "${WORKDIR}/passwords" | sed 's/^/        /')
+        $(htpasswd -bBn prom "${PASSWORD_PROM}")
+        $(htpasswd -bBn admin "${PASSWORD_ADMIN}")
+      credentials: |-
+        {}
     serviceMonitor:
       basicAuth:
         username: prom
@@ -31,5 +25,3 @@ $(cat "${WORKDIR}/passwords" | sed 's/^/        /')
   adminPassword: ${PASSWORD_ADMIN}
 
 EOF
-
-rm "${WORKDIR}/passwords"

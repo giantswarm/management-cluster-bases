@@ -101,6 +101,8 @@ configFiles:
         },
         "extensions": {
           "sync": {
+            "enable": true,
+            "credentialsFile": "/secret/credentials",
             "registries": [
               {
                 "urls": [
