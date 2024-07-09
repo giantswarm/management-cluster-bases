@@ -80,6 +80,9 @@ secretFiles:
   htpasswd: |-
     admin:$2y$05$vmiurPmJvHylk78HHFWuruFFVePlit9rZWGA/FbZfTEmNRneGJtha
     prom:$2y$05$L86zqQDfH5y445dcMlwu6uHv.oXFgT6AiJCwpv3ehr7idc0rI3S2G
+  # See https://zotregistry.dev/latest/articles/mirroring/
+  credentials: |-
+    {}
 ```
 
 Also, to let prometheus scrape metrics, you need to add a BasicAuth to service monitor.
