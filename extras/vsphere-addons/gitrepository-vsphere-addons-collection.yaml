@@ -7,6 +7,4 @@ spec:
   interval: 30s
   ref:
     branch: main
-  secretRef:
-    name: github-giantswarm-https-credentials
   url: https://github.com/giantswarm/vsphere-addons-app-collection
