@@ -1,0 +1,134 @@
+service:
+  type: ClusterIP
+
+# To enable ingress, please add an additional
+# values file. See the README.md in this directory
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+
+strategy:
+  type: Recreate
+
+serviceMonitor:
+  enabled: true
+
+persistence: true
+pvc:
+  create: true
+  accessMode: ReadWriteOnce
+  storage: 50Gi
+  policyException:
+    enforce: true
+
+giantswarm:
+  verticalPodAutoscaler:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 300m
+    memory: 1024Mi
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+
+env:
+  - name: "GOGC"
+    value: "50"
+  - name: "GOMEMLIMIT"
+    value: "800MiB"
+
+global:
+  podSecurityStandards:
+    enforced: true
+
+configFiles:
+  config.json: |-
+    {
+        "storage":
+        {
+            "rootDirectory": "/var/lib/registry",
+            "dedupe": true,
+            "gc": true,
+            "gcDelay": "1h",
+            "gcInterval": "24h"
+        },
+        "http":
+        {
+            "auth":
+            {
+                "htpasswd":
+                {
+                  "path": "/secret/htpasswd"
+                }
+            },
+            "accessControl":
+            {
+                "metrics":
+                {
+                  "users": ["prom"]
+                },
+                "repositories":
+                {
+                  "**":
+                  {
+                      "anonymousPolicy": ["read"],
+                      "policies":
+                      [
+                          {
+                              "users": ["admin"],
+                              "actions":
+                              [
+                                  "read",
+                                  "create",
+                                  "update",
+                                  "delete"
+                              ]
+                          }
+                      ]
+                  }
+                }
+            },
+            "address": "0.0.0.0",
+            "port": "5000"
+        },
+        "log":
+        {
+            "level": "debug"
+        },
+        "extensions": {
+          "sync": {
+            "enable": true,
+            "credentialsFile": "/secret/credentials",
+            "registries": [
+              {
+                "urls": [
+                  "https://gsoci.azurecr.io"
+                ],
+                "onDemand": true,
+                "tlsVerify": true,
+                "maxRetries": 3,
+                "retryDelay": "5m"
+              }
+            ]
+          },
+          "scrub": {
+            "enable": true
+          },
+          "ui": {
+            "enable": false
+          },
+          "search": {
+            "enable": false
+          },
+          "metrics": {
+            "enable": true,
+            "prometheus": {
+                "path": "/metrics"
+            }
+          }
+        }
+    }
