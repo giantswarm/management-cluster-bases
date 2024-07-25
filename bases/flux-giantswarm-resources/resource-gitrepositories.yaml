@@ -17,7 +17,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: main
+    branch: add-kratix
   secretRef:
     name: giantswarm-clusters-ssh-credentials
   timeout: 60s
