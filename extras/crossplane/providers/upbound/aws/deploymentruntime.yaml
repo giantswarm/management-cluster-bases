@@ -38,3 +38,22 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+---
+# DeploymentRuntimeConfig for AWS resources
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: xfn-network-discovery
+  labels:
+    provider-family: functions
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          serviceAccountName: xfn-network-discovery
+          containers:
+            - name: package-runtime
+              args:
+                - --debug
