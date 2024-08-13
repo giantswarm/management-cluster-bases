@@ -25,4 +25,4 @@ spec:
   values:
     global:
       podSecurityStandards:
-        enforced: ${pssEnforced:=false}
+        enforced: ${pssEnforced:=true}
