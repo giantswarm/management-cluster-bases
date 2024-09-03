@@ -65,6 +65,16 @@ patches:
     path: ./patches/zot-release.yaml
 ```
 
+### Private clusters
+
+For private cluster the ingress annotation should use a different cluster issuer.
+
+```yaml
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: private-giantswarm
+```
+
 ## Auth
 
 Since pushing should not be enabled publicly, we need to use some kind of auth. The easiest approach is to go with the `BasicAuth`
