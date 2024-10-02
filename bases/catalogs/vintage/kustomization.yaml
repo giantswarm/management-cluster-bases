@@ -11,7 +11,4 @@ patches:
           appCatalog:
             create: true
 resources:
-# External
-- ../external
-# Giant Swarm
 - ../giantswarm
