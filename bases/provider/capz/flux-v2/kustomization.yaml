@@ -5,4 +5,5 @@ patches:
 resources:
   - ../../../flux-app-v2/giantswarm
   - ../../../flux-giantswarm-resources
+  - ../releases
   - configmap-provider-data.yaml
