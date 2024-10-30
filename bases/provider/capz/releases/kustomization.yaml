@@ -1,0 +1,7 @@
+resources:
+- ../../../releases
+
+patches:
+- path: releases.yaml
+
+nameSuffix: -azure
