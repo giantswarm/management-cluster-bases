@@ -10,9 +10,9 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: giantswarm-test-catalog
+        name: giantswarm-catalog
         namespace: flux-giantswarm
-      version: 2.0.0-b4144b3e279317cb591a3d52206a7e91853da3eb
+      version: 2.0.1
   install:
     remediation:
       retries: 10
