@@ -12,8 +12,10 @@ ingress:
 strategy:
   type: Recreate
 
-serviceMonitor:
+metrics:
   enabled: true
+  serviceMonitor:
+    enabled: true
 
 persistence: true
 pvc:
