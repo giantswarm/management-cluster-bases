@@ -1,2 +1,8 @@
 resources:
   - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/application.giantswarm.io_appcatalogs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_certconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_chartconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_configs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_drainerconfigs.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_sparks.yaml
+  - https://raw.githubusercontent.com/giantswarm/apiextensions/v6.6.0/helm/crds-common/templates/core.giantswarm.io_storageconfigs.yaml
