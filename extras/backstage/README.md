@@ -60,13 +60,16 @@ patches:
       spec:
         valuesFrom:
           - kind: ConfigMap
+            name: backstage-app-config
+            valuesKey: values
+          - kind: ConfigMap
             name: backstage-user-values
             valuesKey: values
           - kind: Secret
             name: backstage-user-secrets
             valuesKey: values
           - kind: Secret
-            name: backstage-github-app-credentials-secret
+            name: backstage-github-app-credentials
             valuesKey: values
     target:
       kind: HelmRelease
