@@ -38,7 +38,6 @@ spec:
               - op: add
                 path: /spec/template/metadata/labels/backstage.io~1kubernetes-id
                 value: backstage
-  releaseName: backstage
   targetNamespace: backstage
   timeout: 10m
   upgrade:
