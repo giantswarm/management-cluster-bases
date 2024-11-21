@@ -49,7 +49,7 @@ Replace all instances of `MC_NAME` with the name of your management cluster.
 ```yaml
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/backstage/?ref=main
-  - ../backstage
+  - ./backstage
 patches:
   - patch: |
       apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -60,13 +60,16 @@ patches:
       spec:
         valuesFrom:
           - kind: ConfigMap
+            name: backstage-app-config
+            valuesKey: values
+          - kind: ConfigMap
             name: backstage-user-values
             valuesKey: values
           - kind: Secret
             name: backstage-user-secrets
             valuesKey: values
           - kind: Secret
-            name: backstage-github-app-credentials-secret
+            name: backstage-github-app-credentials
             valuesKey: values
     target:
       kind: HelmRelease
@@ -79,4 +82,4 @@ with ConfigMap and Secrets. Secret files should be encrypted.
 
 Commit these changes to git and raise a PR to have this merged into the main
 branch. Once your PR is accepted and merged, backstage will deploy to your
-management cluster during the next full reconcilliation cycle.
+management cluster during the next full reconciliation cycle.
