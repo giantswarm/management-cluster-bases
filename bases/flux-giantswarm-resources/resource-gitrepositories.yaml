@@ -82,6 +82,6 @@ spec:
   ref:
     branch: main
   secretRef:
-    name: shared-configs-ssh-credentials
+    name: configs-ssh-credentials
   timeout: 60s
   url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/silences.git
