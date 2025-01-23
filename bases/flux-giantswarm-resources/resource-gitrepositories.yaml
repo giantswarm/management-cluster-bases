@@ -78,6 +78,7 @@ metadata:
   name: silences
   namespace: flux-giantswarm
 spec:
+  interval: 30s
   ref:
     branch: main
   secretRef:
