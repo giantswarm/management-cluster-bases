@@ -143,7 +143,26 @@ spec:
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./"
-  prune: true
+  prune: false
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: silences
+    namespace: flux-giantswarm
+  timeout: 3m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: silences-default
+  namespace: flux-giantswarm
+spec:
+  dependsOn:
+    - name: flux
+  interval: 5m
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./default"
+  prune: false
   retryInterval: 1m
   sourceRef:
     kind: GitRepository
