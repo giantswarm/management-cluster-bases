@@ -80,7 +80,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: update-kind-ci
+    branch: test
   secretRef:
     name: silences-ssh-credentials
   timeout: 60s
