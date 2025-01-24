@@ -143,7 +143,7 @@ spec:
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./"
-  prune: false
+  prune: true
   retryInterval: 1m
   sourceRef:
     kind: GitRepository
