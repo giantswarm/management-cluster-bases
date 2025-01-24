@@ -142,11 +142,11 @@ spec:
     - name: flux
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
-  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/silences"
+  path: "./"
   prune: false
   retryInterval: 1m
   sourceRef:
     kind: GitRepository
-    name: management-clusters-fleet
+    name: silences
     namespace: flux-giantswarm
   timeout: 3m
