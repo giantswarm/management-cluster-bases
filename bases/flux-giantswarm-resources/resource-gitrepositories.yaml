@@ -80,7 +80,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: main
+    branch: kustomization
   secretRef:
     name: silences-ssh-credentials
   timeout: 60s
