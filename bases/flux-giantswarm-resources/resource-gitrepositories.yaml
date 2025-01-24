@@ -71,17 +71,3 @@ spec:
   ref:
     branch: master
   interval: 1m
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: silences
-  namespace: flux-giantswarm
-spec:
-  interval: 30s
-  ref:
-    branch: test
-  secretRef:
-    name: silences-ssh-credentials
-  timeout: 60s
-  url: ssh://git@ssh.github.com:${github_port:=443}/giantswarm/silences.git
