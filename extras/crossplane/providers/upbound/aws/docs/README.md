@@ -82,7 +82,7 @@ patches:
         value: provider-aws-${PROVIDER}
       - op: add
         path: /spec/package
-        value: xpkg.upbound.io/upbound/provider-aws-${PROVIDER}:${VERSION}
+        value: gsoci.azurecr.io/giantswarm/upbound-provider-aws-${PROVIDER}:${VERSION}
     target:
       kind: Provider
   - patch: |

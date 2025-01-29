@@ -129,7 +129,7 @@ the substitutions are:
 - `gcpversion`
 
 It is recommended that all version strings are defaulted such as: 
-`${awsversion:=0.43.0}` This ensures that at least a minimum provider version
+`${awsversion:=1.0.0}` This ensures that at least a minimum provider version
 will always be used.
 
 > **Note**
@@ -250,8 +250,8 @@ spec:
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
-  skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-aws-ec2:v${awsversion:=0.43.0}
+  skipDependencyResolution: true
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-ec2:v${awsversion:=1.0.0}
   runtimeConfigRef:
     name: upbound-provider-aws
 ```
@@ -296,7 +296,7 @@ kind: Function
 metadata:
   name: function-patch-and-transform
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/function-patch-and-transform:v0.1.4
+  package: gsoci.azurecr.io/giantswarm/crossplane-contrib-function-patch-and-transform:v0.1.4
   runtimeConfigRef:
     name: upbound-provider-aws
 ```

@@ -64,7 +64,7 @@ patches:
         value: provider-azure-${PROVIDER}
       - op: add
         path: /spec/package
-        value: xpkg.upbound.io/upbound/provider-azure-${PROVIDER}:${VERSION}
+        value: gsoci.azurecr.io/giantswarm/upbound-provider-azure-${PROVIDER}:${VERSION}
     target:
       kind: Provider
   - patch: |
