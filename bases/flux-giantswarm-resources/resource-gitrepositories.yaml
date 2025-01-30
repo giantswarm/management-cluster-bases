@@ -41,7 +41,7 @@ spec:
       toPath: include
   interval: 30s
   ref:
-    branch: silences
+    branch: main
   secretRef:
     name: configs-ssh-credentials
   timeout: 60s
@@ -55,7 +55,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: silences
+    branch: main
   secretRef:
     name: shared-configs-ssh-credentials
   timeout: 60s
