@@ -1,0 +1,14 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: default-silence
+  annotations:
+    valid-until: "2100-01-01"
+spec:
+  targetTags:
+  - name: installation
+    value: default-name
+  matchers:
+  - name: cluster_id
+    value: default-id
+    isRegex: false
