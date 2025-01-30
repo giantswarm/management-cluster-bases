@@ -135,25 +135,6 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: silences-default
-  namespace: flux-giantswarm
-spec:
-  dependsOn:
-    - name: flux
-  interval: 5m
-  # DO NOT use slashes in the comment to indicate the path, just "->".
-  path: "./default/silences"
-  prune: false
-  retryInterval: 1m
-  sourceRef:
-    kind: GitRepository
-    name: giantswarm-config
-    namespace: flux-giantswarm
-  timeout: 3m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: silences
   namespace: flux-giantswarm
 spec:
@@ -161,11 +142,11 @@ spec:
     - name: flux
   interval: 5m
   # DO NOT use slashes in the comment to indicate the path, just "->".
-  path: "./installations/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/silences"
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/silences"
   prune: false
   retryInterval: 1m
   sourceRef:
     kind: GitRepository
-    name: giantswarm-config
+    name: management-clusters-fleet
     namespace: flux-giantswarm
   timeout: 3m
