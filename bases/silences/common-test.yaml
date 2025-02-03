@@ -5,6 +5,9 @@ metadata:
   annotations:
     valid-until: "2100-01-01"
 spec:
+  targetTags:
+  - name: any
+    value: .*
   matchers:
   - name: alertname
     value: NoisyAlert
