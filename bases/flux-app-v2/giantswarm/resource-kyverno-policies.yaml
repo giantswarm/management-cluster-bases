@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: flux-multi-tenancy
 spec:
-  validationFailureAction: enforce
+  validationFailureAction: Enforce
   rules:
     - name: serviceAccountNameMustBeSet
       exclude:
