@@ -10,9 +10,10 @@ spec:
       - ip: "192.168.190.100"
         hostnames:
           - "github.com"
-      - ip: "192.168.190.101"
-        hostnames:
-        - "giantswarm.github.io"
+      # Uncomment this to move traffic back to DirectConnect
+      # - ip: "192.168.190.101"
+      #   hostnames:
+      #   - "giantswarm.github.io"
       - ip: "192.168.190.102"
         hostnames:
         - "ssh.github.com"
