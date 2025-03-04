@@ -1,0 +1,14 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: common-silence
+  annotations:
+    valid-until: "2100-01-01"
+spec:
+  targetTags:
+  - name: any
+    value: .*
+  matchers:
+  - name: alertname
+    value: NoisyAlert
+    isRegex: false

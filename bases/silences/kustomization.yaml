@@ -1,0 +1,3 @@
+namePrefix: global-
+resources:
+- common-test.yaml
