@@ -1,3 +1,5 @@
 namePrefix: global-
+commonAnnotations:
+  from: mcb
 resources:
 - common-test.yaml
