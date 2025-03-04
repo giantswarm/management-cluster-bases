@@ -5,6 +5,8 @@ patches:
   - path: patch-kustomize-controller.yaml
   - path: patch-source-controller.yaml
   - path: patch-collection-gitrepository.yaml
+  - path: patch-control-plane-catalog-helmrepository.yaml
+  - path: patch-giantswarm-catalog-helmrepository.yaml
 images:
   - name: giantswarm/fluxcd-helm-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-helm-controller

@@ -12,7 +12,7 @@ spec:
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
-  skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-family-azure:v${azureversion:=0.38.0}
+  skipDependencyResolution: true
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-family-azure:v${azureversion:=1.0.0}
   runtimeConfigRef:
     name: upbound-provider-family-azure

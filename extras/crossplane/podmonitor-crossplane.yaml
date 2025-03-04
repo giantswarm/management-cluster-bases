@@ -10,7 +10,7 @@ spec:
     matchNames:
       - 'crossplane'
   selector:
-    matchLabels:
-      app.kubernetes.io/name: crossplane
+    # All pods in the namespace are covered (includes Crossplane provider pods)`
+    matchLabels: {}
   podMetricsEndpoints:
     - targetPort: metrics
