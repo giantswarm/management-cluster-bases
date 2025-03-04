@@ -138,9 +138,6 @@ metadata:
   name: silences
   namespace: flux-giantswarm
 spec:
-  commonMetadata:
-    annotations:
-      config.giantswarm.io/origin: ""
   dependsOn:
     - name: flux
   interval: 5m
