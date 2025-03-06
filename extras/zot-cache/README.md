@@ -81,27 +81,42 @@ Since pushing should not be enabled publicly, we need to use some kind of auth. 
 
 By the default config, it's allowed for the `prom` user to access metrics, and for the `admin` user to push images.
 
-Users are not configured by default, because creds should be entrypted, so to add a user, custom values should have the following properties:
+Users are not configured by default, because creds should be encrypted, so to add a user, custom values should have the following properties:
 
 ```yaml
-mountSecret: false
+mountSecret: true
 secretFiles:
-  # Example htpasswd with 'admin:admin' & 'user:user' user:pass pairs
   htpasswd: |-
     admin:$2y$05$vmiurPmJvHylk78HHFWuruFFVePlit9rZWGA/FbZfTEmNRneGJtha
     prom:$2y$05$L86zqQDfH5y445dcMlwu6uHv.oXFgT6AiJCwpv3ehr7idc0rI3S2G
   # See https://zotregistry.dev/latest/articles/mirroring/
   credentials: |-
-    {}
+    {
+      "my.registry.example.org": {
+        "username": "<USERNAME>",
+        "password": "<PASSWORD>"
+      }
+    }
 ```
+
+For more details on setting up authentication, see: https://docs.giantswarm.io/tutorials/registry/zot/.
 
 Also, to let prometheus scrape metrics, you need to add a BasicAuth to service monitor.
 
+```yaml
+metrics:
+  serviceMonitor:
+    basicAuth:
+      username: prom
+      password: <REDACTED>
+```
+
 To get a snippet of a code that should be encrypted, you can use the script `./make_passwords.sh`
 
-Admin's password will be store in the same secret, where values are stored, it's not going to be used by zot directly, but in case one needs to login as admin, it will be possible to get the password
+Admins password can be stored in the same secret under `.stringData.adminPassword`.
+It's not going to be used by zot directly, but in case one need to log in as admin, it will be possible to get the password.
 
-After the secret is added to the installation, it's required to add it to the `HelmRelease`
+After the secret is added to the installation, it's required to add it to the `HelmRelease`:
 
 ```yaml
 - op: add
