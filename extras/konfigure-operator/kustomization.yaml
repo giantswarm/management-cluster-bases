@@ -1,0 +1,3 @@
+resources:
+- konfigure-operator-values.yaml
+- helm-release.yaml
