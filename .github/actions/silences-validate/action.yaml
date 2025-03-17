@@ -1,8 +1,8 @@
 name: "Silences validate"
 description: "Validate silences CR files"
 inputs:
-  directory:
-    description: "Directory with silence CR files"
+  directory_pattern:
+    description: "Bash pattern to match directories with silence CR files"
     required: true
 runs:
   using: "composite"
@@ -21,7 +21,7 @@ runs:
     - name: Validate silences files
       shell: bash
       run: |
-        for directory in ${{ inputs.directory }}; do
+        for directory in ${{ inputs.directory_pattern }}; do
           silences-validate.sh "$directory"
         done
     - name: Setup kind cluster
@@ -31,8 +31,8 @@ runs:
       run: |
         # create CRD
         kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/master/config/crd/monitoring.giantswarm.io_silences.yaml
-        for directory in ${{ inputs.directory }}; do
-          kustomize build ${{ inputs.directory }} --output resources.yaml
-          kubectl apply -f resources.yaml
-          kubectl delete -f resources.yaml
+        for directory in ${{ inputs.directory_pattern }}; do
+          kustomize build "$directory" --output "${directory}/resources.yaml"
+          kubectl apply -f "${directory}/resources.yaml"
+          kubectl delete -f "${directory}/resources.yaml"
         done
