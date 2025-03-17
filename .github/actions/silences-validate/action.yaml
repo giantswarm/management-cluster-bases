@@ -15,7 +15,6 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        cd ${{ github.action_path }}
         make bin/yq
         make bin/kustomize
     - name: Check directory pattern
