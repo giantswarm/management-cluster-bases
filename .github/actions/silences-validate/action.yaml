@@ -1,0 +1,12 @@
+name: "Silences validate"
+description: "Validate silences CR files"
+inputs:
+  directory:
+    description: "Directory with silence CR files"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Run goodbye.sh
+      shell: bash
+      run: make silences-validate ${{ inputs.directory }}
