@@ -13,6 +13,7 @@ error() {
   echo -e "${RED}$*${NC}" >&2
 }
 
+# no_yml fail if file has .yml extension
 no_yml() {
   # Reject .yml
   if [[ "$1" =~ .*\.yml ]]; then
@@ -22,16 +23,16 @@ no_yml() {
   echo "  [ok] no .yml"
 }
 
+# skip_non_yaml fail if file does not have .yaml extension
 skip_non_yaml() {
-  # Skip non yaml files
   if [[ ! "$1" =~ .*\.yaml ]]; then
     echo "  [ok] skipping non .yaml file"
     return 1
   fi
 }
 
+# valid_until_date fail if valid-until annotation is missing or invalid
 valid_until_date() {
-  # Validate date from valid_until annotation
   valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")" || return 1
   if [[ -n "$valid_until_annotation" ]] && [[ "$valid_until_annotation" != "null" ]]; then
     if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
@@ -45,6 +46,7 @@ valid_until_date() {
   fi
 }
 
+# validate_kustomization_resources fail if resource is not found in kustomization.yaml
 validate_kustomization_resources() {
   file_basename="$(basename "$1")"
   if ! echo "${KUSTOMIZATION_RESOURCES}" | grep -qE "^${file_basename}$"; then
@@ -57,17 +59,20 @@ validate_kustomization_resources() {
 main() {
   echo "> start"
 
+  # Get default branch and merge base to compare against
   default_branch="$(git remote show origin | grep 'HEAD' | cut -d':' -f2 | tr -d '[[:space:]]')"
   merge_base="$(git merge-base HEAD "origin/$default_branch")"
+  # Get the root of the git repository
   git_root="$(git rev-parse --show-toplevel)"
 
   silences_path="${git_root}/${1}"
+  # Assume kustomization.yaml is at root of silences path
   kustomization_path="$silences_path/kustomization.yaml"
 
+  # List resources referenced in kustomization.yaml
   KUSTOMIZATION_RESOURCES="$($YQ e '.resources[]' "$kustomization_path")"
 
-  # Detect files which changed between the current HEAD and the remote default branch.
-  # Only keep first level files.
+  # Detect files which changed between the current HEAD and the remote default branch in the silences path
   mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "${silences_path}" ":(exclude)$kustomization_path")
   echo "> found ${#changed_files[@]} changed files between $(git rev-parse --abbrev-ref HEAD) and $default_branch"
 
