@@ -38,6 +38,15 @@ valid_until_date() {
   fi
 }
 
+validate_kustomization_resources() {
+  file_basename="$(basename "$1")"
+  if ! echo "${KUSTOMIZATION_RESOURCES}" | grep -qE "^${file_basename}$"; then
+    echo "  [err] resource ${file_basename} not found in kustomization.yaml"
+    return 1
+  fi
+  echo "  [ok] resource ${file_basename} found in kustomization.yaml"
+}
+
 main() {
   echo "> start"
 
@@ -48,6 +57,7 @@ main() {
   silences_path="${git_root}/${1}"
   kustomization_path="$silences_path/kustomization.yaml"
 
+  KUSTOMIZATION_RESOURCES="$($YQ e '.resources[]' "$kustomization_path")"
 
   # Detect files which changed between the current HEAD and the remote default branch.
   # Only keep first level files.
@@ -60,9 +70,10 @@ main() {
     file_path="${git_root}/${file}"
     echo "> checking $file_path"
 
-    no_yml "$file_path"           || has_error=true
-    skip_non_yaml "$file_path"    || continue
-    valid_until_date "$file_path" || has_error=true
+    no_yml "$file_path"                      || has_error=true
+    skip_non_yaml "$file_path"               || continue
+    valid_until_date "$file_path"            || has_error=true
+    validate_kustomization_resources "$file" || has_error=true
 
   done
 
