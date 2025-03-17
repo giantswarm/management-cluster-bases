@@ -9,4 +9,4 @@ runs:
   steps:
     - name: Run goodbye.sh
       shell: bash
-      run: make silences-validate ${{ inputs.directory }}
+      run: make silences-validate directory=${{ inputs.directory }}
