@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
@@ -25,8 +25,8 @@ skip_non_yaml() {
 
 valid_until_date() {
   # Validate date from valid_until annotation
-  valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")"
-  if [[ "$valid_until_annotation" != "null" ]]; then
+  valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")" || return 1
+  if [[ -n "$valid_until_annotation" ]] && [[ "$valid_until_annotation" != "null" ]]; then
     if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
       echo "  [err] valid until : $valid_until"
       return 1
