@@ -17,7 +17,6 @@ runs:
       run: |
         cd ${{ github.action_path }}
         make bin/yq
-        cd -
     - name: Validate silences files
       shell: bash
       run: silences-validate.sh ${{ inputs.directory }}
