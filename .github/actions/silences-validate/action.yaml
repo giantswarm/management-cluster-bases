@@ -12,6 +12,11 @@ runs:
       shell: bash
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
+    - name: Install yq
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        make bin/yq
     - name: Validate silences files
       shell: bash
-      run: make silences-validate directory=${{ inputs.directory }}
+      run: silences-validate.sh ${{ inputs.directory }}
