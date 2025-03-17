@@ -6,9 +6,6 @@ SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 YQ="${SCRIPT_DIR}/bin/yq"
 
-silences_path="$1"
-kustomization_path="$silences_path/kustomization.yaml"
-
 no_yml() {
   # Reject .yml
   if [[ "$1" =~ .*\.yml ]]; then
@@ -43,25 +40,29 @@ valid_until_date() {
 
 main() {
   echo "> start"
-  cd "${SCRIPT_DIR}/.."
 
   default_branch="$(git remote show origin | grep 'HEAD' | cut -d':' -f2 | tr -d '[[:space:]]')"
   merge_base="$(git merge-base HEAD "origin/$default_branch")"
+  git_root="$(git rev-parse --show-toplevel)"
+
+  silences_path="${git_root}/${1}"
+  kustomization_path="$silences_path/kustomization.yaml"
+
 
   # Detect files which changed between the current HEAD and the remote default branch.
   # Only keep first level files.
-  git_root="$(git rev-parse --show-toplevel)"
-  mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "${git_root}/${silences_path}" ":(exclude)$kustomization_path")
+  mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "${silences_path}" ":(exclude)$kustomization_path")
   echo "> found ${#changed_files[@]} changed files between $(git rev-parse --abbrev-ref HEAD) and $default_branch"
 
   # Run file checks
   local has_error=false
   for file in "${changed_files[@]}"; do
-    echo "> checking $file"
+    file_path="${git_root}/${file}"
+    echo "> checking $file_path"
 
-    no_yml "$file"           || has_error=true
-    skip_non_yaml "$file"    || continue
-    valid_until_date "$file" || has_error=true
+    no_yml "$file_path"           || has_error=true
+    skip_non_yaml "$file_path"    || continue
+    valid_until_date "$file_path" || has_error=true
 
   done
 
