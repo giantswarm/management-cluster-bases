@@ -28,7 +28,7 @@ runs:
       run: |
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silence files in $directory"
-          silences-validate.sh "$directory"
+          make silences-validate directory="$directory"
         done
     - name: Setup kind cluster
       uses: helm/kind-action@v1
