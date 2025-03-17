@@ -24,6 +24,7 @@ runs:
     - name: Setup kind cluster
       uses: helm/kind-action@v1
     - name: Validate unique names
+      shell: bash
       run: |
         # create CRD
         kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/master/config/crd/monitoring.giantswarm.io_silences.yaml
