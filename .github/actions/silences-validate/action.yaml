@@ -23,7 +23,7 @@ runs:
       run: |
         # Check for non-empty pattern and valid directories
         test -n "${{ inputs.directory_pattern }}" && \
-          echo ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
+          printf "%s\n" ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
     - name: Validate silences files
       shell: bash
       run: |
