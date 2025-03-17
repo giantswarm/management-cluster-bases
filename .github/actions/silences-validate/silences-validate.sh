@@ -6,10 +6,17 @@ SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 YQ="${SCRIPT_DIR}/bin/yq"
 
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+error() {
+  echo -e "${RED}$*${NC}" >&2
+}
+
 no_yml() {
   # Reject .yml
   if [[ "$1" =~ .*\.yml ]]; then
-    echo "  [err] wrong extension, please use .yaml"
+    error "  [err] wrong extension, please use .yaml"
     return 1
   fi
   echo "  [ok] no .yml"
@@ -28,12 +35,12 @@ valid_until_date() {
   valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")" || return 1
   if [[ -n "$valid_until_annotation" ]] && [[ "$valid_until_annotation" != "null" ]]; then
     if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
-      echo "  [err] valid until : $valid_until"
+      error "  [err] valid until : $valid_until"
       return 1
     fi
     echo "  [ok] valid until correct $valid_until"
   else
-    echo "  [err] valid until required"
+    error "  [err] valid until required"
     return 1
   fi
 }
@@ -41,7 +48,7 @@ valid_until_date() {
 validate_kustomization_resources() {
   file_basename="$(basename "$1")"
   if ! echo "${KUSTOMIZATION_RESOURCES}" | grep -qE "^${file_basename}$"; then
-    echo "  [err] resource ${file_basename} not found in kustomization.yaml"
+    error "  [err] resource ${file_basename} not found in kustomization.yaml"
     return 1
   fi
   echo "  [ok] resource ${file_basename} found in kustomization.yaml"
@@ -78,7 +85,7 @@ main() {
   done
 
   if $has_error; then
-    echo "> fail"
+    error "> failed"
     exit 1
   fi
 
