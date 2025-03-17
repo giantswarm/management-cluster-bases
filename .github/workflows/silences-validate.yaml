@@ -9,10 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: silences
           ref: ${{ github.ref }}
           fetch-depth: 0
       - id: silences-validate-action
-        uses: ./silences/.github/actions/silences-validate
+        uses: ./.github/actions/silences-validate
         with:
-          directory: silences/bases/silences
+          directory: bases/silences
