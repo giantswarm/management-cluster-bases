@@ -41,8 +41,3 @@ $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	mkdir -p output
 
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
-
-silences-validate: $(YQ) ## Validate silences
-	@echo "====> $@ in $(directory)"
-
-	./tools/silences-validate.sh $(directory)
