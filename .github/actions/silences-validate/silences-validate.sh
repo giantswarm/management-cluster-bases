@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eu
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
@@ -47,9 +47,10 @@ main() {
 
   default_branch="$(git remote show origin | grep 'HEAD' | cut -d':' -f2 | tr -d '[[:space:]]')"
   merge_base="$(git merge-base HEAD "origin/$default_branch")"
+
   # Detect files which changed between the current HEAD and the remote default branch.
   # Only keep first level files.
-  mapfile -t changed_files < <(git --no-pager diff --name-only HEAD main -- "$silences_path" ":(exclude)$kustomization_path")
+  mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "$silences_path" ":(exclude)$kustomization_path")
   echo "> found ${#changed_files[@]} changed files between $(git rev-parse --abbrev-ref HEAD) and $default_branch"
 
   # Run file checks
