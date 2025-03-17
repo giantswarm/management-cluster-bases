@@ -13,6 +13,6 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
       - id: silences-validate-action
-        uses: ./.github/actions/silences-validate
+        uses: silences/.github/actions/silences-validate
         with:
           directory: silences/bases/silences
