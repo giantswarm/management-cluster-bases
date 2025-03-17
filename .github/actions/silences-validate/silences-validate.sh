@@ -2,9 +2,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
-
-YQ="${SCRIPT_DIR}/bin/yq"
+YQ="bin/yq"
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
