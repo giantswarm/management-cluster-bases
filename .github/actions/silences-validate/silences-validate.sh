@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eu
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-YQ="${SCRIPT_DIR}/../bin/yq"
+YQ="${SCRIPT_DIR}/bin/yq"
 
 silences_path="$1"
 kustomization_path="$silences_path/kustomization.yaml"
