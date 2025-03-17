@@ -14,4 +14,4 @@ $(YQ): ## Download yq locally if necessary.
 silences-validate: $(YQ) ## Validate silences
 	@echo "====> $@ in $(directory)"
 
-	tools/silences-validate.sh $(directory)
+	silences-validate.sh $(directory)
