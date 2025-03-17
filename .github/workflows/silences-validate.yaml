@@ -14,4 +14,4 @@ jobs:
       - id: silences-validate-action
         uses: ./.github/actions/silences-validate
         with:
-          directory: bases/silences
+          directory: */silences
