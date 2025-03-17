@@ -50,7 +50,8 @@ main() {
 
   # Detect files which changed between the current HEAD and the remote default branch.
   # Only keep first level files.
-  mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "$silences_path" ":(exclude)$kustomization_path")
+  git_root="$(git rev-parse --show-toplevel)"
+  mapfile -t changed_files < <(git --no-pager diff --name-only "$merge_base" HEAD -- "${git_root}/${silences_path}" ":(exclude)$kustomization_path")
   echo "> found ${#changed_files[@]} changed files between $(git rev-parse --abbrev-ref HEAD) and $default_branch"
 
   # Run file checks
