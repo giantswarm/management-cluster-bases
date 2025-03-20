@@ -2,7 +2,7 @@ name: "Silences validate"
 description: "Validate silences CR files"
 inputs:
   directory_pattern:
-    description: "Bash pattern to match directories with silence CR files"
+    description: "Bash pattern to match directories containing silence CR files"
     required: true
 runs:
   using: "composite"
@@ -26,6 +26,7 @@ runs:
     - name: Validate silences files
       shell: bash
       run: |
+        # Run files validation for each directory
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silence files in $directory"
           make silences-validate directory="$directory"
@@ -35,6 +36,7 @@ runs:
     - name: Validate silence CRs
       shell: bash
       run: |
+        # Run CR validation for each directory
         kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/master/config/crd/monitoring.giantswarm.io_silences.yaml
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silence CRs in $directory"
