@@ -11,6 +11,6 @@ jobs:
         with:
           # Fetch all history so silences-validate.sh can find changed files.
           fetch-depth: 0
-      - uses: giantswarm/management-cluster-bases/.github/actions/silences-validate@silences-ci
+      - uses: giantswarm/management-cluster-bases/.github/actions/silences-validate@main
         with:
           directory_pattern: '*/silences'
