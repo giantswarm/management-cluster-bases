@@ -48,6 +48,7 @@ runs:
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silences CRs in $directory"
           kustomize build "$directory" --output "${directory}/resources.yaml"
+          test -s "${directory}/resources.yaml" || continue
           kubectl apply -f "${directory}/resources.yaml"
           kubectl delete -f "${directory}/resources.yaml"
         done
