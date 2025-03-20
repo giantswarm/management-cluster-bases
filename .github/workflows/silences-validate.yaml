@@ -6,7 +6,6 @@ on:
     inputs:
       directory_pattern:
         description: "Bash pattern to match directories containing silence CR files"
-        default: '*/silences'
         type: string
         required: true
 
