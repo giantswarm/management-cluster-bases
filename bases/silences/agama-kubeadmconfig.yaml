@@ -1,0 +1,18 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: agama-kubeadmconfig
+  annotations:
+    motivation: Known issue, we need to make MachinePool use the new KubeadmConfig and delete the old one
+    valid-until: "2100-01-01"
+spec:
+  targetTags:
+  - name: installation
+    value: agama
+  matchers:
+  - name: cluster_id
+    value: agama
+    isRegex: false
+  - name: alertname
+    value: KubeadmConfigNotReady
+    isRegex: false

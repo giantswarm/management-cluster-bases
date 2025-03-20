@@ -153,3 +153,8 @@ $(YQ): ## Download yq locally if necessary.
 	mkdir -p $(dir $@)
 	curl -sfL https://github.com/mikefarah/yq/releases/download/v$(YQ_VERSION)/yq_$(OS)_$(ARCH) > $@
 	chmod +x $@
+
+silences-validate: $(YQ) ## Validate silences
+	@echo "====> $@"
+
+	./tools/silences-validate.sh $(directory)
