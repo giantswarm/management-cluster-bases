@@ -10,8 +10,8 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        make -C ../../../ bin/yq
-        make -C ../../../ bin/kustomize
+        make -C ../../ bin/yq
+        make -C ../../ bin/kustomize
     - name: Check directory pattern
       shell: bash
       run: |
@@ -24,7 +24,7 @@ runs:
         # Run files validation for each directory
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silence files in $directory"
-          make -C ../../../ silences-validate directory="$directory"
+          make -C ../../ silences-validate directory="$directory"
         done
     - name: Setup kind cluster
       uses: helm/kind-action@v1
