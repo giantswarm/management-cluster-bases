@@ -3,7 +3,6 @@ description: "Validate silences CR files"
 inputs:
   directory_pattern:
     description: "Bash pattern to match directories containing silence CR files"
-    default: '*/silences'
     required: true
 runs:
   using: "composite"
