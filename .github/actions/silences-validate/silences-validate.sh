@@ -11,22 +11,13 @@ error() {
   echo -e "${RED}$*${NC}" >&2
 }
 
-# no_yml fail if file has .yml extension
-no_yml() {
-  # Reject .yml
-  if [[ "$1" =~ .*\.yml ]]; then
+# yaml_extension fail if file does not have .yaml extension
+yaml_extension() {
+  if ! [[ "$1" =~ .*\.yaml ]]; then
     error "  [err] wrong extension, please use .yaml"
     return 1
   fi
-  echo "  [ok] no .yml"
-}
-
-# skip_non_yaml fail if file does not have .yaml extension
-skip_non_yaml() {
-  if [[ ! "$1" =~ .*\.yaml ]]; then
-    echo "  [ok] skipping non .yaml file"
-    return 1
-  fi
+  echo "  [ok] .yaml extension"
 }
 
 # valid_until_date fail if valid-until annotation is missing or invalid
@@ -80,8 +71,7 @@ main() {
     file_path="${git_root}/${file}"
     echo "> checking $file_path"
 
-    no_yml "$file_path"                      || has_error=true
-    skip_non_yaml "$file_path"               || continue
+    yaml_extension "$file_path"              || has_error=true
     valid_until_date "$file_path"            || has_error=true
     validate_kustomization_resources "$file" || has_error=true
 
