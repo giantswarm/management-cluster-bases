@@ -46,3 +46,8 @@ silences-validate: $(YQ) ## Validate silences
 	@echo "====> $@"
 
 	./.github/actions/silences-validate/silences-validate.sh $(directory)
+
+silences-report-expired: $(YQ) ## Validate silences
+	@echo "====> $@"
+
+	./.github/actions/silences-report-expired/silences-report-expired.sh $(directory)
