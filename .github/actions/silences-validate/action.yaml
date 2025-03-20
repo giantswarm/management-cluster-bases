@@ -10,7 +10,6 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        ls -l
         make bin/yq
         make bin/kustomize
     - name: Check directory pattern
