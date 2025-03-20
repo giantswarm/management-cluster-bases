@@ -1,4 +1,4 @@
-name: Validate silence CRs
+name: Validate silences
 
 on: [push, pull_request]
 
