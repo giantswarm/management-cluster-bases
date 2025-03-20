@@ -1,8 +1,13 @@
 name: Validate silence CRs
 
 on:
-  - push
-  - workflow_call
+  push:
+  workflow_call:
+    inputs:
+      directory_pattern:
+        description: "Bash pattern to match directories containing silence CR files"
+        default: '*/silences'
+        required: true
 
 jobs:
   silences_validate:
@@ -16,4 +21,4 @@ jobs:
       - id: silences-validate-action
         uses: ./.github/actions/silences-validate
         with:
-          directory_pattern: '*/silences'
+          directory_pattern: '${{ inputs.directory_pattern }}'
