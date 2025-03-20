@@ -1,22 +1,15 @@
 name: Validate silence CRs
 
-on:
-  push:
-  workflow_call:
-    inputs:
-      directory_pattern:
-        description: "Bash pattern to match directories containing silence CR files"
-        type: string
-        required: true
+on: [push, pull_request]
 
 jobs:
   silences_validate:
     runs-on: ubuntu-latest
-    name: Validate silence CRs
+    name: Validate silences
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          # Fetch all history so silences-validate.sh can find changed files.
           fetch-depth: 0
       - id: silences-validate-action
         uses: giantswarm/management-cluster-bases/.github/actions/silences-validate@silences-ci
