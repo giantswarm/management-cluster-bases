@@ -1,0 +1,16 @@
+name: Validate silences
+
+on: [push, pull_request]
+
+jobs:
+  silences_validate:
+    runs-on: ubuntu-latest
+    name: Validate silences
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fetch all history so silences-validate.sh can find changed files.
+          fetch-depth: 0
+      - uses: giantswarm/management-cluster-bases/.github/actions/silences-validate@main
+        with:
+          directory_pattern: '*/silences'
