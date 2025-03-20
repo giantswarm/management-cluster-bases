@@ -1,6 +1,8 @@
 name: Validate silence CRs
 
-on: [push]
+on:
+  - push
+  - workflow_call
 
 jobs:
   silences_validate:
