@@ -7,6 +7,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
     - name: Install dependencies
       shell: bash
       run: |
@@ -24,7 +29,7 @@ runs:
         # Run files validation for each directory
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silence files in $directory"
-          make silences-validate directory="$directory"
+          silences-validate.sh $(directory)
         done
     - name: Setup kind cluster
       uses: helm/kind-action@v1
