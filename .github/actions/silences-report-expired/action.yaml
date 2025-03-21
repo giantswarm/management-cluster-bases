@@ -29,7 +29,7 @@ runs:
       run: |
         test -n "${{ inputs.directory_pattern }}" && \
           printf "%s\n" ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
-    # Run files validation for each directory
+    # Run files expiration report for each directory
     - name: Report expired silences
       shell: bash
       run: |
