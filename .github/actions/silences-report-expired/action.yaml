@@ -6,9 +6,6 @@ inputs:
   directory_pattern:
     description: "Bash pattern to match directories containing silence CR files"
     required: true
-  github_token:
-    description: "GitHub token"
-    required: true
 runs:
   using: "composite"
   steps:
@@ -36,7 +33,7 @@ runs:
     - name: Report expired silences
       shell: bash
       env:
-        GH_TOKEN: ${{ inputs.github_token }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
