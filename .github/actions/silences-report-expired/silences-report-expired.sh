@@ -116,7 +116,10 @@ main() {
     echo "> reporting expired silences"
 
     start_branch="$(git branch --show-current)"
-
+    repository_name="${GITHUB_REPOSITORY-}"
+    if [[ -z "$repository_name" ]]; then
+      repository_name="$(git remote get-url origin --push | sed -n 's#.*:\(.*\)\.git#\1#p')"
+    fi
 
     function _run () {
         if $dry_run; then
@@ -134,7 +137,7 @@ main() {
       echo "> reporting $file@$commit_sha on $branch_name"
 
       # Map the git commit author to its github handle using github api
-      userGithubHandle="$(gh api "/repos/giantswarm/silences/commits/${commit_sha}" -q '.author.login')"
+      userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
 
       message="${COMMIT_MESSAGE_PREFIX}${file}"
 
