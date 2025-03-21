@@ -69,7 +69,7 @@ find_expired() {
 
     # Check if Silence is expired
     if [ "${expiration_date}" -le "${today_date}" ]; then
-      printf "$RED - EXPIRED$NC" >&2
+      printf "${RED} - EXPIRED${NC}" >&2
       expired+=("$latest_commit")
     fi
     echo "" >&2
@@ -124,7 +124,8 @@ report() {
                --assignee "${userGithubHandle}" \
                --title "${message}" \
                --body "$PULL_REQUEST_BODY")
-      _run gh pr merge --squash --auto "$branch_name"
+      # Ignore auto merge error, which might be due to repository settings
+      _run gh pr merge --squash --auto "$branch_name" || true
       ;;
   esac
 }
@@ -163,6 +164,8 @@ main() {
   local expired=()
   mapfile expired < <(find_expired "$directory")
 
+  local error=false
+
   # Report expired silences via github pull requests
   # 1 pull request is created for each expired silence, and the owner is assigned for review.
   if $reporting; then
@@ -180,12 +183,17 @@ main() {
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
 
       if ! report "$file" "$commit_sha" "$start_branch" "$repository_name"; then
-        echo "> reporting ${file} ${RED}failed${NC}"
+        echo -e "> reporting ${file} ${RED}failed${NC}"
+        error=true
         continue
       fi
 
       echo "> reported ${file} at ${pr_link}"
     done
+  fi
+
+  if $error; then
+    exit 1
   fi
 }
 
