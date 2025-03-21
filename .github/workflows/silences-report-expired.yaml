@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@silences-report-expired-test
-        secrets: inherit
         with:
           directory_pattern: '*/silences'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
