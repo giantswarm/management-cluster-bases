@@ -1,0 +1,13 @@
+name: Report expired silences
+
+on: [push, pull_request]
+
+jobs:
+  silences_report_expired:
+    runs-on: ubuntu-latest
+    name: Report expired silences
+    steps:
+      - uses: actions/checkout@v4
+      - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@main
+        with:
+          directory_pattern: '*/silences'
