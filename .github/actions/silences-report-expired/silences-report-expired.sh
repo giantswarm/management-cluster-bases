@@ -127,8 +127,8 @@ main() {
     }
 
     for commit in "${expired[@]}"; do
-      file="$(echo "$commit" | jq -r '.file')"
-      commit_sha="$(echo "$commit" | jq -r '.hash')"
+      file="$(echo "$commit" | $YQ e '.file')"
+      commit_sha="$(echo "$commit" | $YQ e '.hash')"
       branch_name="clean-$file"
 
       # Map the git commit author to its github handle using github api
@@ -144,8 +144,8 @@ main() {
       _run git push --force --quiet --set-upstream origin "$branch_name"
 
       pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
-      pr_status="$(echo "$pr_data" | jq -r '.state')"
-      pr_link="$(echo "$pr_data" | jq -r '.url')"
+      pr_status="$(echo "$pr_data" | $YQ e '.state')"
+      pr_link="$(echo "$pr_data" | $YQ e '.url')"
 
       case "$pr_status" in
         "OPEN")
