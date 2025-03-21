@@ -90,6 +90,8 @@ report() {
   commit_sha="$(echo "$commit" | $YQ e '.hash')"
   branch_name="clean-$file"
 
+  echo "> reporting $file@$commit_sha"
+
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
 
@@ -179,7 +181,6 @@ main() {
     fi
 
     for commit in "${expired[@]}"; do
-      echo "> reporting $file@$commit_sha"
       report "$commit" "$start_branch" "$repository_name" || continue
     done
   fi
