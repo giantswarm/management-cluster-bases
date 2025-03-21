@@ -13,6 +13,9 @@ PULL_REQUEST_REMINDER="please merge this PR to delete this silence or update the
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 DATE="$(command -v gdate || command -v date)"
 
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 print_usage() {
         echo "Usage: $(basename "$0") <action> <name>
 
@@ -60,7 +63,7 @@ find_expired() {
 
     # Check if Silence is expired
     if [ "${expiration_date}" -le "${today_date}" ]; then
-      printf " - EXPIRED" >&2
+      printf "$RED - EXPIRED$NC" >&2
       expired+=("$latest_commit")
     fi
     echo "" >&2
