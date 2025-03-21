@@ -8,6 +8,6 @@ jobs:
     name: Report expired silences
     steps:
       - uses: actions/checkout@v4
-      - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@main
+      - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@silences-report-expired-test
         with:
           directory_pattern: '*/silences'
