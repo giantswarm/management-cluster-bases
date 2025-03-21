@@ -6,7 +6,6 @@ jobs:
   silences_report_expired:
     runs-on: ubuntu-latest
     name: Report expired silences
-    secrets: inherit
     steps:
       - uses: actions/checkout@v4
       - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@silences-report-expired-test
