@@ -82,15 +82,12 @@ find_expired() {
 }
 
 report() {
-  local commit="$1"
-  local start_branch="$2"
-  local repository_name="$3"
+  local file="$1"
+  local commit_sha="$2"
+  local start_branch="$3"
+  local repository_name="$4"
 
-  file="$(echo "$commit" | $YQ e '.file')"
-  commit_sha="$(echo "$commit" | $YQ e '.hash')"
   branch_name="clean-$file"
-
-  echo "> reporting $file@$commit_sha"
 
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
@@ -130,8 +127,6 @@ report() {
       _run gh pr merge --squash --auto "$branch_name"
       ;;
   esac
-
-  echo "> reported ${file} at ${pr_link}"
 }
 
 main() {
@@ -181,7 +176,15 @@ main() {
     fi
 
     for commit in "${expired[@]}"; do
-      report "$commit" "$start_branch" "$repository_name" || continue
+      file="$(echo "$commit" | $YQ e '.file')"
+      commit_sha="$(echo "$commit" | $YQ e '.hash')"
+
+      if ! report "$file" "$commit_sha" "$start_branch" "$repository_name"; then
+        echo "> reporting ${file} ${RED}failed${NC}"
+        continue
+      fi
+
+      echo "> reported ${file} at ${pr_link}"
     done
   fi
 }
