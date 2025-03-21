@@ -32,8 +32,12 @@ runs:
     # Run files expiration report for each directory
     - name: Report expired silences
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Report silences from $directory"
-          silences-report-expired.sh "$directory"
+          silences-report-expired.sh --report --dry-run "$directory"
         done
