@@ -83,12 +83,10 @@ main() {
   while test $# -gt 0; do
     case "$1" in
       --dry-run)
-        shift
         dry_run=true
         echo "> dry_run=$dry_run"
         ;;
       -r|--report)
-        shift
         reporting=true
         ;;
       -h|--help)
