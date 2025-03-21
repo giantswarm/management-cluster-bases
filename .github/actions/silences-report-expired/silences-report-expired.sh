@@ -131,6 +131,8 @@ main() {
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
       branch_name="clean-$file"
 
+      echo "> reporting $file@$commit_sha on $branch_name"
+
       # Map the git commit author to its github handle using github api
       userGithubHandle="$(gh api "/repos/giantswarm/silences/commits/${commit_sha}" -q '.author.login')"
 
