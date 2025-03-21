@@ -7,7 +7,13 @@ KUSTOMIZATION_FILENAME="kustomization.yaml"
 
 DEFAULT_EXPIRATION="14 days"
 COMMIT_MESSAGE_PREFIX="remove expired silence - "
-PULL_REQUEST_BODY=$(printf "This pull request was automatically created using the \`$(basename $0)\` script.\n\nIf you are assigned for review this means you created a silence which is now expired, based on the \`valid-until\` annotation, and has **been removed from AlertManager**.\n\nIf this correct please approve this PR and make sure it is being merged, otherwise feel free to update to extend or set the \`valid-until\` annotation, see https://github.com/giantswarm/silences#readme.\n\nThanks")
+PULL_REQUEST_BODY="This pull request was automatically created using the $(basename $0) script.
+
+If you are assigned for review this means you created a silence which is now expired, based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
+
+If this correct please approve this PR and make sure it is being merged, otherwise feel free to update to extend or set the \`valid-until\` annotation, see https://github.com/giantswarm/silences#readme.
+
+Thanks"
 PULL_REQUEST_REMINDER="please merge this PR to delete this silence or update the \`valid-until\` annotation"
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
