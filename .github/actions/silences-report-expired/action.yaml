@@ -35,5 +35,5 @@ runs:
       run: |
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Report silences from $directory"
-          silences-report-expired.sh "$directory"
+          silences-report-expired.sh --report "$directory"
         done
