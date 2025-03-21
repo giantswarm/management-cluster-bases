@@ -39,5 +39,5 @@ runs:
         git config --local user.name "github-actions[bot]"
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Report silences from $directory"
-          silences-report-expired.sh --report "$directory"
+          silences-report-expired.sh --report --dry-run "$directory"
         done
