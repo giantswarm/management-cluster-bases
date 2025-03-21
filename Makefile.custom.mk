@@ -45,4 +45,9 @@ $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 silences-validate: $(YQ) ## Validate silences
 	@echo "====> $@"
 
-	./tools/silences-validate.sh $(directory)
+	./.github/actions/silences-validate/silences-validate.sh $(directory)
+
+silences-report-expired: $(YQ) ## Validate silences
+	@echo "====> $@"
+
+	./.github/actions/silences-report-expired/silences-report-expired.sh $(directory)
