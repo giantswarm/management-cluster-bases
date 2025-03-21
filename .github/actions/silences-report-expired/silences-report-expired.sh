@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
 
 YQ="bin/yq"
 KUSTOMIZATION_FILENAME="kustomization.yaml"
@@ -75,16 +75,67 @@ find_expired() {
   done
 }
 
+report() {
+  local commit="$1"
+  local start_branch="$2"
+  local repository_name="$3"
+
+  file="$(echo "$commit" | $YQ e '.file')"
+  commit_sha="$(echo "$commit" | $YQ e '.hash')"
+  branch_name="clean-$file"
+
+  # Map the git commit author to its github handle using github api
+  userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
+
+  message="${COMMIT_MESSAGE_PREFIX}${file}"
+
+  function _run () {
+      if $DRY_RUN; then
+          echo "$*"
+      else
+          "$@"
+      fi
+  }
+
+  # Create the git branch
+  $DRY_RUN && echo "> dry run active, otherwise would run..."
+  _run git checkout --quiet -b "$branch_name" "$start_branch"
+  _run git rm --quiet -- "${file}"
+  _run git commit --quiet --all --message="${message}"
+  _run git push --force --quiet --set-upstream origin "$branch_name"
+
+  pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
+  pr_status="$(echo "$pr_data" | $YQ e '.state')"
+  pr_link="$(echo "$pr_data" | $YQ e '.url')"
+
+  case "$pr_status" in
+    "OPEN")
+      _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
+      ;;
+    *)
+      pr_link=$(_run gh pr create \
+               --head "$branch_name" \
+               --reviewer "${userGithubHandle}" \
+               --assignee "${userGithubHandle}" \
+               --title "${message}" \
+               --body "$PULL_REQUEST_BODY")
+      _run gh pr merge --squash --auto "$branch_name"
+      ;;
+  esac
+
+  echo "> reported ${file} at ${pr_link}"
+}
+
 main() {
-  local dry_run=false
+  local DRY_RUN=false
   local reporting=false
 
   args=()
   while test $# -gt 0; do
     case "$1" in
       --dry-run)
-        dry_run=true
-        echo "> dry_run=$dry_run"
+        DRY_RUN=true
+        echo "> dry_run=$DRY_RUN"
         ;;
       -r|--report)
         reporting=true
@@ -121,54 +172,9 @@ main() {
       repository_name="$(git remote get-url origin --push | sed -n 's#.*:\(.*\)\.git#\1#p')"
     fi
 
-    function _run () {
-        if $dry_run; then
-            echo "$*"
-        else
-            "$@"
-        fi
-    }
-
     for commit in "${expired[@]}"; do
-      file="$(echo "$commit" | $YQ e '.file')"
-      commit_sha="$(echo "$commit" | $YQ e '.hash')"
-      branch_name="clean-$file"
-
-      echo "> reporting $file@$commit_sha on $branch_name"
-
-      # Map the git commit author to its github handle using github api
-      userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
-
-      message="${COMMIT_MESSAGE_PREFIX}${file}"
-
-      # Create the git branch
-      $dry_run && echo "> dry run active, otherwise would run..."
-      _run git checkout --quiet -b "$branch_name"
-      _run git rm --quiet -- "${file}"
-      _run git commit --quiet --all --message="${message}"
-      _run git push --force --quiet --set-upstream origin "$branch_name"
-
-      pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
-      pr_status="$(echo "$pr_data" | $YQ e '.state')"
-      pr_link="$(echo "$pr_data" | $YQ e '.url')"
-
-      case "$pr_status" in
-        "OPEN")
-          _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
-          ;;
-        *)
-          pr_link=$(_run gh pr create \
-                   --head "$branch_name" \
-                   --reviewer "${userGithubHandle}" \
-                   --assignee "${userGithubHandle}" \
-                   --title "${message}" \
-                   --body "$PULL_REQUEST_BODY")
-          _run gh pr merge --squash --auto "$branch_name"
-          ;;
-      esac
-
-      _run echo "> reported ${file} at ${pr_link}"
-      _run git checkout --quiet "$start_branch"
+      echo "> reporting $file@$commit_sha"
+      report "$commit" "$start_branch" "$repository_name" || continue
     done
   fi
 }
