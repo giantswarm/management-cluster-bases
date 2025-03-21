@@ -1,0 +1,17 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: testing-no-valid-until
+  annotations:
+    motivation: testing
+spec:
+  targetTags:
+    - name: installation
+      value: some-installation
+  matchers:
+    - name: name
+      value: abc
+      isRegex: true
+    - name: alertname
+      value: FluxHelmReleaseFailed
+      isRegex: false
