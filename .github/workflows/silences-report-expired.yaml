@@ -1,6 +1,10 @@
 name: Report expired silences
 
-on: [push, pull_request]
+on:
+  schedule:
+    # At 09:00 on Monday.
+    - cron:  '0 9 * * 1'
+  workflow_dispatch:
 
 jobs:
   silences_report_expired:
