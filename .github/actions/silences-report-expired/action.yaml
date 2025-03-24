@@ -1,0 +1,42 @@
+# Github action used to report expired silences CRs in the repository.
+# Using an action rather than a workflow to be able to pass different inputs depending where it is called from, since workflows do not support inputs for push events.
+name: "Silences report expired"
+description: "Report expired silences CRs in the repository"
+inputs:
+  directory_pattern:
+    description: "Bash pattern to match directories containing silence CR files"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # Set PATH to include GitHub Action path
+    # This is needed to run the silences-report-expired.sh script
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+    # Install dependencies
+    # yq: is used by silences-report-expired.sh
+    - name: Install dependencies
+      shell: bash
+      run: |
+        make bin/yq
+    # Check for non-empty directory_pattern and valid directories
+    - name: Check directory pattern
+      shell: bash
+      run: |
+        test -n "${{ inputs.directory_pattern }}" && \
+          printf "%s\n" ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
+    # Run files expiration report for each directory
+    - name: Report expired silences
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        for directory in ${{ inputs.directory_pattern }}; do
+          echo "Report silences from $directory"
+          silences-report-expired.sh --report "$directory"
+        done
