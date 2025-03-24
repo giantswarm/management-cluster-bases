@@ -118,12 +118,13 @@ report() {
       _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
       ;;
     *)
-      pr_link=$(_run gh pr create \
+      pr_link=$(echo "$PULL_REQUEST_BODY" | \
+        _run gh pr create \
                --head "$branch_name" \
                --reviewer "${userGithubHandle}" \
                --assignee "${userGithubHandle}" \
                --title "${message}" \
-               --body "$PULL_REQUEST_BODY")
+               --body -)
       # Ignore auto merge error, which might be due to repository settings
       _run gh pr merge --squash --auto "$branch_name" || true
       ;;
