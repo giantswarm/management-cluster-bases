@@ -1,0 +1,17 @@
+name: Report expired silences
+
+on:
+  schedule:
+    # At 09:00 on Monday.
+    - cron:  '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  silences_report_expired:
+    runs-on: ubuntu-latest
+    name: Report expired silences
+    steps:
+      - uses: actions/checkout@v4
+      - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@main
+        with:
+          directory_pattern: '*/silences'
