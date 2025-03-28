@@ -3,6 +3,7 @@
 set -euo pipefail
 
 YQ="bin/yq"
+KUSTOMIZATION_FILENAME="kustomization.yaml"
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -56,7 +57,7 @@ main() {
 
   silences_path="${git_root}/${1}"
   # Assume kustomization.yaml is at root of silences path
-  kustomization_path="$silences_path/kustomization.yaml"
+  kustomization_path="$silences_path/$KUSTOMIZATION_FILENAME"
 
   # List resources referenced in kustomization.yaml
   KUSTOMIZATION_RESOURCES="$($YQ e '.resources[]' "$kustomization_path")"
