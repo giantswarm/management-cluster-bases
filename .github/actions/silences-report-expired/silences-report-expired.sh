@@ -11,10 +11,10 @@ PULL_REQUEST_BODY="This pull request was automatically created using the $(basen
 
 If you are assigned for review this means you created a silence which is now expired, based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
-If this correct please approve this PR and make sure it is being merged, otherwise feel free to update to extend or set the \`valid-until\` annotation, see https://github.com/giantswarm/silences#readme.
+If this is correct please approve this PR and make sure it is being merged, otherwise feel free to update or extend the \`valid-until\` annotation, see https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence
 
 Thanks"
-PULL_REQUEST_REMINDER="please merge this PR to delete this silence or update the \`valid-until\` annotation"
+PULL_REQUEST_REMINDER="Please merge this PR to delete this silence or update the \`valid-until\` annotation."
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 DATE="$(command -v gdate || command -v date)"
