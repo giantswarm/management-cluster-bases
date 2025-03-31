@@ -13,4 +13,4 @@ jobs:
           fetch-depth: 0
       - uses: giantswarm/management-cluster-bases/.github/actions/silences-validate@main
         with:
-          directory_pattern: '*/silences'
+          directory_pattern: 'bases/silences'
