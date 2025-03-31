@@ -26,6 +26,7 @@ runs:
     - name: Check directory pattern
       shell: bash
       run: |
+        shopt -s globstar
         test -n "${{ inputs.directory_pattern }}" && \
           printf "%s\n" ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
     # Run files expiration report for each directory
@@ -34,6 +35,7 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
+        shopt -s globstar
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         for directory in ${{ inputs.directory_pattern }}; do
