@@ -28,12 +28,14 @@ runs:
     - name: Check directory pattern
       shell: bash
       run: |
+        shopt -s globstar
         test -n "${{ inputs.directory_pattern }}" && \
           printf "%s\n" ${{ inputs.directory_pattern }} | xargs -I{} test -d {} && echo ok
     # Run files validation for each directory
     - name: Validate silences files
       shell: bash
       run: |
+        shopt -s globstar
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silences files in $directory"
           silences-validate.sh "$directory"
@@ -44,6 +46,7 @@ runs:
     - name: Validate silences CRs
       shell: bash
       run: |
+        shopt -s globstar
         kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/master/config/crd/monitoring.giantswarm.io_silences.yaml
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silences CRs in $directory"

@@ -14,4 +14,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: giantswarm/management-cluster-bases/.github/actions/silences-report-expired@main
         with:
-          directory_pattern: '*/silences'
+          directory_pattern: 'bases/silences'

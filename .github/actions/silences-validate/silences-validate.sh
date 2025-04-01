@@ -63,7 +63,7 @@ main() {
   KUSTOMIZATION_RESOURCES="$($YQ e '.resources[]' "$kustomization_path")"
 
   # Detect files which changed between the current HEAD and the remote default branch in the silences path
-  mapfile -t changed_files < <(git --no-pager diff --diff-filter=d --name-only HEAD "$merge_base" -- "${silences_path}" ":(exclude)$kustomization_path")
+  mapfile -t changed_files < <(git --no-pager diff --diff-filter=d --name-only "$merge_base" HEAD -- "${silences_path}" ":(exclude)$kustomization_path")
   echo "> found ${#changed_files[@]} changed files between $(git rev-parse --abbrev-ref HEAD) and $default_branch"
 
   # Run file checks
