@@ -4,5 +4,5 @@ data:
     organization: giantswarm
 kind: ConfigMap
 metadata:
-  name: gateway-api-bundle-user-values
+  name: gateway-api-bundle-base
   namespace: org-giantswarm
