@@ -1,0 +1,19 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  labels:
+    app.kubernetes.io/name: gateway-api-bundle
+    app-operator.giantswarm.io/version: 0.0.0
+  name: gateway-api-bundle
+  namespace: org-giantswarm
+spec:
+  catalog: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: gateway-api-bundle
+  namespace: org-giantswarm
+  userConfig:
+    configMap:
+      name: gateway-api-bundle-user-values
+      namespace: org-giantswarm
+  version: 0.3.0
