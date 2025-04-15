@@ -3,3 +3,4 @@ resources:
   - karpenter.yaml
   - metricforwardingerrors.yaml
   - mf1.yaml
+  - mf2.yaml

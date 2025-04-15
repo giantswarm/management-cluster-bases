@@ -1,0 +1,32 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  annotations:
+    config.kubernetes.io/origin: |
+      path: metricforwardingerrors.yaml
+    issue: https://github.com/giantswarm/giantswarm/issues/32873
+    motivation: This alert is noisy and we are working on a fix.
+    valid-until: "2025-04-15"
+  creationTimestamp: "2025-03-25T11:55:02Z"
+  finalizers:
+    - operatorkit.giantswarm.io/silence-operator-silence-controller
+  generation: 5
+  labels:
+    kustomize.toolkit.fluxcd.io/name: silences
+    kustomize.toolkit.fluxcd.io/namespace: flux-giantswarm
+  name: metricforwardingerrors
+  resourceVersion: "1784890403"
+  uid: 6a92b0fa-3e92-4fce-909f-d553151cc21e
+spec:
+  matchers:
+    - isRegex: false
+      name: alertname
+      value: MetricForwardingErrors
+    - isEqual: false
+      isRegex: false
+      name: alertname
+      value: Heartbeat
+    - isEqual: false
+      isRegex: false
+      name: all_pipelines
+      value: "true"
