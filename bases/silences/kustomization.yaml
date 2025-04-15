@@ -1,3 +1,4 @@
 namePrefix: common-
 resources:
   - karpenter.yaml
+  - metricforwardingerrors.yaml
