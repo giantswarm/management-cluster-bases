@@ -1,0 +1,13 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: karpentercannotregisternewnodes
+  annotations:
+    motivation: The alert is currently not working as expected
+    valid-until: "2025-06-01"
+    issue: https://github.com/giantswarm/giantswarm/issues/32502
+spec:
+  matchers:
+    - name: alertname
+      value: KarpenterCanNotRegisterNewNodes
+      isRegex: false
