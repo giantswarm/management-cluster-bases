@@ -4,3 +4,4 @@ resources:
   - metricforwardingerrors.yaml
   - mf1.yaml
   - mf2.yaml
+  - mf3.yaml
