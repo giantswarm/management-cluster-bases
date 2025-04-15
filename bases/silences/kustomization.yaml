@@ -1,2 +1,3 @@
 namePrefix: common-
-resources: []
+resources:
+  - karpenter.yaml
