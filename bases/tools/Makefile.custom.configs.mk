@@ -1,3 +1,5 @@
+SHELL = /bin/sh
+
 SHARED_CONFIGS_BRANCH ?= main
 
 TMPDIR := $(shell mktemp -d)
