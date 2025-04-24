@@ -12,12 +12,13 @@ spec:
         kind: HelmRepository
         name: giantswarm-catalog
         namespace: flux-giantswarm
-      version: 0.3.0
+      version: 0.3.1
   install:
     remediation:
       retries: 10
       remediateLastFailure: false
   interval: 1m
+  releaseName: konfigure-operator
   targetNamespace: giantswarm
   timeout: 10m
   valuesFrom:
