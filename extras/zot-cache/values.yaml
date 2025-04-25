@@ -56,7 +56,42 @@ configFiles:
             "dedupe": true,
             "gc": true,
             "gcDelay": "1h",
-            "gcInterval": "24h"
+            "gcInterval": "24h",
+            "retention": {
+            "dryRun": false,
+            "policies": [
+              {
+                "repositories": [
+                  "giantswarm/*"
+                ],
+                "deleteReferrers": true,
+                "deleteUntagged": true,
+                "keepTags": [
+                  {
+                    "patterns": [
+                      "^v?[0-9]+\\\\.[0-9]+\\\\.[0-9]+$"
+                    ],
+                    "mostRecentlyPulledCount": 3
+                  },
+                  {
+                    "patterns": [
+                      "^v?[0-9]+\\\\.[0-9]+\\\\.[0-9]+-[0-9a-f]{5,40}$"
+                    ],
+                    "mostRecentlyPulledCount": 1
+                  }
+                ]
+              },
+              {
+                "keepTags": [
+                  {
+                    "patterns": [
+                      ".*"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         "http":
         {
