@@ -1,4 +1,5 @@
 namePrefix: common-
 resources:
+  - alloy-unhealthy-components.yaml
   - karpenter.yaml
   - metricforwardingerrors.yaml
