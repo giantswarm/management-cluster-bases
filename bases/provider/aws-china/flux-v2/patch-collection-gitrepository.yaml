@@ -5,3 +5,5 @@ metadata:
   namespace: flux-giantswarm
 spec:
   url: https://github.com/giantswarm/aws-app-collection
+  ref:
+    branch: vintage
