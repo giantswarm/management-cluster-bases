@@ -1,4 +1,4 @@
-SHARED_CONFIGS_BRANCH ?= main
+SHARED_CONFIGS_BRANCH ?= vintage
 
 TMPDIR := $(shell mktemp -d)
 
