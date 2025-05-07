@@ -109,7 +109,7 @@ report() {
   _run git rm --quiet -- "${file}"
   if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
     filename="${file##*/}"
-    _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'))' "$directory/$KUSTOMIZATION_FILENAME"
+    _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'"))' "$directory/$KUSTOMIZATION_FILENAME"
     _run git add "$directory/$KUSTOMIZATION_FILENAME"
   fi
   _run git commit --quiet --all --message="${message}"
