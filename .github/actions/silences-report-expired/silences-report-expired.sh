@@ -83,9 +83,10 @@ find_expired() {
 
 report() {
   local file="$1"
-  local commit_sha="$2"
-  local start_branch="$3"
-  local repository_name="$4"
+  local directory="$2"
+  local commit_sha="$3"
+  local start_branch="$4"
+  local repository_name="$5"
 
   branch_name="clean-$file"
 
@@ -106,6 +107,11 @@ report() {
   $DRY_RUN && echo "> dry run active, otherwise would run..."
   _run git checkout --quiet -b "$branch_name" "$start_branch"
   _run git rm --quiet -- "${file}"
+  if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
+    filename="${file##*/}"
+    _run "$YQ" -y -i  'del(.resources[] | select(. == "'"$filename"'))' "$directory/$KUSTOMIZATION_FILENAME"
+    _run git add "$directory/$KUSTOMIZATION_FILENAME"
+  fi
   _run git commit --quiet --all --message="${message}"
   _run git push --force --quiet --set-upstream origin "$branch_name"
 
@@ -182,7 +188,7 @@ main() {
       file="$(echo "$commit" | $YQ e '.file')"
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
 
-      if ! report "$file" "$commit_sha" "$start_branch" "$repository_name"; then
+      if ! report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name"; then
         echo -e "> reporting ${file} ${RED}failed${NC}"
         error=true
         continue
