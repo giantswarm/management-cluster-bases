@@ -46,10 +46,34 @@ are not accidentally removed from your cluster.
 
 Replace all instances of `MC_NAME` with the name of your management cluster.
 
+**management-clusters/MC_NAME/extras/kustomization.yaml**
 ```yaml
 resources:
-  - https://github.com/giantswarm/management-cluster-bases//extras/backstage/?ref=main
-  - ./backstage
+  # ...
+  - ./backstage/
+```
+
+Create `backstage` subdirectory inside the `management-clusters/MC_NAME/extras` folder. Add `kustomization.yaml` file with the folowing content. In this example we have three deployments of Backstage:
+
+**management-clusters/MC_NAME/extras/backstage/kustomization.yaml**
+```yaml
+resources:
+  - https://github.com/giantswarm/management-cluster-bases/extras/backstage/base?ref=main
+  - ./backstage/
+  - ./backstage-headless-service/
+  - ./backstage-headless-service-customer/
+```
+
+Next, we need to create subdirectory for each deployment with all configmaps and secrets. Additionally add `kustomization.yaml` file with the following content. If there are more than one deployment, use `nameSuffix` to avoid name collisions.
+
+**management-clusters/MC_NAME/extras/backstage/backstage-headless-service/kustomization.yaml**
+```yaml
+nameSuffix: -headless-service
+resources:
+  - https://github.com/giantswarm/management-cluster-bases/extras/backstage/main?ref=main
+  - app-config.yaml
+  - user-values.yaml
+  - user-secrets.enc.yaml
 patches:
   - patch: |
       apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -60,26 +84,23 @@ patches:
       spec:
         valuesFrom:
           - kind: ConfigMap
-            name: backstage-app-config
+            name: shared-config-backstage
             valuesKey: values
-          - kind: ConfigMap
-            name: backstage-user-values
-            valuesKey: values
-          - kind: Secret
-            name: backstage-user-secrets
-            valuesKey: values
-          - kind: Secret
-            name: backstage-github-app-credentials
-            valuesKey: values
+          
+          # include values from configmaps and secrets
+          # - kind: ConfigMap
+          #   name: app-config-backstage
+          #   valuesKey: values
+          # - kind: ConfigMap
+          #   name: user-values-backstage
+          #   valuesKey: values
+          # - kind: Secret
+          #   name: user-secrets-backstage
+          #   valuesKey: values
     target:
       kind: HelmRelease
       name: backstage
       namespace: flux-giantswarm
 ```
 
-Next, we need to create the `backstage` subdirectory referenced in the `kustomization.yaml`
-with ConfigMap and Secrets. Secret files should be encrypted.
-
-Commit these changes to git and raise a PR to have this merged into the main
-branch. Once your PR is accepted and merged, backstage will deploy to your
-management cluster during the next full reconciliation cycle.
+Commit these changes to git and raise a PR to have this merged into the main branch. Once your PR is accepted and merged, backstage will be deployed to your management cluster during the next full reconciliation cycle.

@@ -1,4 +1,4 @@
 resources:
-- helm-release.yaml
-- namespace.yaml
+- main/helm-release.yaml
+- base/namespace.yaml
 - backstage-shared-config.yaml
