@@ -67,8 +67,9 @@ find_expired() {
       expiration_date="$($DATE "+%s" -d "${valid_until_annotation}")"
     fi
 
-    # Check if Silence is expired
-    if [ "${expiration_date}" -le "${today_date}" ]; then
+    # Check if Silence is about to expire or already expired
+    warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
+    if [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
       printf "${RED} - EXPIRED${NC}" >&2
       expired+=("$latest_commit")
     fi
@@ -92,6 +93,19 @@ report() {
 
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
+  
+  # Check if silence has a linked open issue and skip if yes
+  issue_url="$($YQ e '.metadata.annotations.issue' "$directory/$file")"
+
+  if [[ -n "$issue_url" && "$issue_url" != "null" ]]; then
+    issue_number=$(echo "$issue_url" | grep -oE '[0-9]+$')
+    issue_state=$(gh issue view "$issue_number" --json state -q '.state' 2>/dev/null || echo "UNKNOWN")
+
+    if [[ "$issue_state" == "OPEN" ]]; then
+      echo "> skipping $file because linked issue #$issue_number is still open"
+      return 0
+    fi
+  fi
 
   message="${COMMIT_MESSAGE_PREFIX}${file}"
 

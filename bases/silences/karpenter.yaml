@@ -1,13 +1,12 @@
 apiVersion: monitoring.giantswarm.io/v1alpha1
 kind: Silence
 metadata:
-  name: karpentercannotregisternewnodes
+  name: test-silence-for-workflow
   annotations:
-    motivation: The alert is currently not working as expected
-    valid-until: "2025-06-01"
-    issue: https://github.com/giantswarm/giantswarm/issues/32502
+    motivation: "This is a test silence created to verify the expiration workflow"
+    valid-until: "2025-05-16"
 spec:
   matchers:
     - name: alertname
-      value: KarpenterCanNotRegisterNewNodes
+      value: TestAlertForSilence
       isRegex: false
