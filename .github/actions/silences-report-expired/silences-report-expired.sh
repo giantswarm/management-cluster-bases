@@ -164,7 +164,7 @@ report() {
 
     [[ "$mode" == "expired" ]] && _run gh pr merge --squash --auto "$branch_name" || true
   fi
-
+  }
 main() {
   local DRY_RUN=false
   local reporting=false
