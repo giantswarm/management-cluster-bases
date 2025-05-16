@@ -129,7 +129,7 @@ report() {
   # Create the git branch
   $DRY_RUN && echo "> dry run active, otherwise would run..."
   _run git checkout --quiet -b "$branch_name" "$start_branch"
-  _run git rm --quiet -- "${file}"
+  _run git rm --quiet -- "${directory}/${file}"
   if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
     filename="${file##*/}"
     _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'"))' "$directory/$KUSTOMIZATION_FILENAME"
