@@ -7,7 +7,7 @@ KUSTOMIZATION_FILENAME="kustomization.yaml"
 
 DEFAULT_EXPIRATION="14 days"
 COMMIT_MESSAGE_PREFIX="remove expired silence - "
-PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename "$0") script.
+PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename $0) script.
 
 If you are assigned for review, this means you created a silence which is now expired based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
@@ -105,7 +105,6 @@ report() {
 
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
-
 
   message="${COMMIT_MESSAGE_PREFIX}${file}"
 
