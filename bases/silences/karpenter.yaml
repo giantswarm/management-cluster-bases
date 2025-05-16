@@ -4,7 +4,7 @@ metadata:
   name: test-silence-for-workflow
   annotations:
     motivation: "This is a test silence created to verify the expiration workflow"
-    valid-until: "2025-05-16"
+    valid-until: "2025-05-18"
 spec:
   matchers:
     - name: alertname
