@@ -9,7 +9,7 @@ DEFAULT_EXPIRATION="14 days"
 COMMIT_MESSAGE_PREFIX="remove expired silence - "
 PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename $0) script.
 
-If you are assigned for review, this means you created a silence which is now expired based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
+If you are assigned for review, this means you created a silence which is **now expired** based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
 If this is correct, please approve this PR and make sure it is being merged. Otherwise, feel free to update or extend the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
 PULL_REQUEST_BODY_SOON="This pull request was automatically created using the $(basename "$0") script.
