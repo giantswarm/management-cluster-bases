@@ -1,0 +1,12 @@
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: jobscrapingfailure
+  annotations:
+    motivation: We did a review of jobs failing everywhere, let's give teams time to manage them.
+    valid-until: "2025-07-29"
+spec:
+  matchers:
+    - name: alertname
+      value: JobScrapingFailure
+      isRegex: false
