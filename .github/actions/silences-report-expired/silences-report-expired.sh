@@ -104,7 +104,7 @@ report() {
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
 
   # Check if silence has a linked open issue and skip if yes
-  issue_url="$($YQ e '.metadata.annotations.issue' "$directory/$file")"
+  issue_url="$($YQ e '.metadata.annotations.issue' "$file")"
 
   if [[ -n "$issue_url" && "$issue_url" != "null" ]]; then
     issue_number=$(echo "$issue_url" | grep -oE '[0-9]+$')
@@ -129,7 +129,7 @@ report() {
   # Create the git branch
   $DRY_RUN && echo "> dry run active, otherwise would run..."
   _run git checkout --quiet -b "$branch_name" "$start_branch"
-  _run git rm --quiet -- "${directory}/${file}"
+  _run git rm --quiet -- "$file"
   if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
     filename="${file##*/}"
     _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'"))' "$directory/$KUSTOMIZATION_FILENAME"
