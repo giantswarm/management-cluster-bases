@@ -2,8 +2,8 @@ name: Report expired silences
 
 on:
   schedule:
-    # At 09:00 on Monday.
-    - cron:  '0 9 * * 1'
+    # Everyday at 09:00
+    - cron:  '0 9 * * *'
   workflow_dispatch:
 
 jobs:

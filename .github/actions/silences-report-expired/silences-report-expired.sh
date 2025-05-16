@@ -7,13 +7,16 @@ KUSTOMIZATION_FILENAME="kustomization.yaml"
 
 DEFAULT_EXPIRATION="14 days"
 COMMIT_MESSAGE_PREFIX="remove expired silence - "
-PULL_REQUEST_BODY="This pull request was automatically created using the $(basename $0) script.
+PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename $0) script.
 
-If you are assigned for review this means you created a silence which is now expired, based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
+If you are assigned for review, this means you created a silence which is **now expired** based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
-If this is correct please approve this PR and make sure it is being merged, otherwise feel free to update or extend the \`valid-until\` annotation, see https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence
+If this is correct, please approve this PR and make sure it is being merged. Otherwise, feel free to update or extend the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
+PULL_REQUEST_BODY_SOON="This pull request was automatically created using the $(basename "$0") script.
 
-Thanks"
+If you are assigned for review, this means you created a silence which is **expiring soon**, based on the \`valid-until\` annotation. The silence has **not yet been removed from AlertManager**, but we suggest you check and update the annotation if needed.
+
+If this is correct, please approve this PR or update the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
 PULL_REQUEST_REMINDER="Please merge this PR to delete this silence or update the \`valid-until\` annotation."
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
@@ -44,6 +47,7 @@ find_expired() {
   local expiration_date
   local valid_until_annotation
   local expired=()
+  local expiring_soon=()
 
   today_date="$($DATE "+%s")"
 
@@ -67,17 +71,25 @@ find_expired() {
       expiration_date="$($DATE "+%s" -d "${valid_until_annotation}")"
     fi
 
-    # Check if Silence is expired
-    if [ "${expiration_date}" -le "${today_date}" ]; then
+    # Check if Silence is about to expire or already expired
+    warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
+     if [ "$expiration_date" -le "$today_date" ]; then
       printf "${RED} - EXPIRED${NC}" >&2
       expired+=("$latest_commit")
+    elif [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
+      printf "${RED} - EXPIRING SOON${NC}" >&2
+      expiring_soon+=("$latest_commit")
     fi
     echo "" >&2
   done
-  echo "> found ${#expired[@]} expired silence(s)" >&2
+
+  echo "> found ${#expired[@]} expired and ${#expiring_soon[@]} expiring soon silence(s)" >&2
 
   for silence in "${expired[@]}"; do
-      echo "$silence"
+    echo "EXPIRED::$silence"
+  done
+  for silence in "${expiring_soon[@]}"; do
+    echo "EXPIRING_SOON::$silence"
   done
 }
 
@@ -87,6 +99,7 @@ report() {
   local commit_sha="$3"
   local start_branch="$4"
   local repository_name="$5"
+  local mode="${6:-expired}"  # default is expired
 
   branch_name="clean-$file"
 
@@ -106,7 +119,7 @@ report() {
   # Create the git branch
   $DRY_RUN && echo "> dry run active, otherwise would run..."
   _run git checkout --quiet -b "$branch_name" "$start_branch"
-  _run git rm --quiet -- "${file}"
+  _run git rm --quiet -- "$file"
   if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
     filename="${file##*/}"
     _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'"))' "$directory/$KUSTOMIZATION_FILENAME"
@@ -118,24 +131,23 @@ report() {
   pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
   pr_status="$(echo "$pr_data" | $YQ e '.state')"
   pr_link="$(echo "$pr_data" | $YQ e '.url')"
+  pr_body="$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")"
 
-  case "$pr_status" in
-    "OPEN")
-      _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
-      ;;
-    *)
-      pr_link=$(_run gh pr create \
-               --head "$branch_name" \
-               --reviewer "${userGithubHandle}" \
-               --assignee "${userGithubHandle}" \
-               --title "${message}" \
-               --body "$PULL_REQUEST_BODY")
-      # Ignore auto merge error, which might be due to repository settings
-      _run gh pr merge --squash --auto "$branch_name" || true
-      ;;
-  esac
-}
+  if [[ "$pr_status" == "OPEN" ]]; then
+    _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
+    
+    _run gh pr edit "$branch_name" --body "$pr_body"
+  else
+    pr_link=$(_run gh pr create \
+      --head "$branch_name" \
+      --reviewer "${userGithubHandle}" \
+      --assignee "${userGithubHandle}" \
+      --title "${message}" \
+      --body "$pr_body")
 
+    [[ "$mode" == "expired" ]] && _run gh pr merge --squash --auto "$branch_name" || true
+  fi
+  }
 main() {
   local DRY_RUN=false
   local reporting=false
@@ -166,9 +178,20 @@ main() {
   directory="$1"
 
   echo "> start with directory: $directory"
+  local expired_raw=()
+  mapfile -t expired_raw < <(find_expired "$directory")
 
-  local expired=()
-  mapfile expired < <(find_expired "$directory")
+  expired=()
+  expiring_soon=()
+  for line in "${expired_raw[@]}"; do
+    type="${line%%::*}"
+    data="${line#*::}"
+    if [[ "$type" == "EXPIRED" ]]; then
+      expired+=("$data")
+    elif [[ "$type" == "EXPIRING_SOON" ]]; then
+      expiring_soon+=("$data")
+    fi
+  done
 
   local error=false
 
@@ -184,17 +207,18 @@ main() {
       repository_name="$(git remote get-url origin --push | sed -n 's#.*:\(.*\)\.git#\1#p')"
     fi
 
+    # Handle expired: auto-merge
     for commit in "${expired[@]}"; do
       file="$(echo "$commit" | $YQ e '.file')"
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
+      report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "expired"
+    done
 
-      if ! report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name"; then
-        echo -e "> reporting ${file} ${RED}failed${NC}"
-        error=true
-        continue
-      fi
-
-      echo "> reported ${file} at ${pr_link}"
+    # Handle expiring soon: no auto-merge
+    for commit in "${expiring_soon[@]}"; do
+      file="$(echo "$commit" | $YQ e '.file')"
+      commit_sha="$(echo "$commit" | $YQ e '.hash')"
+      report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "soon"
     done
   fi
 
