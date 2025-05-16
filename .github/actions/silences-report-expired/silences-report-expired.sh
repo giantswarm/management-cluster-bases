@@ -148,29 +148,22 @@ report() {
   pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
   pr_status="$(echo "$pr_data" | $YQ e '.state')"
   pr_link="$(echo "$pr_data" | $YQ e '.url')"
+  pr_body=$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")
 
-  case "$pr_status" in
-    "OPEN")
-      _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
-      ;;
-    *)
-      if [[ "$mode" == "expired" ]]; then
-        pr_body="$PULL_REQUEST_BODY_EXPIRED"
-      else
-        pr_body="$PULL_REQUEST_BODY_SOON"
-      fi
-      pr_link=$(_run gh pr create \
-              --head "$branch_name" \
-              --reviewer "${userGithubHandle}" \
-              --assignee "${userGithubHandle}" \
-              --title "${message}" \
-              --body "$pr_body")
-      if [[ "$mode" == "expired" ]]; then
-        _run gh pr merge --squash --auto "$branch_name" || true
-      fi
-      ;;
-  esac
-}
+  if [[ "$pr_status" == "OPEN" ]]; then
+    _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
+    
+    _run gh pr edit "$branch_name" --body "$pr_body"
+  else
+    pr_link=$(_run gh pr create \
+      --head "$branch_name" \
+      --reviewer "${userGithubHandle}" \
+      --assignee "${userGithubHandle}" \
+      --title "${message}" \
+      --body "$pr_body")
+
+    [[ "$mode" == "expired" ]] && _run gh pr merge --squash --auto "$branch_name" || true
+  fi
 
 main() {
   local DRY_RUN=false
