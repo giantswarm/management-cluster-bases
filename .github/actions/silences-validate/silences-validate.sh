@@ -30,6 +30,18 @@ valid_until_date() {
       return 1
     fi
     echo "  [ok] valid until correct $valid_until"
+    # Check if valid-until date falls on a weekend
+    day_of_week="$(date -d "$valid_until_annotation" '+%u')" # 6=Saturday, 7=Sunday
+    if [[ "$day_of_week" -ge 6 ]]; then
+      current_branch="$(git branch --show-current)"
+      repo_name="$(git remote get-url origin | sed -n 's#.*:\(.*\)\.git#\1#p')"
+      commit_sha="$(git log -n 1 --format="%H" -- "$1")"
+      userGithubHandle="$(gh api "/repos/${repo_name}/commits/${commit_sha}" -q '.author.login')"
+      weekend_msg="Note: The \`valid-until\` date for \`$(basename "$1")\` falls on a **weekend** ($valid_until_annotation)."
+
+      echo "  [warn] $weekend_msg"
+      _run gh pr comment "$current_branch" --body "@${userGithubHandle} $weekend_msg"
+    fi
   else
     error "  [err] valid until required"
     return 1
