@@ -221,14 +221,14 @@ done
 
     # Handle expired: auto-merge
     for commit in "${expired[@]}"; do
-      file="$(echo "$commit" | $YQ e '.file' | sed "s|^$directory/||")"
+      file="$(echo "$commit" | $YQ e '.file')"
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
       report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "expired"
     done
 
     # Handle expiring soon: no auto-merge
     for commit in "${expiring_soon[@]}"; do
-      file="$(echo "$commit" | $YQ e '.file' | sed "s|^$directory/||")"
+      file="$(echo "$commit" | $YQ e '.file')"
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
       report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "soon"
     done
