@@ -44,6 +44,7 @@ find_expired() {
   local expiration_date
   local valid_until_annotation
   local expired=()
+  local expiring_soon=()
 
   today_date="$($DATE "+%s")"
 
@@ -69,16 +70,23 @@ find_expired() {
 
     # Check if Silence is about to expire or already expired
     warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
-    if [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
+     if [ "$expiration_date" -le "$today_date" ]; then
       printf "${RED} - EXPIRED${NC}" >&2
       expired+=("$latest_commit")
+    elif [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
+      printf "${RED} - EXPIRING SOON${NC}" >&2
+      expiring_soon+=("$latest_commit")
     fi
     echo "" >&2
   done
-  echo "> found ${#expired[@]} expired silence(s)" >&2
+
+  echo "> found ${#expired[@]} expired and ${#expiring_soon[@]} expiring soon silence(s)" >&2
 
   for silence in "${expired[@]}"; do
-      echo "$silence"
+    echo "EXPIRED::$silence"
+  done
+  for silence in "${expiring_soon[@]}"; do
+    echo "EXPIRING_SOON::$silence"
   done
 }
 
@@ -88,12 +96,13 @@ report() {
   local commit_sha="$3"
   local start_branch="$4"
   local repository_name="$5"
+  local mode="${6:-expired}"  # default is expired
 
   branch_name="clean-$file"
 
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
-  
+
   # Check if silence has a linked open issue and skip if yes
   issue_url="$($YQ e '.metadata.annotations.issue' "$directory/$file")"
 
@@ -139,13 +148,14 @@ report() {
       ;;
     *)
       pr_link=$(_run gh pr create \
-               --head "$branch_name" \
-               --reviewer "${userGithubHandle}" \
-               --assignee "${userGithubHandle}" \
-               --title "${message}" \
-               --body "$PULL_REQUEST_BODY")
-      # Ignore auto merge error, which might be due to repository settings
-      _run gh pr merge --squash --auto "$branch_name" || true
+              --head "$branch_name" \
+              --reviewer "${userGithubHandle}" \
+              --assignee "${userGithubHandle}" \
+              --title "${message}" \
+              --body "$PULL_REQUEST_BODY")
+      if [[ "$mode" == "expired" ]]; then
+        _run gh pr merge --squash --auto "$branch_name" || true
+      fi
       ;;
   esac
 }
@@ -180,9 +190,20 @@ main() {
   directory="$1"
 
   echo "> start with directory: $directory"
+  local expired_raw=()
+mapfile -t expired_raw < <(find_expired "$directory")
 
-  local expired=()
-  mapfile expired < <(find_expired "$directory")
+expired=()
+expiring_soon=()
+for line in "${expired_raw[@]}"; do
+  type="${line%%::*}"
+  data="${line#*::}"
+  if [[ "$type" == "EXPIRED" ]]; then
+    expired+=("$data")
+  elif [[ "$type" == "EXPIRING_SOON" ]]; then
+    expiring_soon+=("$data")
+  fi
+done
 
   local error=false
 
@@ -198,17 +219,18 @@ main() {
       repository_name="$(git remote get-url origin --push | sed -n 's#.*:\(.*\)\.git#\1#p')"
     fi
 
+    # Handle expired: auto-merge
     for commit in "${expired[@]}"; do
       file="$(echo "$commit" | $YQ e '.file')"
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
+      report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "expired"
+    done
 
-      if ! report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name"; then
-        echo -e "> reporting ${file} ${RED}failed${NC}"
-        error=true
-        continue
-      fi
-
-      echo "> reported ${file} at ${pr_link}"
+    # Handle expiring soon: no auto-merge
+    for commit in "${expiring_soon[@]}"; do
+      file="$(echo "$commit" | $YQ e '.file')"
+      commit_sha="$(echo "$commit" | $YQ e '.hash')"
+      report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "soon"
     done
   fi
 
