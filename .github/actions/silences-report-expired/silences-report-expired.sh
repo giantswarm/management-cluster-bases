@@ -11,16 +11,12 @@ PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the
 
 If you are assigned for review, this means you created a silence which is now expired based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
-If this is correct, please approve this PR and make sure it is being merged. Otherwise, feel free to update or extend the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence
-
-Thanks"
+If this is correct, please approve this PR and make sure it is being merged. Otherwise, feel free to update or extend the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
 PULL_REQUEST_BODY_SOON="This pull request was automatically created using the $(basename "$0") script.
 
 If you are assigned for review, this means you created a silence which is **expiring soon**, based on the \`valid-until\` annotation. The silence has **not yet been removed from AlertManager**, but we suggest you check and update the annotation if needed.
 
-If this is correct, please approve this PR or update the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence
-
-Thanks"
+If this is correct, please approve this PR or update the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
 PULL_REQUEST_REMINDER="Please merge this PR to delete this silence or update the \`valid-until\` annotation."
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
@@ -110,18 +106,6 @@ report() {
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
 
-  # Check if silence has a linked open issue and skip if yes
-  issue_url="$($YQ e '.metadata.annotations.issue' "$file")"
-
-  if [[ -n "$issue_url" && "$issue_url" != "null" ]]; then
-    issue_number=$(echo "$issue_url" | grep -oE '[0-9]+$')
-    issue_state=$(gh issue view "$issue_number" --json state -q '.state' 2>/dev/null || echo "UNKNOWN")
-
-    if [[ "$issue_state" == "OPEN" ]]; then
-      echo "> skipping $file because linked issue #$issue_number is still open"
-      return 0
-    fi
-  fi
 
   message="${COMMIT_MESSAGE_PREFIX}${file}"
 
@@ -148,7 +132,7 @@ report() {
   pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
   pr_status="$(echo "$pr_data" | $YQ e '.state')"
   pr_link="$(echo "$pr_data" | $YQ e '.url')"
-  pr_body=$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")
+  pr_body="$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")"
 
   if [[ "$pr_status" == "OPEN" ]]; then
     _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
@@ -196,19 +180,19 @@ main() {
 
   echo "> start with directory: $directory"
   local expired_raw=()
-mapfile -t expired_raw < <(find_expired "$directory")
+  mapfile -t expired_raw < <(find_expired "$directory")
 
-expired=()
-expiring_soon=()
-for line in "${expired_raw[@]}"; do
-  type="${line%%::*}"
-  data="${line#*::}"
-  if [[ "$type" == "EXPIRED" ]]; then
-    expired+=("$data")
-  elif [[ "$type" == "EXPIRING_SOON" ]]; then
-    expiring_soon+=("$data")
-  fi
-done
+  expired=()
+  expiring_soon=()
+  for line in "${expired_raw[@]}"; do
+    type="${line%%::*}"
+    data="${line#*::}"
+    if [[ "$type" == "EXPIRED" ]]; then
+      expired+=("$data")
+    elif [[ "$type" == "EXPIRING_SOON" ]]; then
+      expiring_soon+=("$data")
+    fi
+  done
 
   local error=false
 
