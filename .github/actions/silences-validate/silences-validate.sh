@@ -30,6 +30,13 @@ valid_until_date() {
       return 1
     fi
     echo "  [ok] valid until correct $valid_until"
+          if gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
+        repo_name="$(git remote get-url origin | sed -n 's#.*:\(.*\)\.git#\1#p')"
+        commit_sha="$(git log -n 1 --format="%H" -- "$1")"
+        userGithubHandle="$(gh api "/repos/${repo_name}/commits/${commit_sha}" -q '.author.login')"
+        weekend_msg="Note: The \`valid-until\` date for \`$(basename "$1")\` falls on a **weekend** ($valid_until_annotation)."
+        gh pr comment "$(git branch --show-current)" --body "@${userGithubHandle} $weekend_msg"
+      fi
   else
     error "  [err] valid until required"
     return 1

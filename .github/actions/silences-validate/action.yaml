@@ -34,6 +34,8 @@ runs:
     # Run files validation for each directory
     - name: Validate silences files
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         shopt -s globstar
         for directory in ${{ inputs.directory_pattern }}; do
