@@ -22,7 +22,10 @@ yaml_extension() {
 }
 
 notify_expiry_on_weekend(){
-  if gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
+  if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
+    # We can't comment if there's no PR
+    return
+  fi
   repo_name="$(git remote get-url origin | sed -n 's#.*:\(.*\)\.git#\1#p')"
   commit_sha="$(git log -n 1 --format="%H" -- "$1")"
   userGithubHandle="$(gh api "/repos/${repo_name}/commits/${commit_sha}" -q '.author.login')"
@@ -39,7 +42,7 @@ valid_until_date() {
     return 1
   fi
   if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
-    error "  [err] valid until : $valid_until"
+    error "  [err] can't parse valid until : $valid_until"
     return 1
   fi
   echo "  [ok] valid until correct $valid_until"
