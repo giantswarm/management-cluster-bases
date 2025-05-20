@@ -21,18 +21,34 @@ yaml_extension() {
   echo "  [ok] .yaml extension"
 }
 
+notify_expiry_on_weekend(){
+  if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
+    # We can't comment if there's no PR
+    return
+  fi
+  repo_name="$(git remote get-url origin | sed -n 's#.*:\(.*\)\.git#\1#p')"
+  commit_sha="$(git log -n 1 --format="%H" -- "$1")"
+  userGithubHandle="$(gh api "/repos/${repo_name}/commits/${commit_sha}" -q '.author.login')"
+  weekend_msg="Note: The \`valid-until\` date for \`$(basename "$1")\` falls on a **weekend** ($valid_until_annotation)."
+  gh pr comment "$(git branch --show-current)" --body "@${userGithubHandle} $weekend_msg"
+}
+
 # valid_until_date fail if valid-until annotation is missing or invalid
 valid_until_date() {
   valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")" || return 1
-  if [[ -n "$valid_until_annotation" ]] && [[ "$valid_until_annotation" != "null" ]]; then
-    if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
-      error "  [err] valid until : $valid_until"
-      return 1
-    fi
-    echo "  [ok] valid until correct $valid_until"
-  else
+  if [[ -z "$valid_until_annotation" ]] || [[ "$valid_until_annotation" == "null" ]]; then
     error "  [err] valid until required"
     return 1
+  fi
+  if ! valid_until="$(date --rfc-3339=date -d "${valid_until_annotation}" 2>&1)"; then
+    error "  [err] can't parse valid until : $valid_until"
+    return 1
+  fi
+  echo "  [ok] valid until correct $valid_until"
+  
+  # notify if silence expires on a weekend
+  if [[ $(date -d "$valid_until" +%u) -gt 5 ]]; then
+    notify_expiry_on_weekend "$1"
   fi
 }
 
