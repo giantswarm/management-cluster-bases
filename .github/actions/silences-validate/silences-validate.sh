@@ -31,7 +31,6 @@ notify_expiry_on_weekend(){
   userGithubHandle="$(gh api "/repos/${repo_name}/commits/${commit_sha}" -q '.author.login')"
   weekend_msg="Note: The \`valid-until\` date for \`$(basename "$1")\` falls on a **weekend** ($valid_until_annotation)."
   gh pr comment "$(git branch --show-current)" --body "@${userGithubHandle} $weekend_msg"
-fi
 }
 
 # valid_until_date fail if valid-until annotation is missing or invalid
