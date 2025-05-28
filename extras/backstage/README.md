@@ -71,9 +71,10 @@ Next, we need to create subdirectory for each deployment with all configmaps and
 nameSuffix: -headless-service
 resources:
   - https://github.com/giantswarm/management-cluster-bases/extras/backstage/main?ref=main
-  - app-config.yaml
-  - user-values.yaml
-  - user-secrets.enc.yaml
+  # include instance specific resources
+  # - app-config.yaml
+  # - user-values.yaml
+  # - user-secrets.enc.yaml
 patches:
   - patch: |
       apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -84,18 +85,18 @@ patches:
       spec:
         valuesFrom:
           - kind: ConfigMap
-            name: shared-config-backstage
+            name: shared-config-backstage-headless-service
             valuesKey: values
           
-          # include values from configmaps and secrets
+          # include values from instance specific configmaps and secrets
           # - kind: ConfigMap
-          #   name: app-config-backstage
+          #   name: app-config-backstage-headless-service
           #   valuesKey: values
           # - kind: ConfigMap
-          #   name: user-values-backstage
+          #   name: user-values-backstage-headless-service
           #   valuesKey: values
           # - kind: Secret
-          #   name: user-secrets-backstage
+          #   name: user-secrets-backstage-headless-service
           #   valuesKey: values
     target:
       kind: HelmRelease
