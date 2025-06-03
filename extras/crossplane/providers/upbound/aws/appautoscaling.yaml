@@ -2,17 +2,14 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upbound-provider-family-aws
+  name: upbound-provider-aws-appautoscaling
   namespace: crossplane
-  labels:
-    provider-family: aws
-    provider-family-member: aws-family
 spec:
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-family-aws:v${awsversion:=1.21.0}
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-appautoscaling:v${awsversion:=1.21.0}
   runtimeConfigRef:
-    name: upbound-provider-family-aws
+    name: upbound-provider-aws
