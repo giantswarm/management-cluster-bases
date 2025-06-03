@@ -10,6 +10,44 @@ data:
         - giantswarm-ad:giantswarm-admins
         - giantswarm-github:giantswarm:giantswarm-admins
 
+      clusterDetailsResources:
+        overviewDashboard:
+          label: "Cluster overview \n dashboard"
+          icon: GrafanaIcon
+          url: "https://grafana.$${{BASE_DOMAIN}}/d/gs_cluster-overview/cluster-overview?orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=default&var-cluster=$${{CLUSTER_NAME}}"
+        alertsDashboard:
+          label: Alerts
+          icon: NotificationsNone
+          url: "https://grafana.$${{BASE_DOMAIN}}/alerting"
+        webUIWC:
+          label: Web UI
+          icon: Public
+          url: "https://happa.$${{BASE_DOMAIN}}/organizations/$${{ORG_NAME}}/clusters/$${{CLUSTER_NAME}}"
+          clusterType: workload
+        webUIMC:
+          label: Web UI
+          icon: Public
+          url: "https://happa.$${{BASE_DOMAIN}}"
+          clusterType: management
+
+      homepageResources:
+        gsDocs:
+          label: "Giant Swarm \n Docs"
+          icon: MenuBook
+          url: "https://docs.giantswarm.io"
+        gsGitHub:
+          label: "Giant Swarm \n GitHub"
+          icon: GitHub
+          url: "https://github.com/giantswarm"
+        portalChangelog:
+          label: "Portal \n changelog"
+          icon: BackstageIcon
+          url: "https://github.com/giantswarm/backstage/releases"
+        portalRoadmap:
+          label: "Portal \n roadmap"
+          icon: BackstageIcon
+          url: "https://github.com/orgs/giantswarm/projects/273/views/28?filterQuery=-status%3A%22Done+%E2%9C%85%22+kind%3A%22Epic+%F0%9F%8E%AF%22%2C%22Rock+%F0%9F%AA%A8%22%2C%22Feature+%F0%9F%92%AB%22+label%3Aui%2Fbackstage"
+
       # Source: https://kubernetes.io/releases/
       kubernetesVersions:
         "1.20":
