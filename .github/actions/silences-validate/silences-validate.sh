@@ -21,6 +21,15 @@ yaml_extension() {
   echo "  [ok] .yaml extension"
 }
 
+has_cluster_id_matcher() {
+  content="$($YQ e '.spec.matchers[] | select(.name == "cluster_id")' "$1")"
+  if [[ -z "$content" ]] || [[ "$content" == "null" ]]; then
+    error "  [err] cluster_id matcher not found"
+    return 1
+  fi
+  echo "  [ok] cluster_id matcher found"
+}
+
 notify_expiry_on_weekend(){
   if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
     # We can't comment if there's no PR
@@ -91,6 +100,7 @@ main() {
     yaml_extension "$file_path"              || has_error=true
     valid_until_date "$file_path"            || has_error=true
     validate_kustomization_resources "$file" || has_error=true
+    has_cluster_id_matcher "$file_path"      || has_error=true
 
   done
 
