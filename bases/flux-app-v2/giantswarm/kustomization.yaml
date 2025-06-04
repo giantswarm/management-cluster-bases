@@ -25,134 +25,135 @@ helmCharts:
         enabled: true
         force: true
 patches:
-- target:
-    kind: ClusterRole
-    name: crd-controller
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: crd-controller-giantswarm
-    - op: replace
-      path: /rules/0/resourceNames/0
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: PodSecurityPolicy
-    name: flux-app-pvc-psp
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: flux-app-pvc-psp-giantswarm
-- target:
-    kind: ClusterRoleBinding
-    name: cluster-reconciler
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: cluster-reconciler-giantswarm
-- target:
-    kind: ClusterRoleBinding
-    name: crd-controller
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: crd-controller-giantswarm
-    - op: replace
-      path: /roleRef/name
-      value: crd-controller-giantswarm
-- target:
-    kind: CustomResourceDefinition
-    name: ".*"
-  patch: |-
-    - op: add
-      # https://github.com/kubernetes-sigs/kustomize/issues/1256
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1prune
-      value: disabled
-- target:
-    kind: Deployment
-    name: helm-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-        - --concurrent=12
-- target:
-    kind: Deployment
-    name: image-automation-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-- target:
-    kind: Deployment
-    name: image-reflector-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-- target:
-    kind: Deployment
-    name: kustomize-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-- target:
-    kind: Deployment
-    name: notification-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-- target:
-    kind: Deployment
-    name: source-controller
-    namespace: flux-giantswarm
-  patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/args
-      value:
-        - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
-        - --watch-all-namespaces
-        - --log-level=info
-        - --log-encoding=json
-        - --enable-leader-election
-        - --storage-path=/data
-        - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
+  - target:
+      kind: ClusterRole
+      name: crd-controller
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: crd-controller-giantswarm
+      - op: replace
+        path: /rules/0/resourceNames/0
+        value: flux-app-pvc-psp-giantswarm
+  - target:
+      kind: PodSecurityPolicy
+      name: flux-app-pvc-psp
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: flux-app-pvc-psp-giantswarm
+  - target:
+      kind: ClusterRoleBinding
+      name: cluster-reconciler
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: cluster-reconciler-giantswarm
+  - target:
+      kind: ClusterRoleBinding
+      name: crd-controller
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: crd-controller-giantswarm
+      - op: replace
+        path: /roleRef/name
+        value: crd-controller-giantswarm
+  - target:
+      kind: CustomResourceDefinition
+      name: ".*"
+    patch: |-
+      - op: add
+        # https://github.com/kubernetes-sigs/kustomize/issues/1256
+        path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1prune
+        value: disabled
+  - target:
+      kind: Deployment
+      name: helm-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+          - --concurrent=12
+  - target:
+      kind: Deployment
+      name: image-automation-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+  - target:
+      kind: Deployment
+      name: image-reflector-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+  - target:
+      kind: Deployment
+      name: kustomize-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+  - target:
+      kind: Deployment
+      name: notification-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+  - target:
+      kind: Deployment
+      name: source-controller
+      namespace: flux-giantswarm
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --events-addr=http://notification-controller.$(RUNTIME_NAMESPACE).svc
+          - --watch-all-namespaces
+          - --log-level=info
+          - --log-encoding=json
+          - --enable-leader-election
+          - --storage-path=/data
+          - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
 # Keeping this because of vaultless helper + upstream bug in kustomize to apply patch files with multiple documents
 patchesStrategicMerge:
-- patch-pvc-psp.yaml
-- patch-kustomize-controller.yaml
+  - patch-pvc-psp.yaml
+  - patch-kustomize-controller.yaml
 resources:
-- resource-kyverno-policies.yaml
-- resource-namespace.yaml
-- resource-rbac.yaml
-- resource-refresh-vault-token.yaml
+  - resource-kyverno-policies.yaml
+  - resource-namespace.yaml
+  - resource-rbac.yaml
+  - resource-refresh-vault-token.yaml
+  - resource-kyverno-clusterrole.yaml
