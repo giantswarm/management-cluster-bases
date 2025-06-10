@@ -122,7 +122,7 @@ spec:
       kind: App
       name: prometheus-operator-app
       namespace: giantswarm
-  path: ./flux-manifests
+  path: ./kustomize
   prune: true
   retryInterval: 1m
   sourceRef:
