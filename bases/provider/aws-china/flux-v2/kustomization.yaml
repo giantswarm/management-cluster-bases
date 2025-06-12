@@ -20,10 +20,6 @@ images:
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/fluxcd-source-controller
   - name: giantswarm/kustomize-controller
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/kustomize-controller
-  - name: giantswarm/k8s-jwt-to-vault-token
-    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token
-  - name: giantswarm/konfigure
-    newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/konfigure
   - name: giantswarm/docker-kubectl
     newName: giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/docker-kubectl
   - name: giantswarm/alpine-helm
