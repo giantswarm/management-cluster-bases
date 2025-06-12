@@ -26,97 +26,17 @@ spec:
         volumeMounts:
         - mountPath: /helm-bin
           name: helm-bin
-      - args:
-        - cp konfigure /giantswarm-bin && chmod +x /giantswarm-bin/konfigure
-        command: ["sh", "-c"]
-        image: gsoci.azurecr.io/giantswarm/konfigure:0.17.1
-        name: ensure-konfigure
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsUser: 100
-          seccompProfile:
-            type: RuntimeDefault
-        volumeMounts:
-        - mountPath: /giantswarm-bin
-          name: giantswarm-bin
-      - args:
-        - /giantswarm-bin/konfigure fetchkeys --sops-keys-dir /sopsenv
-        command: ["sh", "-c"]
-        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.2.2
-        name: ensure-sopsenv
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsUser: 100
-          seccompProfile:
-            type: RuntimeDefault
-        volumeMounts:
-        - mountPath: /giantswarm-bin
-          name: giantswarm-bin
-        - mountPath: /sopsenv
-          name: sopsenv
-      - args:
-        - --vault-address=$(VAULT_ADDR)
-        - --vault-role=konfigure
-        - --vault-token-secret-name=flux-vault-token
-        - --vault-token-secret-namespace=flux-giantswarm
-        env:
-        - name: VAULT_ADDR
-          valueFrom:
-            configMapKeyRef:
-              key: VAULT_ADDR
-              name: management-cluster-metadata
-        image: gsoci.azurecr.io/giantswarm/k8s-jwt-to-vault-token:0.1.0
-        imagePullPolicy: Always
-        name: ensure-vault-token
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsUser: 100
-          seccompProfile:
-            type: RuntimeDefault
       containers:
       - name: manager
         image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.2.2
-        env:
-          - name: KONFIGURE_MODE
-            value: "kustomizepatch"
-          - name: KONFIGURE_INSTALLATION
-            valueFrom:
-              configMapKeyRef:
-                key: NAME
-                name: management-cluster-metadata
-          - name: KONFIGURE_GITREPO
-            value: "flux-giantswarm/giantswarm-config"
-          - name: KONFIGURE_SOURCE_SERVICE
-            value: "source-controller.flux-giantswarm.svc"
-          - name: KONFIGURE_SOPS_KEYS_DIR
-            value: "/sopsenv"
-          - name: VAULT_ADDR
-            valueFrom:
-              configMapKeyRef:
-                key: VAULT_ADDR
-                name: management-cluster-metadata
-          - name: VAULT_CAPATH
-            value: /etc/ssl/certs/ca-certificates.crt
-          - name: VAULT_TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: token
-                name: flux-vault-token
         volumeMounts:
-        - mountPath: /plugins/konfigure
-          name: giantswarm-bin
-          subPath: konfigure
         - mountPath: /usr/bin/helmV3
           name: helm-bin
           subPath: helmV3
-        - mountPath: /tmp/konfigure-cache
-          name: cache
         - mountPath: /etc/ssl/certs/ca-certificates.crt
           name: ca-certs
         - mountPath: /etc/ssl/certs/
           name: ssl-certs
-        - mountPath: /sopsenv
-          name: sopsenv
       volumes:
       - hostPath:
           path: /etc/ssl/certs/ca-certificates.crt
@@ -128,10 +48,3 @@ spec:
         name: ssl-certs
       - name: helm-bin
         emptyDir: {}
-      - name: giantswarm-bin
-        emptyDir: {}
-      - name: cache
-        emptyDir: {}
-      - name: sopsenv
-        emptyDir:
-          medium: "Memory"
