@@ -155,5 +155,5 @@ resources:
   - resource-kyverno-policies.yaml
   - resource-namespace.yaml
   - resource-rbac.yaml
-  - resource-refresh-vault-token.yaml
+  # - resource-refresh-vault-token.yaml
   - resource-kyverno-clusterrole.yaml
