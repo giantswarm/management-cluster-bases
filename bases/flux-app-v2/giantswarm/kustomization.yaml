@@ -25,6 +25,8 @@ helmCharts:
         enabled: true
         force: true
 patches:
+  - path: patch-pvc-psp.yaml
+  - path: patch-kustomize-controller.yaml
   - target:
       kind: ClusterRole
       name: crd-controller
@@ -147,10 +149,6 @@ patches:
           - --enable-leader-election
           - --storage-path=/data
           - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
-# Keeping this because of vaultless helper + upstream bug in kustomize to apply patch files with multiple documents
-patchesStrategicMerge:
-  - patch-pvc-psp.yaml
-  - patch-kustomize-controller.yaml
 resources:
   - resource-kyverno-policies.yaml
   - resource-namespace.yaml
