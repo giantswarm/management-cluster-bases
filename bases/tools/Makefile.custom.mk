@@ -22,19 +22,6 @@ BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 BASE_REPOSITORY := giantswarm/management-cluster-bases
 MCB_BRANCH ?= main
 
-.PHONY: build-flux-app-vaultless-helper
-ifeq ($(VAULTLESS),1)
-build-flux-app-vaultless-helper: $(YQ)
-ifndef TMP_BASE
-	$(error $$TMP_BASE env var is not defined, this is a bug and has to be fixed in the Makefile.custom.mk)
-endif
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-delete-vault-cronjob.yaml"]' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '.patchesStrategicMerge += ["https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/extras/vaultless/patch-kustomize-controller.yaml"]' $(TMP_BASE)/kustomization.yaml
-else
-build-flux-app-vaultless-helper:
-	@# noop
-endif
-
 # TODO Change https://github.com/giantswarm/apptestctl/blame/90942be9c1c2fd58f765bc191d8ef5889717eb4b/hack/sync-crds.sh to use these instead (ATS will need make too tho)
 .PHONY: build-catalogs-with-defaults
 build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with default configuration
@@ -78,9 +65,6 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	rm -rf $(TMP_BASE)
 
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION}/${SUFFIX} $(TMP_BASE)
-
-	@# This will run extra yq calls if VAULTLESS=1
-	@$(MAKE) VAULTLESS=$(SUFFIX:giantswarm=1) TMP_BASE=$(TMP_BASE) build-flux-app-vaultless-helper
 ifeq ($(DISABLE_KYVERNO),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
 	$(YQ) e -i '.resources -= ["resource-kyverno-policies.yaml"]' $(TMP_BASE)/kustomization.yaml
