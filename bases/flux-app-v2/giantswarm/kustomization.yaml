@@ -25,7 +25,6 @@ helmCharts:
         enabled: true
         force: true
 patches:
-  - path: patch-pvc-psp.yaml
   - path: patch-kustomize-controller.yaml
   - target:
       kind: ClusterRole
