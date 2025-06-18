@@ -1,0 +1,8 @@
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-kcl
+spec:
+  package: gsoci.azurecr.io/giantswarm/crossplane-contrib-function-kcl:v0.9.0
+  skipDependencyResolution: true

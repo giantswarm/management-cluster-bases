@@ -129,7 +129,7 @@ the substitutions are:
 - `gcpversion`
 
 It is recommended that all version strings are defaulted such as: 
-`${awsversion:=1.0.0}` This ensures that at least a minimum provider version
+`${awsversion:=1.21.0}` This ensures that at least a minimum provider version
 will always be used.
 
 > **Note**
@@ -251,7 +251,7 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-ec2:v${awsversion:=1.0.0}
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-ec2:v${awsversion:=1.21.0}
   runtimeConfigRef:
     name: upbound-provider-aws
 ```

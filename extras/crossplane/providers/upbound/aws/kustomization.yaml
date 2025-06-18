@@ -2,3 +2,26 @@ resources:
 - provider.yaml
 - service-account.yaml
 - deploymentruntime.yaml
+- cloudwatch.yaml
+- ec2.yaml
+- iam.yaml
+- kms.yaml
+- polex.yaml
+- ram.yaml
+- s3.yaml
+- sqs.yaml
+- cloudfront.yaml
+- acm.yaml
+- route53.yaml
+
+patches:
+  - patch: |
+      - op: replace
+        path: /metadata/name
+        value: upbound-provider-aws
+      - op: replace
+        path: /spec/deploymentTemplate/spec/template/spec/serviceAccountName
+        value: upbound-provider-aws
+    target:
+      kind: DeploymentRuntimeConfig
+      labelSelector: provider-family-member=aws-provider

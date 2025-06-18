@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- auto-ready.yaml
+- kcl.yaml
+- patch-and-transform.yaml

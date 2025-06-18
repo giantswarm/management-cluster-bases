@@ -1,0 +1,3 @@
+resources:
+- https://github.com/giantswarm/crossplane-fn-irsa//api/composition?ref=main
+
