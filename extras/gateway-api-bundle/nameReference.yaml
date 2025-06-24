@@ -1,5 +1,0 @@
-nameReference:
-  - kind: ConfigMap
-    fieldSpecs:
-      - kind: App
-        path: spec/userConfig/configMap/name
