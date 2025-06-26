@@ -18,7 +18,7 @@ data:
         alertsDashboard:
           label: Alerts
           icon: NotificationsNone
-          url: "https://grafana.$${{BASE_DOMAIN}}/alerting"
+          url: "https://grafana.$${{BASE_DOMAIN}}/alerting?orgId=2"
         webUIWC:
           label: Web UI
           icon: Public
