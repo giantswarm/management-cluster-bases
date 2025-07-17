@@ -30,6 +30,50 @@ has_cluster_id_matcher() {
   echo "  [ok] cluster_id matcher found"
 }
 
+# Get the API version of the silence
+get_api_version() {
+  api_version="$($YQ e '.apiVersion' "$1")"
+  echo "$api_version"
+}
+
+# validate_v1alpha2_apiversion fail if v1alpha2 file doesn't have correct apiVersion
+validate_v1alpha2_apiversion() {
+  local file_path="$1"
+  local api_version
+  api_version="$(get_api_version "$file_path")"
+  
+  if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
+    echo "  [ok] v1alpha2 apiVersion correct"
+    return 0
+  elif [[ "$api_version" == "monitoring.giantswarm.io/v1alpha1" ]]; then
+    echo "  [ok] v1alpha1 apiVersion correct"
+    return 0
+  else
+    error "  [err] invalid apiVersion: $api_version (expected observability.giantswarm.io/v1alpha2 or monitoring.giantswarm.io/v1alpha1)"
+    return 1
+  fi
+}
+
+# validate_v1alpha2_namespace fail if v1alpha2 file doesn't have namespace
+validate_v1alpha2_namespace() {
+  local file_path="$1"
+  local api_version
+  api_version="$(get_api_version "$file_path")"
+  
+  # Only validate namespace for v1alpha2
+  if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
+    local namespace
+    namespace="$($YQ e '.metadata.namespace' "$file_path")"
+    if [[ -z "$namespace" ]] || [[ "$namespace" == "null" ]]; then
+      error "  [err] v1alpha2 silence requires metadata.namespace"
+      return 1
+    fi
+    echo "  [ok] v1alpha2 namespace present: $namespace"
+  else
+    echo "  [ok] v1alpha1 silence (namespace not required)"
+  fi
+}
+
 notify_expiry_on_weekend(){
   if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
     # We can't comment if there's no PR
@@ -97,10 +141,12 @@ main() {
     file_path="${git_root}/${file}"
     echo "> checking $file_path"
 
-    yaml_extension "$file_path"              || has_error=true
-    valid_until_date "$file_path"            || has_error=true
-    validate_kustomization_resources "$file" || has_error=true
-    has_cluster_id_matcher "$file_path"      || has_error=true
+    yaml_extension "$file_path"               || has_error=true
+    validate_v1alpha2_apiversion "$file_path" || has_error=true
+    validate_v1alpha2_namespace "$file_path"  || has_error=true
+    valid_until_date "$file_path"             || has_error=true
+    validate_kustomization_resources "$file"  || has_error=true
+    has_cluster_id_matcher "$file_path"       || has_error=true
 
   done
 
