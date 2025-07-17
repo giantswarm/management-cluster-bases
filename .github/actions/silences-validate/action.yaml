@@ -49,7 +49,8 @@ runs:
       shell: bash
       run: |
         shopt -s globstar
-        kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/master/config/crd/bases/monitoring.giantswarm.io_silences.yaml
+        kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/main/config/crd/bases/monitoring.giantswarm.io_silences.yaml
+        kubectl create -f https://raw.githubusercontent.com/giantswarm/silence-operator/main/config/crd/bases/observability.giantswarm.io_silences.yaml
         for directory in ${{ inputs.directory_pattern }}; do
           echo "Validating silences CRs in $directory"
           kustomize build "$directory" --output "${directory}/resources.yaml"
