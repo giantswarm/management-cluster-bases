@@ -2,7 +2,7 @@ apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
   name: jobscrapingfailure
-  namespace: giantswarm
+  namespace: monitoring
   annotations:
     motivation: We did a review of jobs failing everywhere, let's give teams time to manage them.
     valid-until: "2025-07-29"
