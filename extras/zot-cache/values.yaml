@@ -112,21 +112,12 @@ configFiles:
                 {
                   "**":
                   {
-                      "anonymousPolicy": ["read"],
-                      "policies":
-                      [
-                          {
-                              "users": ["admin"],
-                              "actions":
-                              [
-                                  "read",
-                                  "create",
-                                  "update",
-                                  "delete"
-                              ]
-                          }
-                      ]
+                      "anonymousPolicy": ["read"]
                   }
+                },
+                "adminPolicy": {
+                  "users": ["admin"],
+                  "actions": ["read", "create", "update", "delete"]
                 }
             },
             "address": "0.0.0.0",
