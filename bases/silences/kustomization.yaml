@@ -2,3 +2,5 @@ namePrefix: common-
 resources:
   - jobscrapingfailure.yaml
   - keda.yaml
+  - jobscrapingfailure-v1alpha2.yaml
+  - keda-v1alpha2.yaml
