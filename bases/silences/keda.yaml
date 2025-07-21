@@ -1,7 +1,8 @@
-apiVersion: monitoring.giantswarm.io/v1alpha1
+apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
   name: kedaerrors
+  namespace: monitoring
   annotations:
     motivation: We don't support keda yet, yet some customers-installed keda are alerting.
     valid-until: "2025-07-29"
@@ -9,7 +10,7 @@ spec:
   matchers:
     - name: alertname
       value: KedaScale.*
-      isRegex: true
+      matchType: "=~"
     - name: cluster_id
       value: ".*"
-      isRegex: true
+      matchType: "=~"

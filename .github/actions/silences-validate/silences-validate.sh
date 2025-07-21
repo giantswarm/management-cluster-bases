@@ -46,10 +46,10 @@ validate_v1alpha2_apiversion() {
     echo "  [ok] v1alpha2 apiVersion correct"
     return 0
   elif [[ "$api_version" == "monitoring.giantswarm.io/v1alpha1" ]]; then
-    echo "  [ok] v1alpha1 apiVersion correct"
-    return 0
+    error "  [err] v1alpha1 silences are no longer accepted. Please migrate to v1alpha2."
+    return 1
   else
-    error "  [err] invalid apiVersion: $api_version (expected observability.giantswarm.io/v1alpha2 or monitoring.giantswarm.io/v1alpha1)"
+    error "  [err] invalid apiVersion: $api_version (expected observability.giantswarm.io/v1alpha2)"
     return 1
   fi
 }
