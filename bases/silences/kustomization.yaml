@@ -1,4 +1,3 @@
 namePrefix: common-
 resources:
   - jobscrapingfailure.yaml
-  - keda.yaml
