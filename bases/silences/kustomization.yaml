@@ -1,4 +1,3 @@
 namePrefix: common-
 resources:
   - clustercontrolplanemachinestatusnothealthy.yaml
-  - jobscrapingfailure.yaml
