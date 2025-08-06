@@ -43,7 +43,7 @@ env:
   - name: "GOGC"
     value: "50"
   - name: "GOMEMLIMIT"
-    value: "800MiB"
+    value: "1200MiB"
 
 global:
   podSecurityStandards:
