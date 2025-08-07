@@ -1,0 +1,10 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: KonfigurationSchema
+metadata:
+  name: management-cluster-configuration
+  namespace: giantswarm
+spec:
+  raw:
+    remote:
+      url: https://raw.githubusercontent.com/giantswarm/konfiguration-schemas/refs/tags/management-cluster-configuration/v1.0.0/schemas/management-cluster-configuration/schema.yaml
