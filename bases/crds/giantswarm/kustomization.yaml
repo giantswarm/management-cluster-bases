@@ -9,4 +9,6 @@ resources:
   - https://raw.githubusercontent.com/giantswarm/rbac-operator/v0.39.0/config/crd/auth.giantswarm.io_rolebindingtemplates.yaml
   - https://raw.githubusercontent.com/giantswarm/releases/sdk/v0.10.0/sdk/manifests/apiextensions.k8s.io_v1_customresourcedefinition_releases.release.giantswarm.io.yaml
   - https://raw.githubusercontent.com/giantswarm/konfigure-operator/refs/tags/v0.8.0/config/crd/bases/konfigure.giantswarm.io_managementclusterconfigurations.yaml
+  - https://raw.githubusercontent.com/giantswarm/konfigure-operator/03b8f9e4bfe1c43437691c4ef40039132476f358/config/crd/bases/konfigure.giantswarm.io_konfigurationschemas.yaml
+  - https://raw.githubusercontent.com/giantswarm/konfigure-operator/03b8f9e4bfe1c43437691c4ef40039132476f358/config/crd/bases/konfigure.giantswarm.io_konfigurations.yaml
   - https://raw.githubusercontent.com/giantswarm/observability-operator/main/config/crd/bases/observability.giantswarm.io_grafanaorganizations.yaml
