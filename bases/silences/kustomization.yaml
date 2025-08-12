@@ -1,3 +1,2 @@
 namePrefix: common-
-resources:
-  - clustercontrolplanemachinestatusnothealthy.yaml
+resources: []
