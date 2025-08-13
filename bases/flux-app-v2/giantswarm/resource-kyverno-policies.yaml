@@ -17,6 +17,7 @@ spec:
           kinds:
             - Kustomization
             - HelmRelease
+            - ResourceSet
       validate:
         message: "either .spec.serviceAccountName or .spec.kubeConfig.secretRef.name is required"
         anyPattern:
@@ -70,6 +71,30 @@ spec:
                 spec:
                   sourceRef:
                     =(namespace): "{{request.object.metadata.namespace}}"
+    - name: resourceSetCopyFromNamespaceIsSafe
+      exclude:
+        resources:
+          namespaces:
+            - "flux-giantswarm"
+            - "giantswarm"
+            - "monitoring"
+      match:
+        resources:
+          kinds:
+            - ResourceSet
+      validate:
+        message: "copyFrom namespace must be the same as metadata.namespace or 'default' for all resources"
+        anyPattern:
+          - spec:
+              resources:
+                - metadata:
+                    =(annotations):
+                      =(fluxcd.controlplane.io/copyFrom): "default/*"
+          - spec:
+              resources:
+                - metadata:
+                    =(annotations):
+                      =(fluxcd.controlplane.io/copyFrom): "{{request.object.metadata.namespace}}/*"
     - name: targetNamespaceMustBeLocal
       exclude:
         resources:
