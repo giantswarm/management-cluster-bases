@@ -11,7 +11,7 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: giantswarm-test-catalog
+        name: giantswarm-catalog
       version: 0.1.0
   install:
     remediation:
