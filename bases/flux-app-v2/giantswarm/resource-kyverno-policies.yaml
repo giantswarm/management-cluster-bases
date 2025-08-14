@@ -77,7 +77,6 @@ spec:
           namespaces:
             - "flux-giantswarm"
             - "giantswarm"
-            - "monitoring"
       match:
         resources:
           kinds:
@@ -118,6 +117,31 @@ spec:
               kubeConfig:
                 secretRef:
                   name: "?*"
+    - name: resourceSetTargetNamespaceMustBeLocal
+      exclude:
+        resources:
+          namespaces:
+            - "flux-giantswarm"
+            - "giantswarm"
+      match:
+        resources:
+          kinds:
+            - ResourceSet
+      validate:
+        message: "resources creation outside `default`, metadata.namespace and org-* namespaces is disallowed"
+        anyPattern:
+          - spec:
+              resources:
+                - metadata:
+                    =(namespace): "{{request.object.metadata.namespace}}"
+          - spec:
+              resources:
+                - metadata:
+                    =(namespace): "default"
+          - spec:
+              resources:
+                - metadata:
+                    =(namespace): "org-* & !org-giantswarm"
     - name: storageNamespaceMustBeLocal
       exclude:
         resources:
@@ -206,3 +230,13 @@ spec:
           spec:
             imageRepositoryRef:
               =(namespace): "{{request.object.metadata.namespace}}"
+    - name: fluxInstanceMustBeSingleton
+      match:
+        resources:
+          kinds:
+            - FluxInstance
+      validate:
+        message: "FluxInstances allowed only in the `flux-giantswarm` namespace"
+        pattern:
+          metadata:
+            namespace: "flux-giantswarm"

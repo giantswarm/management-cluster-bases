@@ -1,0 +1,19 @@
+# FluxInstance in good namespace
+apiVersion: fluxcd.controlplane.io/v1
+kind: FluxInstance
+metadata:
+  name: flux
+  namespace: flux-giantswarm
+spec:
+  distribution:
+    version: "2.3"
+---
+# FluxInstance in wrong namespace
+apiVersion: fluxcd.controlplane.io/v1
+kind: FluxInstance
+metadata:
+  name: flux
+  namespace: org-test
+spec:
+  distribution:
+    version: "2.3"

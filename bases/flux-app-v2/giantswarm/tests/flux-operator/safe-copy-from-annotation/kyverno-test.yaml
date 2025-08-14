@@ -1,7 +1,7 @@
 apiVersion: cli.kyverno.io/v1alpha1
 kind: Test
 metadata:
-  name: test
+  name: safe-copy-from-annotation
 policies:
   - ../../../resource-kyverno-policies.yaml
 resources:
