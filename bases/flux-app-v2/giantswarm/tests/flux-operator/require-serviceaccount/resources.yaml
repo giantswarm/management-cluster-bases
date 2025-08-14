@@ -1,0 +1,32 @@
+# This ResourceSet does not provide ServiceAccount name
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: test
+  namespace: ns1
+spec:
+  resources:
+    - apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: test
+        namespace: default
+      data:
+        key: value
+---
+# This ResourceSet provides ServiceAccount name
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: test
+  namespace: ns2
+spec:
+  serviceAccountName: automation
+  resources:
+    - apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: test
+        namespace: default
+      data:
+        key: value
