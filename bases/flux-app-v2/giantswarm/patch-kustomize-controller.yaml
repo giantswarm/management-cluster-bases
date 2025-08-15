@@ -28,7 +28,7 @@ spec:
           name: helm-bin
       containers:
       - name: manager
-        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.2.2
+        image: gsoci.azurecr.io/giantswarm/kustomize-controller:v1.4.0
         volumeMounts:
         - mountPath: /usr/bin/helmV3
           name: helm-bin
