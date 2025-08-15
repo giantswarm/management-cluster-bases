@@ -8,13 +8,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
       - name: Lint kustomization.yaml
         uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.0.0
         with:
           args: --format=github management-clusters
+
       - name: "Build manifest in 'output/'"
         run: |
           ls management-clusters/ | xargs -n1 -I '{}' make build-{}
+
+      - name: List generated manifests
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.0.0
+        with:
+          args: --list-files output
+
       - name: Lint generated manifests
         uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.0.0
         with:
