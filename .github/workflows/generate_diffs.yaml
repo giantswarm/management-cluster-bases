@@ -30,7 +30,7 @@ jobs:
     if: github.event_name == 'pull_request' && needs.check-diff-state.outputs.suspenddiff == 0
     steps:
       - name: install kustomize
-        uses: giantswarm/install-binary-action@v3
+        uses: giantswarm/install-binary-action@0797deb878056114fa54ee30c519f617716e8c69 # v3.1.1
         with:
           binary: kustomize
           download_url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${version}/kustomize_v${version}_linux_amd64.tar.gz"
@@ -39,7 +39,7 @@ jobs:
           version: ${{ env.kustomize_ver }}
       - run: which kustomize
       - name: install dyff
-        uses: giantswarm/install-binary-action@v3
+        uses: giantswarm/install-binary-action@0797deb878056114fa54ee30c519f617716e8c69 # v3.1.1
         with:
           binary: dyff
           download_url: "https://github.com/homeport/dyff/releases/download/v${version}/dyff_${version}_linux_amd64.tar.gz"
@@ -48,7 +48,7 @@ jobs:
           version: ${{ env.dyff_ver }}
       - run: which dyff
       - run: ls -la /opt/hostedtoolcache
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: build and save installations
         run: |
           for MC in $(ls management-clusters/)
@@ -60,7 +60,7 @@ jobs:
             --load-restrictor=LoadRestrictionsNone \
             management-clusters/${MC} > /tmp/${MC}/new.yaml
           done
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           ref: 'main'
           path: 'old'
@@ -98,7 +98,7 @@ jobs:
             $(exit 0)
           fi
       - name: Find diff comment
-        uses: peter-evans/find-comment@v2
+        uses: peter-evans/find-comment@a54c31d7fa095754bfef525c0c8e5e5674c4b4b1 # v2.4.0
         continue-on-error: true
         id: fc
         with:
@@ -106,14 +106,14 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: Rendered manifest diff
       - name: Delete old comment
-        uses: jungwinter/comment@v1
+        uses: winterjung/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1.1.0
         continue-on-error: true
         with:
           type: delete
           comment_id: ${{ steps.fc.outputs.comment-id }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create or update validation comment
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@67dcc547d311b736a8e6c5c236542148a47adc3d # v2.1.1
         if: ${{ steps.diff.outputs.stdout != '' }}
         with:
           issue-number: ${{ github.event.pull_request.number }}
