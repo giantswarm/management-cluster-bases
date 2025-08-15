@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Report expired silences
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/silences-report-expired
         with:
           directory_pattern: 'bases/silences'
