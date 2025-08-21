@@ -16,7 +16,7 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Find suspend comment
-        uses: peter-evans/find-comment@v2
+        uses: peter-evans/find-comment@v3
         continue-on-error: true
         id: fc
         with:
@@ -98,7 +98,7 @@ jobs:
             $(exit 0)
           fi
       - name: Find diff comment
-        uses: peter-evans/find-comment@a54c31d7fa095754bfef525c0c8e5e5674c4b4b1 # v2.4.0
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
         continue-on-error: true
         id: fc
         with:
