@@ -1,7 +1,9 @@
 name: Validate silences
 
 on:
-  - pull_request
+  pull_request:
+    paths:
+      - '**.yaml'
 
 jobs:
   silences_validate:
