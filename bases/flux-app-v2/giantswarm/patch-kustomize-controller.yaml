@@ -12,7 +12,7 @@ spec:
         command:
         - sh
         - -c
-        image: gsoci.azurecr.io/giantswarm/alpine-helm:3.9.3
+        image: gsoci.azurecr.io/giantswarm/alpine-helm:3.18.6
         imagePullPolicy: IfNotPresent
         name: ensure-helm
         resources: {}
