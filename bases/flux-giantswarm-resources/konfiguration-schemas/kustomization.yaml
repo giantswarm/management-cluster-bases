@@ -1,2 +1,2 @@
 resources:
-  - https://raw.githubusercontent.com/giantswarm/konfiguration-schemas/refs/tags/management-cluster-configuration/v1.0.0/schemas/management-cluster-configuration/schema.yaml
+  - management-cluster-configuration.yaml
