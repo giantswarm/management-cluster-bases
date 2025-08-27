@@ -5,12 +5,14 @@
     "github>giantswarm/renovate-presets:default.json5",
   ],
   "packageRules": [
-    // restrict to only update GitHub actions in workflows
     {
-      "description": "Disable all managers except github-actions",
-      "excludeManagers": ["github-actions"],
+      "description": "Disable managers we consider dangerous or unnecessary here",
+      "matchManagers": [
+        "kubernetes",
+        "kustomize",
+        "pip_requirements",
+      ],
       "enabled": false
-    }
+    },
   ]
 }
-
