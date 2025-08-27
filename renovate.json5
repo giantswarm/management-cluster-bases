@@ -4,4 +4,12 @@
     // Base config - https://github.com/giantswarm/renovate-presets/blob/main/default.json5
     "github>giantswarm/renovate-presets:default.json5",
   ],
+  "packageRules": [
+    // restrict to only update GitHub actions in workflows
+    {
+      "description": "Disable all managers except github-actions",
+      "excludeManagers": ["github-actions"],
+      "enabled": false
+    }
+  ]
 }
