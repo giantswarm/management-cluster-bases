@@ -12,7 +12,7 @@ jobs:
     if: contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/deletediffs')
     steps:
       - name: Find diff comments
-        uses: peter-evans/find-comment@v2
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
         continue-on-error: true
         id: fc
         with:
