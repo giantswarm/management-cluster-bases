@@ -4,4 +4,15 @@
     // Base config - https://github.com/giantswarm/renovate-presets/blob/main/default.json5
     "github>giantswarm/renovate-presets:default.json5",
   ],
+  "packageRules": [
+    {
+      "description": "Disable managers we consider dangerous or unnecessary here",
+      "matchManagers": [
+        "kubernetes",
+        "kustomize",
+        "pip_requirements",
+      ],
+      "enabled": false
+    },
+  ]
 }
