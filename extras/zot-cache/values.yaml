@@ -143,7 +143,7 @@ configFiles:
                 "tlsVerify": true,
                 "maxRetries": 3,
                 "preserveDigest": true,
-                "retryDelay": "5m"
+                "retryDelay": "5s"
               }
             ]
           },
