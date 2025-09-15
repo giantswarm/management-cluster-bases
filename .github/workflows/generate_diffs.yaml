@@ -53,6 +53,11 @@ jobs:
         run: |
           for MC in $(ls management-clusters/)
           do
+            # skip rendering directory with bases
+            if [[ "$MC" = "base" ]]; then
+              continue
+            fi
+
             mkdir /tmp/${MC}
 
             kustomize build \
@@ -62,8 +67,8 @@ jobs:
           done
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: 'main'
-          path: 'old'
+          ref: "main"
+          path: "old"
       - name: template all for the old branch
         run: |
           for MC in $(ls old/management-clusters/)
@@ -103,7 +108,7 @@ jobs:
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
+          comment-author: "github-actions[bot]"
           body-includes: Rendered manifest diff
       - name: Delete old comment
         uses: winterjung/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1.1.0
