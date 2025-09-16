@@ -71,29 +71,6 @@ spec:
                 spec:
                   sourceRef:
                     =(namespace): "{{request.object.metadata.namespace}}"
-    - name: resourceSetCopyFromNamespaceIsSafe
-      exclude:
-        resources:
-          namespaces:
-            - "flux-giantswarm"
-            - "giantswarm"
-      match:
-        resources:
-          kinds:
-            - ResourceSet
-      validate:
-        message: "copyFrom namespace must be the same as metadata.namespace or 'default' for all resources"
-        anyPattern:
-          - spec:
-              resources:
-                - metadata:
-                    =(annotations):
-                      =(fluxcd.controlplane.io/copyFrom): "default/*"
-          - spec:
-              resources:
-                - metadata:
-                    =(annotations):
-                      =(fluxcd.controlplane.io/copyFrom): "{{request.object.metadata.namespace}}/*"
     - name: targetNamespaceMustBeLocal
       exclude:
         resources:
@@ -117,31 +94,6 @@ spec:
               kubeConfig:
                 secretRef:
                   name: "?*"
-    - name: resourceSetTargetNamespaceMustBeLocal
-      exclude:
-        resources:
-          namespaces:
-            - "flux-giantswarm"
-            - "giantswarm"
-      match:
-        resources:
-          kinds:
-            - ResourceSet
-      validate:
-        message: "resources creation outside `default`, metadata.namespace and org-* namespaces is disallowed"
-        anyPattern:
-          - spec:
-              resources:
-                - metadata:
-                    =(namespace): "{{request.object.metadata.namespace}}"
-          - spec:
-              resources:
-                - metadata:
-                    =(namespace): "default"
-          - spec:
-              resources:
-                - metadata:
-                    =(namespace): "org-* & !org-giantswarm"
     - name: storageNamespaceMustBeLocal
       exclude:
         resources:
