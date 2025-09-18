@@ -1,9 +1,0 @@
-resources:
-  - ../../common
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/core.giantswarm.io_awsclusterconfigs.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/infrastructure.giantswarm.io_awsclusters.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/infrastructure.giantswarm.io_awscontrolplanes.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/infrastructure.giantswarm.io_awsmachinedeployments.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/infrastructure.giantswarm.io_g8scontrolplanes.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/infrastructure.giantswarm.io_networkpools.yaml
-  - https://raw.githubusercontent.com/giantswarm/apiextensions/v5.2.0/helm/crds-aws/templates/provider.giantswarm.io_awsconfigs.yaml
