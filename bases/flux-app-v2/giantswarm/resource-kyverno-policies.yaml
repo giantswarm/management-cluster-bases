@@ -17,7 +17,6 @@ spec:
           kinds:
             - Kustomization
             - HelmRelease
-            - ResourceSet
       validate:
         message: "either .spec.serviceAccountName or .spec.kubeConfig.secretRef.name is required"
         anyPattern:
@@ -182,13 +181,3 @@ spec:
           spec:
             imageRepositoryRef:
               =(namespace): "{{request.object.metadata.namespace}}"
-    - name: fluxInstanceMustBeSingleton
-      match:
-        resources:
-          kinds:
-            - FluxInstance
-      validate:
-        message: "FluxInstances allowed only in the `flux-giantswarm` namespace"
-        pattern:
-          metadata:
-            namespace: "flux-giantswarm"
