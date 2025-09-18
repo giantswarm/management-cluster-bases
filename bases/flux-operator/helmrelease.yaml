@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: flux-operator
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: flux-operator
+      interval: 5m
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+      version: 0.1.0
+  install:
+    remediation:
+      retries: 3
+  interval: 10m
+  releaseName: flux-operator
+  timeout: 5m
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    flux-operator:
+      extraEnvs:
+      - name: NOTIFICATIONS_DISABLED
+        value: "1"

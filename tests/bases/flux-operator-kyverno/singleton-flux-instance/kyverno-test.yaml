@@ -1,0 +1,21 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: singleton-flux-instance
+policies:
+  - ../../../resource-kyverno-policies.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: flux-multi-tenancy
+    rule: fluxInstanceMustBeSingleton
+    resources:
+    - flux-giantswarm/flux
+    kind: ResourceSet
+    result: pass
+  - policy: flux-multi-tenancy
+    rule: fluxInstanceMustBeSingleton
+    resources:
+    - org-test/flux
+    kind: ResourceSet
+    result: fail
