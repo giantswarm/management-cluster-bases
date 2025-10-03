@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: notification-controller
     app.kubernetes.io/instance: flux-system
@@ -107,7 +107,6 @@ spec:
                       minLength: 1
                       type: string
                   required:
-                  - kind
                   - name
                   type: object
                 type: array
@@ -145,8 +144,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -187,7 +194,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -364,8 +376,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the Alert.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -406,7 +426,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -582,7 +607,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: source-controller
     app.kubernetes.io/instance: flux-system
@@ -601,359 +626,6 @@ spec:
     - jsonPath: .spec.endpoint
       name: Endpoint
       type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    - jsonPath: .status.conditions[?(@.type=="Ready")].status
-      name: Ready
-      type: string
-    - jsonPath: .status.conditions[?(@.type=="Ready")].message
-      name: Status
-      type: string
-    name: v1
-    schema:
-      openAPIV3Schema:
-        description: Bucket is the Schema for the buckets API.
-        properties:
-          apiVersion:
-            description: |-
-              APIVersion defines the versioned schema of this representation of an object.
-              Servers should convert recognized schemas to the latest internal value, and
-              may reject unrecognized values.
-              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-            type: string
-          kind:
-            description: |-
-              Kind is a string value representing the REST resource this object represents.
-              Servers may infer this from the endpoint the client submits requests to.
-              Cannot be updated.
-              In CamelCase.
-              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-            type: string
-          metadata:
-            type: object
-          spec:
-            description: |-
-              BucketSpec specifies the required configuration to produce an Artifact for
-              an object storage bucket.
-            properties:
-              bucketName:
-                description: BucketName is the name of the object storage bucket.
-                type: string
-              certSecretRef:
-                description: |-
-                  CertSecretRef can be given the name of a Secret containing
-                  either or both of
-
-                  - a PEM-encoded client certificate (`tls.crt`) and private
-                  key (`tls.key`);
-                  - a PEM-encoded CA certificate (`ca.crt`)
-
-                  and whichever are supplied, will be used for connecting to the
-                  bucket. The client cert and key are useful if you are
-                  authenticating with a certificate; the CA cert is useful if
-                  you are using a self-signed server certificate. The Secret must
-                  be of type `Opaque` or `kubernetes.io/tls`.
-
-                  This field is only supported for the `generic` provider.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
-              endpoint:
-                description: Endpoint is the object storage address the BucketName
-                  is located at.
-                type: string
-              ignore:
-                description: |-
-                  Ignore overrides the set of excluded patterns in the .sourceignore format
-                  (which is the same as .gitignore). If not provided, a default will be used,
-                  consult the documentation for your version to find out what those are.
-                type: string
-              insecure:
-                description: Insecure allows connecting to a non-TLS HTTP Endpoint.
-                type: boolean
-              interval:
-                description: |-
-                  Interval at which the Bucket Endpoint is checked for updates.
-                  This interval is approximate and may be subject to jitter to ensure
-                  efficient use of resources.
-                pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
-                type: string
-              prefix:
-                description: Prefix to use for server-side filtering of files in the
-                  Bucket.
-                type: string
-              provider:
-                default: generic
-                description: |-
-                  Provider of the object storage bucket.
-                  Defaults to 'generic', which expects an S3 (API) compatible object
-                  storage.
-                enum:
-                - generic
-                - aws
-                - gcp
-                - azure
-                type: string
-              proxySecretRef:
-                description: |-
-                  ProxySecretRef specifies the Secret containing the proxy configuration
-                  to use while communicating with the Bucket server.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
-              region:
-                description: Region of the Endpoint where the BucketName is located
-                  in.
-                type: string
-              secretRef:
-                description: |-
-                  SecretRef specifies the Secret containing authentication credentials
-                  for the Bucket.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
-              sts:
-                description: |-
-                  STS specifies the required configuration to use a Security Token
-                  Service for fetching temporary credentials to authenticate in a
-                  Bucket provider.
-
-                  This field is only supported for the `aws` and `generic` providers.
-                properties:
-                  certSecretRef:
-                    description: |-
-                      CertSecretRef can be given the name of a Secret containing
-                      either or both of
-
-                      - a PEM-encoded client certificate (`tls.crt`) and private
-                      key (`tls.key`);
-                      - a PEM-encoded CA certificate (`ca.crt`)
-
-                      and whichever are supplied, will be used for connecting to the
-                      STS endpoint. The client cert and key are useful if you are
-                      authenticating with a certificate; the CA cert is useful if
-                      you are using a self-signed server certificate. The Secret must
-                      be of type `Opaque` or `kubernetes.io/tls`.
-
-                      This field is only supported for the `ldap` provider.
-                    properties:
-                      name:
-                        description: Name of the referent.
-                        type: string
-                    required:
-                    - name
-                    type: object
-                  endpoint:
-                    description: |-
-                      Endpoint is the HTTP/S endpoint of the Security Token Service from
-                      where temporary credentials will be fetched.
-                    pattern: ^(http|https)://.*$
-                    type: string
-                  provider:
-                    description: Provider of the Security Token Service.
-                    enum:
-                    - aws
-                    - ldap
-                    type: string
-                  secretRef:
-                    description: |-
-                      SecretRef specifies the Secret containing authentication credentials
-                      for the STS endpoint. This Secret must contain the fields `username`
-                      and `password` and is supported only for the `ldap` provider.
-                    properties:
-                      name:
-                        description: Name of the referent.
-                        type: string
-                    required:
-                    - name
-                    type: object
-                required:
-                - endpoint
-                - provider
-                type: object
-              suspend:
-                description: |-
-                  Suspend tells the controller to suspend the reconciliation of this
-                  Bucket.
-                type: boolean
-              timeout:
-                default: 60s
-                description: Timeout for fetch operations, defaults to 60s.
-                pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m))+$
-                type: string
-            required:
-            - bucketName
-            - endpoint
-            - interval
-            type: object
-            x-kubernetes-validations:
-            - message: STS configuration is only supported for the 'aws' and 'generic'
-                Bucket providers
-              rule: self.provider == 'aws' || self.provider == 'generic' || !has(self.sts)
-            - message: '''aws'' is the only supported STS provider for the ''aws''
-                Bucket provider'
-              rule: self.provider != 'aws' || !has(self.sts) || self.sts.provider
-                == 'aws'
-            - message: '''ldap'' is the only supported STS provider for the ''generic''
-                Bucket provider'
-              rule: self.provider != 'generic' || !has(self.sts) || self.sts.provider
-                == 'ldap'
-            - message: spec.sts.secretRef is not required for the 'aws' STS provider
-              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.secretRef)'
-            - message: spec.sts.certSecretRef is not required for the 'aws' STS provider
-              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.certSecretRef)'
-          status:
-            default:
-              observedGeneration: -1
-            description: BucketStatus records the observed state of a Bucket.
-            properties:
-              artifact:
-                description: Artifact represents the last successful Bucket reconciliation.
-                properties:
-                  digest:
-                    description: Digest is the digest of the file in the form of '<algorithm>:<checksum>'.
-                    pattern: ^[a-z0-9]+(?:[.+_-][a-z0-9]+)*:[a-zA-Z0-9=_-]+$
-                    type: string
-                  lastUpdateTime:
-                    description: |-
-                      LastUpdateTime is the timestamp corresponding to the last update of the
-                      Artifact.
-                    format: date-time
-                    type: string
-                  metadata:
-                    additionalProperties:
-                      type: string
-                    description: Metadata holds upstream information such as OCI annotations.
-                    type: object
-                  path:
-                    description: |-
-                      Path is the relative file path of the Artifact. It can be used to locate
-                      the file in the root of the Artifact storage on the local file system of
-                      the controller managing the Source.
-                    type: string
-                  revision:
-                    description: |-
-                      Revision is a human-readable identifier traceable in the origin source
-                      system. It can be a Git commit SHA, Git tag, a Helm chart version, etc.
-                    type: string
-                  size:
-                    description: Size is the number of bytes in the file.
-                    format: int64
-                    type: integer
-                  url:
-                    description: |-
-                      URL is the HTTP address of the Artifact as exposed by the controller
-                      managing the Source. It can be used to retrieve the Artifact for
-                      consumption, e.g. by another controller applying the Artifact contents.
-                    type: string
-                required:
-                - lastUpdateTime
-                - path
-                - revision
-                - url
-                type: object
-              conditions:
-                description: Conditions holds the conditions for the Bucket.
-                items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
-                  properties:
-                    lastTransitionTime:
-                      description: |-
-                        lastTransitionTime is the last time the condition transitioned from one status to another.
-                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: |-
-                        message is a human readable message indicating details about the transition.
-                        This may be an empty string.
-                      maxLength: 32768
-                      type: string
-                    observedGeneration:
-                      description: |-
-                        observedGeneration represents the .metadata.generation that the condition was set based upon.
-                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-                        with respect to the current state of the instance.
-                      format: int64
-                      minimum: 0
-                      type: integer
-                    reason:
-                      description: |-
-                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
-                        Producers of specific condition types may define expected values and meanings for this field,
-                        and whether the values are considered a guaranteed API.
-                        The value should be a CamelCase string.
-                        This field may not be empty.
-                      maxLength: 1024
-                      minLength: 1
-                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-                      type: string
-                    status:
-                      description: status of the condition, one of True, False, Unknown.
-                      enum:
-                      - "True"
-                      - "False"
-                      - Unknown
-                      type: string
-                    type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
-                      maxLength: 316
-                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-              lastHandledReconcileAt:
-                description: |-
-                  LastHandledReconcileAt holds the value of the most recent
-                  reconcile request value, so a change of the annotation value
-                  can be detected.
-                type: string
-              observedGeneration:
-                description: ObservedGeneration is the last observed generation of
-                  the Bucket object.
-                format: int64
-                type: integer
-              observedIgnore:
-                description: |-
-                  ObservedIgnore is the observed exclusion patterns used for constructing
-                  the source artifact.
-                type: string
-              url:
-                description: |-
-                  URL is the dynamic fetch link for the latest Artifact.
-                  It is provided on a "best effort" basis, and using the precise
-                  BucketStatus.Artifact data is recommended.
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
-  - additionalPrinterColumns:
-    - jsonPath: .spec.endpoint
-      name: Endpoint
-      type: string
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
       type: string
@@ -964,7 +636,7 @@ spec:
       name: Age
       type: date
     deprecated: true
-    deprecationWarning: v1beta1 Bucket is deprecated, upgrade to v1
+    deprecationWarning: v1beta1 Bucket is deprecated, upgrade to v1beta2
     name: v1beta1
     schema:
       openAPIV3Schema:
@@ -1101,15 +773,22 @@ spec:
                     description: URL is the HTTP address of this artifact.
                     type: string
                 required:
-                - lastUpdateTime
                 - path
                 - url
                 type: object
               conditions:
                 description: Conditions holds the conditions for the Bucket.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -1150,7 +829,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -1195,8 +879,6 @@ spec:
     - jsonPath: .status.conditions[?(@.type=="Ready")].message
       name: Status
       type: string
-    deprecated: true
-    deprecationWarning: v1beta2 Bucket is deprecated, upgrade to v1
     name: v1beta2
     schema:
       openAPIV3Schema:
@@ -1255,29 +937,6 @@ spec:
               bucketName:
                 description: BucketName is the name of the object storage bucket.
                 type: string
-              certSecretRef:
-                description: |-
-                  CertSecretRef can be given the name of a Secret containing
-                  either or both of
-
-                  - a PEM-encoded client certificate (`tls.crt`) and private
-                  key (`tls.key`);
-                  - a PEM-encoded CA certificate (`ca.crt`)
-
-                  and whichever are supplied, will be used for connecting to the
-                  bucket. The client cert and key are useful if you are
-                  authenticating with a certificate; the CA cert is useful if
-                  you are using a self-signed server certificate. The Secret must
-                  be of type `Opaque` or `kubernetes.io/tls`.
-
-                  This field is only supported for the `generic` provider.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
               endpoint:
                 description: Endpoint is the object storage address the BucketName
                   is located at.
@@ -1314,17 +973,6 @@ spec:
                 - gcp
                 - azure
                 type: string
-              proxySecretRef:
-                description: |-
-                  ProxySecretRef specifies the Secret containing the proxy configuration
-                  to use while communicating with the Bucket server.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
               region:
                 description: Region of the Endpoint where the BucketName is located
                   in.
@@ -1339,65 +987,6 @@ spec:
                     type: string
                 required:
                 - name
-                type: object
-              sts:
-                description: |-
-                  STS specifies the required configuration to use a Security Token
-                  Service for fetching temporary credentials to authenticate in a
-                  Bucket provider.
-
-                  This field is only supported for the `aws` and `generic` providers.
-                properties:
-                  certSecretRef:
-                    description: |-
-                      CertSecretRef can be given the name of a Secret containing
-                      either or both of
-
-                      - a PEM-encoded client certificate (`tls.crt`) and private
-                      key (`tls.key`);
-                      - a PEM-encoded CA certificate (`ca.crt`)
-
-                      and whichever are supplied, will be used for connecting to the
-                      STS endpoint. The client cert and key are useful if you are
-                      authenticating with a certificate; the CA cert is useful if
-                      you are using a self-signed server certificate. The Secret must
-                      be of type `Opaque` or `kubernetes.io/tls`.
-
-                      This field is only supported for the `ldap` provider.
-                    properties:
-                      name:
-                        description: Name of the referent.
-                        type: string
-                    required:
-                    - name
-                    type: object
-                  endpoint:
-                    description: |-
-                      Endpoint is the HTTP/S endpoint of the Security Token Service from
-                      where temporary credentials will be fetched.
-                    pattern: ^(http|https)://.*$
-                    type: string
-                  provider:
-                    description: Provider of the Security Token Service.
-                    enum:
-                    - aws
-                    - ldap
-                    type: string
-                  secretRef:
-                    description: |-
-                      SecretRef specifies the Secret containing authentication credentials
-                      for the STS endpoint. This Secret must contain the fields `username`
-                      and `password` and is supported only for the `ldap` provider.
-                    properties:
-                      name:
-                        description: Name of the referent.
-                        type: string
-                    required:
-                    - name
-                    type: object
-                required:
-                - endpoint
-                - provider
                 type: object
               suspend:
                 description: |-
@@ -1414,22 +1003,6 @@ spec:
             - endpoint
             - interval
             type: object
-            x-kubernetes-validations:
-            - message: STS configuration is only supported for the 'aws' and 'generic'
-                Bucket providers
-              rule: self.provider == 'aws' || self.provider == 'generic' || !has(self.sts)
-            - message: '''aws'' is the only supported STS provider for the ''aws''
-                Bucket provider'
-              rule: self.provider != 'aws' || !has(self.sts) || self.sts.provider
-                == 'aws'
-            - message: '''ldap'' is the only supported STS provider for the ''generic''
-                Bucket provider'
-              rule: self.provider != 'generic' || !has(self.sts) || self.sts.provider
-                == 'ldap'
-            - message: spec.sts.secretRef is not required for the 'aws' STS provider
-              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.secretRef)'
-            - message: spec.sts.certSecretRef is not required for the 'aws' STS provider
-              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.certSecretRef)'
           status:
             default:
               observedGeneration: -1
@@ -1483,8 +1056,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the Bucket.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -1525,7 +1106,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -1562,7 +1148,7 @@ spec:
             type: object
         type: object
     served: true
-    storage: false
+    storage: true
     subresources:
       status: {}
 ---
@@ -1570,7 +1156,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: source-controller
     app.kubernetes.io/instance: flux-system
@@ -1674,14 +1260,6 @@ spec:
                   efficient use of resources.
                 pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                 type: string
-              provider:
-                description: |-
-                  Provider used for authentication, can be 'azure', 'generic'.
-                  When not specified, defaults to 'generic'.
-                enum:
-                - generic
-                - azure
-                type: string
               proxySecretRef:
                 description: |-
                   ProxySecretRef specifies the Secret containing the proxy configuration
@@ -1711,12 +1289,14 @@ spec:
                     description: |-
                       Commit SHA to check out, takes precedence over all reference fields.
 
+
                       This can be combined with Branch to shallow clone the branch, in which
                       the commit is expected to exist.
                     type: string
                   name:
                     description: |-
                       Name of the reference to check out; takes precedence over Branch, Tag and SemVer.
+
 
                       It must be a valid Git reference: https://git-scm.com/docs/git-check-ref-format#_description
                       Examples: "refs/heads/main", "refs/tags/v0.1.0", "refs/pull/420/head", "refs/merge-requests/1/head"
@@ -1769,6 +1349,7 @@ spec:
                     default: HEAD
                     description: |-
                       Mode specifies which Git object(s) should be verified.
+
 
                       The variants "head" and "HEAD" both imply the same thing, i.e. verify
                       the commit that the HEAD of the Git repository points to. The variant
@@ -1851,8 +1432,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the GitRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -1893,7 +1482,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -2246,15 +1840,22 @@ spec:
                     description: URL is the HTTP address of this artifact.
                     type: string
                 required:
-                - lastUpdateTime
                 - path
                 - url
                 type: object
               conditions:
                 description: Conditions holds the conditions for the GitRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -2295,7 +1896,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -2335,7 +1941,6 @@ spec:
                       description: URL is the HTTP address of this artifact.
                       type: string
                   required:
-                  - lastUpdateTime
                   - path
                   - url
                   type: object
@@ -2504,12 +2109,14 @@ spec:
                     description: |-
                       Commit SHA to check out, takes precedence over all reference fields.
 
+
                       This can be combined with Branch to shallow clone the branch, in which
                       the commit is expected to exist.
                     type: string
                   name:
                     description: |-
                       Name of the reference to check out; takes precedence over Branch, Tag and SemVer.
+
 
                       It must be a valid Git reference: https://git-scm.com/docs/git-check-ref-format#_description
                       Examples: "refs/heads/main", "refs/tags/v0.1.0", "refs/pull/420/head", "refs/merge-requests/1/head"
@@ -2637,8 +2244,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the GitRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -2679,7 +2294,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -2702,6 +2322,7 @@ spec:
                   be used to determine if the content of the included repository has
                   changed.
                   It has the format of `<algo>:<checksum>`, for example: `sha256:<checksum>`.
+
 
                   Deprecated: Replaced with explicit fields for observed artifact content
                   config in the status.
@@ -2831,7 +2452,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: source-controller
     app.kubernetes.io/instance: flux-system
@@ -3084,8 +2705,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmChart.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -3126,7 +2755,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -3357,15 +2991,22 @@ spec:
                     description: URL is the HTTP address of this artifact.
                     type: string
                 required:
-                - lastUpdateTime
                 - path
                 - url
                 type: object
               conditions:
                 description: Conditions holds the conditions for the HelmChart.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -3406,7 +3047,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -3710,8 +3356,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmChart.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -3752,7 +3406,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -3811,7 +3470,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: helm-controller
     app.kubernetes.io/instance: flux-system
@@ -3946,7 +3605,6 @@ spec:
                             minLength: 1
                             type: string
                         required:
-                        - kind
                         - name
                         type: object
                       valuesFiles:
@@ -4146,12 +3804,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Create` and if omitted
                       CRDs are installed but not updated.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are applied (installed) during Helm install action.
                       With this option users can opt in to CRD replace existing CRDs on Helm
@@ -4176,11 +3838,6 @@ spec:
                     description: |-
                       DisableOpenAPIValidation prevents the Helm install action from validating
                       rendered templates against the Kubernetes OpenAPI Schema.
-                    type: boolean
-                  disableSchemaValidation:
-                    description: |-
-                      DisableSchemaValidation prevents the Helm install action from validating
-                      the values against the JSON Schema.
                     type: boolean
                   disableWait:
                     description: |-
@@ -4224,6 +3881,7 @@ spec:
                     description: |-
                       SkipCRDs tells the Helm install action to not install any CRDs. By default,
                       CRDs are installed if not already present.
+
 
                       Deprecated use CRD policy (`crds`) attribute with value `Skip` instead.
                     type: boolean
@@ -4285,10 +3943,12 @@ spec:
                   duration of the reconciliation, instead of being created and destroyed
                   for each (step of a) Helm action.
 
+
                   This can improve performance, but may cause issues with some Helm charts
                   that for example do create Custom Resource Definitions during installation
                   outside Helm's CRD lifecycle hooks, which are then not observed to be
                   available by e.g. post-install hooks.
+
 
                   If not set, it defaults to true.
                 type: boolean
@@ -4567,12 +4227,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Skip` and if omitted
                       CRDs are neither installed nor upgraded.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are not applied during Helm upgrade action. With this
                       option users can opt-in to CRD upgrade, which is not (yet) natively supported by Helm.
@@ -4590,11 +4254,6 @@ spec:
                     description: |-
                       DisableOpenAPIValidation prevents the Helm upgrade action from validating
                       rendered templates against the Kubernetes OpenAPI Schema.
-                    type: boolean
-                  disableSchemaValidation:
-                    description: |-
-                      DisableSchemaValidation prevents the Helm upgrade action from validating
-                      the values against the JSON Schema.
                     type: boolean
                   disableWait:
                     description: |-
@@ -4721,8 +4380,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmRelease.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -4763,7 +4430,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -5097,7 +4769,6 @@ spec:
                             minLength: 1
                             type: string
                         required:
-                        - kind
                         - name
                         type: object
                       valuesFile:
@@ -5163,6 +4834,7 @@ spec:
                   ChartRef holds a reference to a source controller resource containing the
                   Helm chart artifact.
 
+
                   Note: this field is provisional to the v2 API, and not actively used
                   by v2beta1 HelmReleases.
                 properties:
@@ -5217,6 +4889,7 @@ spec:
                   DriftDetection holds the configuration for detecting and handling
                   differences between the manifest in the Helm storage and the resources
                   currently existing in the cluster.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -5308,12 +4981,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Create` and if omitted
                       CRDs are installed but not updated.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are applied (installed) during Helm install action.
                       With this option users can opt-in to CRD replace existing CRDs on Helm
@@ -5382,6 +5059,7 @@ spec:
                       SkipCRDs tells the Helm install action to not install any CRDs. By default,
                       CRDs are installed if not already present.
 
+
                       Deprecated use CRD policy (`crds`) attribute with value `Skip` instead.
                     type: boolean
                   timeout:
@@ -5445,10 +5123,12 @@ spec:
                   duration of the reconciliation, instead of being created and destroyed
                   for each (step of a) Helm action.
 
+
                   This can improve performance, but may cause issues with some Helm charts
                   that for example do create Custom Resource Definitions during installation
                   outside Helm's CRD lifecycle hooks, which are then not observed to be
                   available by e.g. post-install hooks.
+
 
                   If not set, it defaults to true.
                 type: boolean
@@ -5805,12 +5485,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Skip` and if omitted
                       CRDs are neither installed nor upgraded.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are not applied during Helm upgrade action. With this
                       option users can opt-in to CRD upgrade, which is not (yet) natively supported by Helm.
@@ -5942,7 +5626,6 @@ spec:
                   type: object
                 type: array
             required:
-            - chart
             - interval
             type: object
           status:
@@ -5953,8 +5636,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmRelease.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -5995,7 +5686,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -6022,6 +5718,7 @@ spec:
                 description: |-
                   History holds the history of Helm releases performed for this HelmRelease
                   up to the last successfully completed release.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -6142,6 +5839,7 @@ spec:
                   LastAttemptedConfigDigest is the digest for the config (better known as
                   "values") of the last reconciliation attempt.
 
+
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
                 type: string
@@ -6149,6 +5847,7 @@ spec:
                 description: |-
                   LastAttemptedGeneration is the last generation the controller attempted
                   to reconcile.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -6158,6 +5857,7 @@ spec:
                 description: |-
                   LastAttemptedReleaseAction is the last release action performed for this
                   HelmRelease. It is used to determine the active remediation strategy.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -6176,6 +5876,7 @@ spec:
                   LastHandledForceAt holds the value of the most recent force request
                   value, so a change of the annotation value can be detected.
 
+
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
                 type: string
@@ -6189,6 +5890,7 @@ spec:
                 description: |-
                   LastHandledResetAt holds the value of the most recent reset request
                   value, so a change of the annotation value can be detected.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -6210,6 +5912,7 @@ spec:
                 description: |-
                   StorageNamespace is the namespace of the Helm release storage for the
                   current release.
+
 
                   Note: this field is provisional to the v2beta2 API, and not actively used
                   by v2beta1 HelmReleases.
@@ -6346,7 +6049,6 @@ spec:
                             minLength: 1
                             type: string
                         required:
-                        - kind
                         - name
                         type: object
                       valuesFile:
@@ -6413,6 +6115,7 @@ spec:
                 description: |-
                   ChartRef holds a reference to a source controller resource containing the
                   Helm chart artifact.
+
 
                   Note: this field is provisional to the v2 API, and not actively used
                   by v2beta2 HelmReleases.
@@ -6556,12 +6259,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Create` and if omitted
                       CRDs are installed but not updated.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are applied (installed) during Helm install action.
                       With this option users can opt in to CRD replace existing CRDs on Helm
@@ -6630,6 +6337,7 @@ spec:
                       SkipCRDs tells the Helm install action to not install any CRDs. By default,
                       CRDs are installed if not already present.
 
+
                       Deprecated use CRD policy (`crds`) attribute with value `Skip` instead.
                     type: boolean
                   timeout:
@@ -6690,10 +6398,12 @@ spec:
                   duration of the reconciliation, instead of being created and destroyed
                   for each (step of a) Helm action.
 
+
                   This can improve performance, but may cause issues with some Helm charts
                   that for example do create Custom Resource Definitions during installation
                   outside Helm's CRD lifecycle hooks, which are then not observed to be
                   available by e.g. post-install hooks.
+
 
                   If not set, it defaults to true.
                 type: boolean
@@ -7075,12 +6785,16 @@ spec:
                       `Create` or `CreateReplace`. Default is `Skip` and if omitted
                       CRDs are neither installed nor upgraded.
 
+
                       Skip: do neither install nor replace (update) any CRDs.
+
 
                       Create: new CRDs are created, existing CRDs are neither updated nor deleted.
 
+
                       CreateReplace: new CRDs are created, existing CRDs are updated (replaced)
                       but not deleted.
+
 
                       By default, CRDs are not applied during Helm upgrade action. With this
                       option users can opt-in to CRD upgrade, which is not (yet) natively supported by Helm.
@@ -7224,8 +6938,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmRelease.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -7266,7 +6988,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -7497,7 +7224,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: source-controller
     app.kubernetes.io/instance: flux-system
@@ -7587,15 +7314,18 @@ spec:
                   CertSecretRef can be given the name of a Secret containing
                   either or both of
 
+
                   - a PEM-encoded client certificate (`tls.crt`) and private
                   key (`tls.key`);
                   - a PEM-encoded CA certificate (`ca.crt`)
+
 
                   and whichever are supplied, will be used for connecting to the
                   registry. The client cert and key are useful if you are
                   authenticating with a certificate; the CA cert is useful if
                   you are using a self-signed server certificate. The Secret must
                   be of type `Opaque` or `kubernetes.io/tls`.
+
 
                   It takes precedence over the values specified in the Secret referred
                   to by `.spec.secretRef`.
@@ -7738,8 +7468,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -7780,7 +7518,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -7956,15 +7699,22 @@ spec:
                     description: URL is the HTTP address of this artifact.
                     type: string
                 required:
-                - lastUpdateTime
                 - path
                 - url
                 type: object
               conditions:
                 description: Conditions holds the conditions for the HelmRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -8005,7 +7755,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -8111,15 +7866,18 @@ spec:
                   CertSecretRef can be given the name of a Secret containing
                   either or both of
 
+
                   - a PEM-encoded client certificate (`tls.crt`) and private
                   key (`tls.key`);
                   - a PEM-encoded CA certificate (`ca.crt`)
+
 
                   and whichever are supplied, will be used for connecting to the
                   registry. The client cert and key are useful if you are
                   authenticating with a certificate; the CA cert is useful if
                   you are using a self-signed server certificate. The Secret must
                   be of type `Opaque` or `kubernetes.io/tls`.
+
 
                   It takes precedence over the values specified in the Secret referred
                   to by `.spec.secretRef`.
@@ -8262,8 +8020,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the HelmRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -8304,7 +8070,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -8345,7 +8116,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: image-reflector-controller
     app.kubernetes.io/instance: flux-system
@@ -8483,8 +8254,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -8525,7 +8304,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -8675,8 +8459,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -8717,7 +8509,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -8754,7 +8551,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: image-reflector-controller
     app.kubernetes.io/instance: flux-system
@@ -8835,9 +8632,11 @@ spec:
                   CertSecretRef can be given the name of a secret containing
                   either or both of
 
+
                    - a PEM-encoded client certificate (`certFile`) and private
                    key (`keyFile`);
                    - a PEM-encoded CA certificate (`caFile`)
+
 
                    and whichever are supplied, will be used for connecting to the
                    registry. The client cert and key are useful if you are
@@ -8896,9 +8695,6 @@ spec:
                   Defaults to 'Interval' duration.
                 pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m))+$
                 type: string
-            required:
-            - image
-            - interval
             type: object
           status:
             default:
@@ -8913,8 +8709,16 @@ spec:
                 type: string
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -8955,7 +8759,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -9060,15 +8869,18 @@ spec:
                   CertSecretRef can be given the name of a Secret containing
                   either or both of
 
+
                   - a PEM-encoded client certificate (`tls.crt`) and private
                   key (`tls.key`);
                   - a PEM-encoded CA certificate (`ca.crt`)
+
 
                   and whichever are supplied, will be used for connecting to the
                   registry. The client cert and key are useful if you are
                   authenticating with a certificate; the CA cert is useful if
                   you are using a self-signed server certificate. The Secret must
                   be of type `Opaque` or `kubernetes.io/tls`.
+
 
                   Note: Support for the `caFile`, `certFile` and `keyFile` keys has
                   been deprecated.
@@ -9113,17 +8925,6 @@ spec:
                 - azure
                 - gcp
                 type: string
-              proxySecretRef:
-                description: |-
-                  ProxySecretRef specifies the Secret containing the proxy configuration
-                  to use while communicating with the container registry.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
               secretRef:
                 description: |-
                   SecretRef can be given the name of a secret containing
@@ -9154,9 +8955,6 @@ spec:
                   Defaults to 'Interval' duration.
                 pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m))+$
                 type: string
-            required:
-            - image
-            - interval
             type: object
           status:
             default:
@@ -9171,8 +8969,16 @@ spec:
                 type: string
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -9213,7 +9019,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -9269,7 +9080,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: image-automation-controller
     app.kubernetes.io/instance: flux-system
@@ -9341,12 +9152,14 @@ spec:
                             description: |-
                               Commit SHA to check out, takes precedence over all reference fields.
 
+
                               This can be combined with Branch to shallow clone the branch, in which
                               the commit is expected to exist.
                             type: string
                           name:
                             description: |-
                               Name of the reference to check out; takes precedence over Branch, Tag and SemVer.
+
 
                               It must be a valid Git reference: https://git-scm.com/docs/git-check-ref-format#_description
                               Examples: "refs/heads/main", "refs/tags/v0.1.0", "refs/pull/420/head", "refs/merge-requests/1/head"
@@ -9403,8 +9216,6 @@ spec:
                             required:
                             - name
                             type: object
-                        required:
-                        - secretRef
                         type: object
                     required:
                     - author
@@ -9512,8 +9323,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -9554,7 +9373,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -9652,12 +9476,14 @@ spec:
                             description: |-
                               Commit SHA to check out, takes precedence over all reference fields.
 
+
                               This can be combined with Branch to shallow clone the branch, in which
                               the commit is expected to exist.
                             type: string
                           name:
                             description: |-
                               Name of the reference to check out; takes precedence over Branch, Tag and SemVer.
+
 
                               It must be a valid Git reference: https://git-scm.com/docs/git-check-ref-format#_description
                               Examples: "refs/heads/main", "refs/tags/v0.1.0", "refs/pull/420/head", "refs/merge-requests/1/head"
@@ -9714,8 +9540,6 @@ spec:
                             required:
                             - name
                             type: object
-                        required:
-                        - secretRef
                         type: object
                     required:
                     - author
@@ -9871,8 +9695,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -9913,7 +9745,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -9985,7 +9822,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: kustomize-controller
     app.kubernetes.io/instance: flux-system
@@ -10413,8 +10250,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -10455,7 +10300,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -10686,8 +10536,6 @@ spec:
                     required:
                     - name
                     type: object
-                required:
-                - secretRef
                 type: object
               patches:
                 description: |-
@@ -10980,8 +10828,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -11022,7 +10878,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -11595,8 +11456,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -11637,7 +11506,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -11706,7 +11580,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: source-controller
     app.kubernetes.io/instance: flux-system
@@ -11766,15 +11640,18 @@ spec:
                   CertSecretRef can be given the name of a Secret containing
                   either or both of
 
+
                   - a PEM-encoded client certificate (`tls.crt`) and private
                   key (`tls.key`);
                   - a PEM-encoded CA certificate (`ca.crt`)
+
 
                   and whichever are supplied, will be used for connecting to the
                   registry. The client cert and key are useful if you are
                   authenticating with a certificate; the CA cert is useful if
                   you are using a self-signed server certificate. The Secret must
                   be of type `Opaque` or `kubernetes.io/tls`.
+
 
                   Note: Support for the `caFile`, `certFile` and `keyFile` keys have
                   been deprecated.
@@ -11835,17 +11712,6 @@ spec:
                 - azure
                 - gcp
                 type: string
-              proxySecretRef:
-                description: |-
-                  ProxySecretRef specifies the Secret containing the proxy configuration
-                  to use while communicating with the container registry.
-                properties:
-                  name:
-                    description: Name of the referent.
-                    type: string
-                required:
-                - name
-                type: object
               ref:
                 description: |-
                   The OCI reference to pull and monitor for changes,
@@ -12017,8 +11883,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the OCIRepository.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -12059,7 +11933,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -12081,6 +11960,7 @@ spec:
                   be used to determine if the content configuration has changed and the
                   artifact needs to be rebuilt.
                   It has the format of `<algo>:<checksum>`, for example: `sha256:<checksum>`.
+
 
                   Deprecated: Replaced with explicit fields for observed artifact content
                   config in the status.
@@ -12137,7 +12017,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: notification-controller
     app.kubernetes.io/instance: flux-system
@@ -12269,8 +12149,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -12311,7 +12199,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -12382,6 +12275,7 @@ spec:
                 description: |-
                   CertSecretRef specifies the Secret containing
                   a PEM-encoded CA certificate (in the `ca.crt` key).
+
 
                   Note: Support for the `caFile` key has
                   been deprecated.
@@ -12472,8 +12366,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the Provider.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -12514,7 +12416,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -12583,6 +12490,7 @@ spec:
                 description: |-
                   CertSecretRef specifies the Secret containing
                   a PEM-encoded CA certificate (in the `ca.crt` key).
+
 
                   Note: Support for the `caFile` key has
                   been deprecated.
@@ -12676,7 +12584,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.15.0
   labels:
     app.kubernetes.io/component: notification-controller
     app.kubernetes.io/instance: flux-system
@@ -12836,8 +12744,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the Receiver.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -12878,7 +12794,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -12999,7 +12920,6 @@ spec:
                       minLength: 1
                       type: string
                   required:
-                  - kind
                   - name
                   type: object
                 type: array
@@ -13038,7 +12958,6 @@ spec:
                 type: string
             required:
             - resources
-            - secretRef
             - type
             type: object
           status:
@@ -13048,8 +12967,16 @@ spec:
             properties:
               conditions:
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -13090,7 +13017,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -13251,7 +13183,6 @@ spec:
                 type: string
             required:
             - resources
-            - secretRef
             - type
             type: object
           status:
@@ -13262,8 +13193,16 @@ spec:
               conditions:
                 description: Conditions holds the conditions for the Receiver.
                 items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
+                  description: "Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -13304,7 +13243,12 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      description: |-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
