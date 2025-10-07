@@ -144,7 +144,7 @@ See an example below.
 
 ```sh
 $ cat <<EOF > management-clusters/MC_NAME/extras/patch-helmrelease-gitops-server.yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: gitops-server
