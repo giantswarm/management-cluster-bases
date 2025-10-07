@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: List kustomizations
-        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.0.0
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
         with:
           args: --list-files management-clusters
 
