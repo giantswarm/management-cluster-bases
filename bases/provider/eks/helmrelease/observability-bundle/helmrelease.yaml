@@ -1,4 +1,4 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: sample-customer-prometheus-operator-crd
@@ -23,7 +23,7 @@ spec:
     remediation:
       retries: 3
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: sample-customer-prometheus-operator-app
@@ -71,7 +71,7 @@ spec:
       kubeControllerManager:
         enabled: false
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: sample-customer-prometheus-agent-app
