@@ -1,0 +1,3 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/konfigure-operator/refs/tags/v1.0.1/config/crd/bases/konfigure.giantswarm.io_konfigurationschemas.yaml
+  - https://raw.githubusercontent.com/giantswarm/konfigure-operator/refs/tags/v1.0.1/config/crd/bases/konfigure.giantswarm.io_konfigurations.yaml
