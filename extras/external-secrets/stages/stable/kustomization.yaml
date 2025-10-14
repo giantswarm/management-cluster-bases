@@ -1,5 +1,7 @@
 resources:
   - ../../base
+  - manifest-configmap.yaml
 patches:
   - path: patch-version.yaml
-g
+  - path: patch-remove-namespace.yaml
+
