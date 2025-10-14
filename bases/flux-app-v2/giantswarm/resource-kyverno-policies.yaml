@@ -59,9 +59,10 @@ spec:
             - HelmRelease
       validate:
         message: >-
-          The spec.chart.spec.sourceRef is allowed to unconditionally refer to either default
+          The .spec.chart.spec.sourceRef is allowed to unconditionally refer to either default
           or local namespace. The giantswarm namespace is allowed under condition the HelmRepository
-          kind of the ?*-catalog name is referred.
+          kind of the ?*-catalog name is referred. The .spec.chartRef is allowed to refer to either
+          default or local namespace.
         anyPattern:
           - spec:
               chart:
@@ -69,12 +70,18 @@ spec:
                   sourceRef:
                     =(namespace): "default"
           - spec:
+              chartRef:
+                =(namespace): "default"
+          - spec:
               chart:
                 spec:
                   sourceRef:
                     (namespace): "giantswarm"
                     kind: "HelmRepository"
                     name: "?*-catalog"
+          - spec:
+              chartRef:
+                =(namespace): "{{request.object.metadata.namespace}}"
           - spec:
               chart:
                 spec:
