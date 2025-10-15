@@ -1,0 +1,13 @@
+resources:
+- alloy-gateway.yaml
+- aws-resolver-rules-operator.yaml
+- aws-vpc-operator.yaml
+- capa-iam-operator.yaml
+- cluster-api-events.yaml
+- cluster-api-provider-aws.yaml
+- event-exporter-app.yaml
+- gateway-api-bundle.yaml
+- irsa-operator.yaml
+- object-storage-operator.yaml
+- teleport-tbot.yaml
+- upgrade-schedule-operator.yaml

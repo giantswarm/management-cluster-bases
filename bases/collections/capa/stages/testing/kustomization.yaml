@@ -1,0 +1,4 @@
+patches:
+  - path: ../../base/patches/konfiguration.v2.yaml
+resources:
+  - ../../../shared/stages/testing
