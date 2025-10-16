@@ -58,13 +58,21 @@ spec:
           kinds:
             - HelmRelease
       validate:
-        message: "spec.chart.spec.sourceRef.namespace must be the same as metadata.namespace or 'default'"
+        message: >-
+          Both, the .spec.chart.spec.sourceRef and the .spec.chartRef, field are allowed to
+          unconditionally refer to either default or local namespace.
         anyPattern:
           - spec:
               chart:
                 spec:
                   sourceRef:
                     =(namespace): "default"
+          - spec:
+              chartRef:
+                =(namespace): "default"
+          - spec:
+              chartRef:
+                =(namespace): "{{request.object.metadata.namespace}}"
           - spec:
               chart:
                 spec:
