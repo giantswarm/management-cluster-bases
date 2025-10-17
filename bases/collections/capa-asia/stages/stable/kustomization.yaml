@@ -1,0 +1,7 @@
+components:
+#  - ../../../shared/stages/stable
+  - ../../base
+patches: []
+resources:
+#  - ../../base
+  - ../../../capa/stages/stable

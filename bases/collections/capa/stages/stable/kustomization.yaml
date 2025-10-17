@@ -1,4 +1,17 @@
-patches:
-  - path: ../../base/patches/konfiguration.v2.yaml
+components:
+#  - ../../../shared/stages/stable
+  - ../../base
+patches: []
+#  - target:
+#      kind: App
+#      name: app-operator
+#      namespace: giantswarm
+#    patch: '[{"op": "replace", "path": "/spec/version", "value": "7.2.0"}]'
+#  - target:
+#      kind: App
+#      name: aws-vpc-operator
+#      namespace: giantswarm
+#    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.6.0"}]'
 resources:
+#  - ../../base
   - ../../../shared/stages/stable

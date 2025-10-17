@@ -1,0 +1,23 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  annotations:
+    chart-operator.giantswarm.io/force-helm-upgrade: 'true'
+  labels:
+    app-operator.giantswarm.io/version: 0.0.0
+  name: hello-world
+  namespace: giantswarm
+spec:
+  catalog: control-plane-catalog
+  config:
+    configMap:
+      name: hello-world-konfiguration
+      namespace: giantswarm
+    secret:
+      name: hello-world-konfiguration
+      namespace: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: hello-world
+  namespace: giantswarm
+  version: 1.0.0
