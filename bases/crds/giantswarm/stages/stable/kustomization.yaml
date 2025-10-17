@@ -1,0 +1,8 @@
+resources:
+  - ../testing/app-platform
+  - ../testing/konfigure-operator
+  - ../testing/observability-bundle
+  - ../testing/organization-operator
+  - ../testing/rbac-operator
+  - ../testing/releases
+  - ../testing/silence-operator

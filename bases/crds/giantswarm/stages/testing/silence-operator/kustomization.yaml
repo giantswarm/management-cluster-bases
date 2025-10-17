@@ -1,0 +1,3 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/silence-operator/main/config/crd/bases/monitoring.giantswarm.io_silences.yaml
+  - https://raw.githubusercontent.com/giantswarm/silence-operator/main/config/crd/bases/observability.giantswarm.io_silences.yaml

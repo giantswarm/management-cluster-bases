@@ -1,0 +1,23 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  annotations:
+    chart-operator.giantswarm.io/force-helm-upgrade: 'true'
+  labels:
+    app-operator.giantswarm.io/version: 0.0.0
+  name: aws-resolver-rules-operator
+  namespace: giantswarm
+spec:
+  catalog: control-plane-catalog
+  config:
+    configMap:
+      name: aws-resolver-rules-operator-konfiguration
+      namespace: giantswarm
+    secret:
+      name: aws-resolver-rules-operator-konfiguration
+      namespace: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: aws-resolver-rules-operator
+  namespace: giantswarm
+  version: 0.23.1

@@ -1,0 +1,2 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/rbac-operator/v0.39.0/config/crd/auth.giantswarm.io_rolebindingtemplates.yaml

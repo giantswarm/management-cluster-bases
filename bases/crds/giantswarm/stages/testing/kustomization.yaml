@@ -1,0 +1,9 @@
+resources:
+  - app-platform
+  - konfigure-operator
+  - observability-bundle
+  - organization-operator
+  - rbac-operator
+  - releases
+  - silence-operator
+

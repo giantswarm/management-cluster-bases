@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - path: patches/konfiguration.v2.yaml
+  - target:
+      kind: App
+      name: app-operator
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "7.0.0"}]'
+  - target:
+      kind: App
+      name: aws-vpc-operator
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.6.6"}]'
+  - target:
+      kind: App
+      name: sloth-rules
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "2.2.2"}]'
+  # This is for testing, makes little sense to patch here, cos it is part of this base, so
+  # you might as well update object-storage-operator.yaml instead, if you want a given version for all capa stages.
+  # Could be useful tho if we keep push-to-app-collection in some form to have the latest in the App CRs. Because
+  # you have the latest updated, but this blocks it to take effect until you remove it, as a rare use case.
+  - target:
+      kind: App
+      name: object-storage-operator
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.14.0"}]'
+resources:
+#- ../../shared/base
+- alloy-gateway.yaml
+- aws-resolver-rules-operator.yaml
+- aws-vpc-operator.yaml
+- capa-iam-operator.yaml
+- cluster-api-events.yaml
+- cluster-api-provider-aws.yaml
+- event-exporter-app.yaml
+- gateway-api-bundle.yaml
+- irsa-operator.yaml
+- object-storage-operator.yaml
+- teleport-tbot.yaml
+- upgrade-schedule-operator.yaml
