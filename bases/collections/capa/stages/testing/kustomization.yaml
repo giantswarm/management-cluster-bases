@@ -1,5 +1,4 @@
 components:
-#  - ../../../shared/stages/testing
   - ../../base
 patches:
   - path: ../../base/patches/konfiguration.v2.yaml
@@ -19,5 +18,4 @@ patches:
       namespace: giantswarm
     patch: '[{"op": "replace", "path": "/spec/version", "value": "3.3.3"}]'
 resources:
-#  - ../../base
   - ../../../shared/stages/testing

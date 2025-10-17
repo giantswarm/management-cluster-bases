@@ -1,6 +1,3 @@
-#apiVersion: kustomize.config.k8s.io/v1alpha1
-#kind: Component
-# This is a must, even if empty, otherwise kustomize fails that the kustomization.yaml is empty.
 patches: []
 resources:
   - ../../base
