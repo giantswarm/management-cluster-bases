@@ -1,3 +1,4 @@
 namePrefix: common-
 resources:
   - jobscrapingfailure.yaml
+  - atlas-managementclustercertificateismissing.yaml
