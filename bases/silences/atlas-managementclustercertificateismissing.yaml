@@ -15,3 +15,6 @@ spec:
     - name: exported_namespace
       value: "monitoring|loki|mimir|tempo"
       matchType: "=~"
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
