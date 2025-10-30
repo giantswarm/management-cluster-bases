@@ -2,3 +2,4 @@ namePrefix: common-
 resources:
   - jobscrapingfailure.yaml
   - atlas-managementclustercertificateismissing.yaml
+  - atlas-mimirrulerruleevaluationfailures.yaml‎
