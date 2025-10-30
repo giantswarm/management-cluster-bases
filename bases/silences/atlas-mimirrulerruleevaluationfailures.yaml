@@ -1,0 +1,17 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: atlas-mimirrulerruleevaluationfailures
+  annotations:
+    motivation: Some rules are failing but this causing noise
+    pm: https://github.com/giantswarm/giantswarm/issues/34742
+    valid-until: "2025-11-30"
+  namespace: monitoring
+spec:
+  matchers:
+    - name: alertname
+      value: MimirRulerRuleEvaluationFailures
+      matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
