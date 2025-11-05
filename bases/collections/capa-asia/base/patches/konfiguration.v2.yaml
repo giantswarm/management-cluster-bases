@@ -1,0 +1,13 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      hello-world:
+        variables:
+          - name: app
+            value: hello-world

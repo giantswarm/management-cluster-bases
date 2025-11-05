@@ -1,0 +1,2 @@
+resources:
+  - https://raw.githubusercontent.com/giantswarm/observability-operator/main/config/crd/bases/observability.giantswarm.io_grafanaorganizations.yaml

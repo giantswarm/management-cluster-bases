@@ -1,0 +1,23 @@
+apiVersion: application.giantswarm.io/v1alpha1
+kind: App
+metadata:
+  annotations:
+    chart-operator.giantswarm.io/force-helm-upgrade: 'true'
+  labels:
+    app-operator.giantswarm.io/version: 0.0.0
+  name: aws-vpc-operator
+  namespace: giantswarm
+spec:
+  catalog: control-plane-catalog
+  config:
+    configMap:
+      name: aws-vpc-operator-konfiguration
+      namespace: giantswarm
+    secret:
+      name: aws-vpc-operator-konfiguration
+      namespace: giantswarm
+  kubeConfig:
+    inCluster: true
+  name: aws-vpc-operator
+  namespace: giantswarm
+  version: 0.8.1

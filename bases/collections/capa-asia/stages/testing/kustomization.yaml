@@ -1,0 +1,15 @@
+components:
+  - ../../base
+patches:
+  - target:
+      kind: App
+      name: sloth-rules
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "4.4.4"}]'
+  - target:
+      kind: App
+      name: hello-world
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "2.0.0"}]'
+resources:
+  - ../../../capa/stages/testing

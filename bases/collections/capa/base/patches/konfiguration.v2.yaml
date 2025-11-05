@@ -1,0 +1,49 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      alloy-gateway:
+        variables:
+          - name: app
+            value: alloy-gateway
+      aws-resolver-rules-operator:
+        variables:
+          - name: app
+            value: aws-resolver-rules-operator
+      aws-vpc-operator:
+        variables:
+          - name: app
+            value: aws-vpc-operator
+      cluster-api-events:
+        variables:
+          - name: app
+            value: cluster-api-events
+      event-exporter-app:
+        variables:
+          - name: app
+            value: event-exporter-app
+      gateway-api-bundle:
+        variables:
+          - name: app
+            value: gateway-api-bundle
+      irsa-operator:
+        variables:
+          - name: app
+            value: irsa-operator
+      object-storage-operator:
+        variables:
+          - name: app
+            value: object-storage-operator
+      teleport-tbot:
+        variables:
+          - name: app
+            value: teleport-tbot
+      upgrade-schedule-operator:
+        variables:
+          - name: app
+            value: upgrade-schedule-operator

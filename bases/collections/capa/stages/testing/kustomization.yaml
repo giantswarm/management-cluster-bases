@@ -1,0 +1,21 @@
+components:
+  - ../../base
+patches:
+  - path: ../../base/patches/konfiguration.v2.yaml
+  - target:
+      kind: App
+      name: aws-vpc-operator
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.7.7"}]'
+  - target:
+      kind: App
+      name: object-storage-operator
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.12.5"}]'
+  - target:
+      kind: App
+      name: sloth-rules
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "3.3.3"}]'
+resources:
+  - ../../../shared/stages/testing
