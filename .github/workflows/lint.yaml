@@ -23,12 +23,23 @@ jobs:
         run: |
           ls management-clusters/ | xargs -n1 -I '{}' make build-{}
 
+      - name: Check if output directory has files
+        id: check_output
+        run: |
+          if [ -d "output" ] && [ "$(find output -type f | wc -l)" -gt 0 ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: List generated manifests
+        if: steps.check_output.outputs.has_files == 'true'
         uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
         with:
           args: --list-files output
 
       - name: Lint generated manifests
+        if: steps.check_output.outputs.has_files == 'true'
         uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
         with:
           args: --format=github output
