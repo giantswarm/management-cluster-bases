@@ -1,4 +1,5 @@
 resources:
-- namespace-external-secrets.yaml
-- helmrelease-external-secrets.yaml
-- podmonitor-external-secrets.yaml
+  - namespace-external-secrets.yaml
+  - helmrelease-external-secrets.yaml
+  - podmonitor-external-secrets.yaml
+  - kyverno-clusterrole.yaml
