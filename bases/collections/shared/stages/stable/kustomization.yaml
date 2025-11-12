@@ -1,3 +1,8 @@
-patches: []
+patches:
+  - target:
+      kind: Konfiguration
+      name: collection-konfiguration
+      namespace: giantswarm
+    patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "stable"}}]'
 resources:
   - ../../base

@@ -1,6 +1,9 @@
-#apiVersion: kustomize.config.k8s.io/v1alpha1
-#kind: Component
 patches:
+  - target:
+      kind: Konfiguration
+      name: collection-konfiguration
+      namespace: giantswarm
+    patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "testing"}}]'
   - target:
       kind: App
       name: app-operator
