@@ -1,7 +1,7 @@
 components:
   - ../../base
 patches:
-  - path: ../../base/patches/konfiguration.v2.yaml
+  - path: ../../base/patches/patch_konfiguration.v2.yaml
   - target:
       kind: App
       name: aws-vpc-operator
