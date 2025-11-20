@@ -48,7 +48,7 @@ jobs:
           version: ${{ env.dyff_ver }}
       - run: which dyff
       - run: ls -la /opt/hostedtoolcache
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: build and save installations
         run: |
           for MC in $(ls management-clusters/)
@@ -65,7 +65,7 @@ jobs:
             --load-restrictor=LoadRestrictionsNone \
             management-clusters/${MC} > /tmp/${MC}/new.yaml
           done
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           ref: "main"
           path: "old"
