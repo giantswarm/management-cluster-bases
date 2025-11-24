@@ -1163,6 +1163,8 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   name: resourcesets.fluxcd.controlplane.io
 spec:
+  conversion:
+    strategy: None
   group: fluxcd.controlplane.io
   names:
     kind: ResourceSet
