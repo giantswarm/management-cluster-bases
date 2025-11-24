@@ -15,7 +15,7 @@ ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
-BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-crds build-flux-app-v2-crds build-giantswarm-crds
+BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-crds build-flux-app-v2-crds build-flux-operator-crds build-giantswarm-crds
 
 BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
