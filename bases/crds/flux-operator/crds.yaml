@@ -1164,10 +1164,7 @@ metadata:
   name: resourcesets.fluxcd.controlplane.io
 spec:
   conversion:
-    strategy: Webhook
-    webhook:
-      clientConfig:
-        url: "https://127.0.0.1:6669/my-webhook-path"
+    strategy: None
   group: fluxcd.controlplane.io
   names:
     kind: ResourceSet
