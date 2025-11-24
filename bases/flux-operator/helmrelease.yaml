@@ -24,6 +24,7 @@ spec:
       retries: 3
   values:
     flux-operator:
+      installCRDs: false
       extraEnvs:
       - name: NOTIFICATIONS_DISABLED
         value: "1"
