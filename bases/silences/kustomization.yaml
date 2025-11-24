@@ -3,5 +3,4 @@ resources:
   - jobscrapingfailure.yaml
   - atlas-managementclustercertificateismissing.yaml
   - atlas-mimirrulerruleevaluationfailures.yaml
-  - atlas-grafanapostgresqlrecoverytestfailed.yaml
   - mimiralertmanagernotificationsfailing.yaml
