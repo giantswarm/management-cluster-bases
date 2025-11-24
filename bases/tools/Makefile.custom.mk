@@ -38,6 +38,7 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 .PHONY: $(BUILD_CRD_TARGETS)
 build-common-flux-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common-flux-v2
 build-flux-app-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-app-v2
+build-flux-operator-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/flux-operator
 build-giantswarm-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/giantswarm
 $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	@echo "====> $@"
