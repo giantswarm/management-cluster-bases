@@ -5,5 +5,5 @@ metadata:
   namespace: flux-giantswarm
 spec:
   ref:
-    branch: main
+    branch: cluster-api-1.11
   url: https://github.com/giantswarm/cloud-director-app-collection
