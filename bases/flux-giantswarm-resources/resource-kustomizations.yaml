@@ -93,35 +93,6 @@ spec:
   dependsOn:
     - name: catalogs
   interval: 5m
-  patches:
-  - patch: |-
-      apiVersion: application.giantswarm.io/v1alpha1
-      kind: App
-      metadata:
-        name: kyverno
-        namespace: giantswarm
-      spec:
-        install:
-          timeout: 10m0s
-        upgrade:
-          timeout: 10m0s
-    target:
-      kind: App
-      name: kyverno
-      namespace: giantswarm
-  - patch: |-
-      apiVersion: application.giantswarm.io/v1alpha1
-      kind: App
-      metadata:
-        name: prometheus-operator-app
-        namespace: giantswarm
-      spec:
-        install:
-          skipCRDs: true
-    target:
-      kind: App
-      name: prometheus-operator-app
-      namespace: giantswarm
   path: ./kustomize
   prune: true
   retryInterval: 1m
