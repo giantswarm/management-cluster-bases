@@ -1,0 +1,17 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: grafana-down
+  annotations:
+    motivation: "Waiting for every grafana to be stabilized"
+    slack: https://gigantic.slack.com/archives/C52L7C6SC/p1764766459891199
+    valid-until: "2025-12-04"
+  namespace: monitoring
+spec:
+  matchers:
+    - name: alertname
+      value: GrafanaDown
+      matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
