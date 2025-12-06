@@ -5,4 +5,3 @@ resources:
   - atlas-mimirrulerruleevaluationfailures.yaml
   - mimiralertmanagernotificationsfailing.yaml
   - grafana-down.yaml
-  - grafana-postgresql.yaml
