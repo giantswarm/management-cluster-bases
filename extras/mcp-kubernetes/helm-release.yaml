@@ -1,0 +1,30 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: mcp-kubernetes
+  namespace: flux-giantswarm
+spec:
+  chart:
+    spec:
+      chart: mcp-kubernetes
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: giantswarm-catalog
+        namespace: flux-giantswarm
+      version: 0.0.43
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 1m
+  targetNamespace: mcp-kubernetes
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    - kind: ConfigMap
+      name: mcp-kubernetes-values
+      valuesKey: values.yaml

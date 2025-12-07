@@ -1,0 +1,26 @@
+# Default values for mcp-kubernetes MCB extra
+# These values are applied to all clusters using this extra
+
+# Service configuration - always ClusterIP
+service:
+  type: ClusterIP
+
+# Ingress is configured per-cluster via configMapGenerator overlay
+# To enable ingress, see the README.md in this directory
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
+    kubernetes.io/tls-acme: "true"
+
+# Resources
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Cilium Network Policy is enabled by default
+ciliumNetworkPolicy:
+  enabled: true
