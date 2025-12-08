@@ -29,8 +29,3 @@ spec:
     - kind: ConfigMap
       name: mcp-kubernetes-konfiguration
       valuesKey: values
-    # Secret rendered by Konfiguration from giantswarm-configs
-    - kind: Secret
-      name: mcp-kubernetes-konfiguration
-      valuesKey: values
-      optional: true
