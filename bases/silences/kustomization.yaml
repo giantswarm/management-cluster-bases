@@ -4,5 +4,4 @@ resources:
   - atlas-managementclustercertificateismissing.yaml
   - atlas-mimirrulerruleevaluationfailures.yaml
   - mimiralertmanagernotificationsfailing.yaml
-  - grafana-down.yaml
   - grafana-postgresql.yaml
