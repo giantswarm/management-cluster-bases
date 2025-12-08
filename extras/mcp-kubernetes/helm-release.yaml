@@ -25,6 +25,12 @@ spec:
       retries: 10
       remediateLastFailure: false
   valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
     - kind: ConfigMap
-      name: mcp-kubernetes-values
-      valuesKey: values.yaml
+      name: mcp-kubernetes-konfiguration
+      valuesKey: values
+    # Secret rendered by Konfiguration from giantswarm-configs
+    - kind: Secret
+      name: mcp-kubernetes-konfiguration
+      valuesKey: values
+      optional: true
