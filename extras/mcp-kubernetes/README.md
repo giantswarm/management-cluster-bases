@@ -79,5 +79,5 @@ stringData:
 
 Then encrypt with SOPS using the cluster's age key.
 
-4. The configuration will be automatically rendered by Konfiguration using cluster-specific
-   values from shared-configs.
+4. The configuration will be automatically rendered by Konfiguration using shared-configs
+   and cluster-specific values from CMC repositories.
