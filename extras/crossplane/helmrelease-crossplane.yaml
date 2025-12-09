@@ -1,18 +1,27 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: crossplane
+  namespace: flux-giantswarm
+spec:
+  interval: 1h
+  provider: generic
+  ref:
+    # Used by renovate
+    # repo: giantswarm/crossplane
+    tag: 2.5.2
+  url: oci://gsoci.azurecr.io/charts/giantswarm/crossplane
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: crossplane
   namespace: flux-giantswarm
 spec:
-  chart:
-    spec:
-      chart: crossplane
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-control-plane-catalog
-        namespace: flux-giantswarm
-      version: 2.5.0
+  chartRef:
+    kind: OCIRepository
+    name: crossplane
+    namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
@@ -29,4 +38,4 @@ spec:
       enabled: true
     global:
       podSecurityStandards:
-        enforced: ${pssEnforced:=true}
+        enforced: true

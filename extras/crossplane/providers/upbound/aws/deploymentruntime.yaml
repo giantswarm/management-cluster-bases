@@ -33,7 +33,7 @@ spec:
       selector: {}
       template:
         spec:
-          serviceAccountName: replaced by kustomization
+          serviceAccountName: upbound-provider-aws
           containers:
             - name: package-runtime
               args:

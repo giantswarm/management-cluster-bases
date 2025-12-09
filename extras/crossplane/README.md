@@ -105,7 +105,7 @@ patches:
 In the above sample, there are 3 patches used with each patch depending on
 the previous one.
 
-For example: 
+For example:
 
 - `crossplane-claims` depends on
 - `crossplane-compositions` depends on
@@ -118,23 +118,19 @@ due to CRDs being missing from the platform.
 Inside the `postBuild` section in the first (`crossplane-providers`) patch,
 the substitutions are:
 
-- `awsversion` This is the version of the AWS provider to apply consistently
-  across all provider family members
-- `kubernetesversion` This is the version to use of the 
+- `kubernetesversion` This is the version to use of the
   `crossplane-contrib/provider-kubernetes` provider. This is a helper here as
-  this provider must be setup entirely from within your 
+  this provider must be setup entirely from within your
   `CUSTOMER_NAME-management-clusters` respository.
 - `azureversion` This is the version of the azure provider to apply to the
   management cluster
 - `gcpversion`
 
-It is recommended that all version strings are defaulted such as: 
-`${awsversion:=1.21.0}` This ensures that at least a minimum provider version
-will always be used.
+These should be removed and put into management-cluster-bases in the future.
 
 > **Note**
 >
-> You do not need to specify the preceeding `v` to version strings. All 
+> You do not need to specify the preceeding `v` to version strings. All
 > examples given provide this as part of the mapping.
 
 ## Crossplane provider setup
@@ -251,7 +247,7 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-ec2:v${awsversion:=1.21.0}
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-aws-ec2:v1.21.0
   runtimeConfigRef:
     name: upbound-provider-aws
 ```
@@ -283,7 +279,7 @@ upbound-provider-family-aws-a64e2d8b178a-69d679458b-xvlrn         1/1     Runnin
 
 ### Enabling composition functions
 
-In this example we will enable the `patch-and-transform` function from the 
+In this example we will enable the `patch-and-transform` function from the
 `crossplane-contrib` repository.
 
 Create a new file `patch-and-transform.yaml` at `management-clusters/MC_NAME/crossplane/providers/aws/functions`
@@ -301,14 +297,14 @@ spec:
     name: upbound-provider-aws
 ```
 
-Next, add this to the `resources` section of `kustomization.yaml` 
+Next, add this to the `resources` section of `kustomization.yaml`
 
 ```yaml
 resources:
 - patch-and-transform.yaml
 ```
 
-Save and commit this. You should see the `patch-and-transform` function start 
+Save and commit this. You should see the `patch-and-transform` function start
 on the next reconciliation cycle.
 
 ```nohighlight
@@ -317,7 +313,7 @@ function-patch-and-transform-201f894df2f6-6fb8dff6fc-lftnj        1/1     Runnin
 
 ## Enabling compositions
 
-Once you have all your providers installed, the next step is to enable 
+Once you have all your providers installed, the next step is to enable
 compositions within your cluster.
 
 We understand that your compositions may be hosted in your own repositories
@@ -337,7 +333,7 @@ resources:
 
 > **Note**
 >
-> The (remote) composition directory **must** contain a `kustomization.yaml` 
+> The (remote) composition directory **must** contain a `kustomization.yaml`
 > file listing all the files that should be included from that location.
 
 Commit this change and apply. You should see the composition and definition
@@ -346,8 +342,8 @@ appear on the next reconciliation cycle.
 ## Enabling claims
 
 Claims should be copied into the `management-clusters/MC_NAME/crossplane/claims`
-directory and enabled in the `kustomization.yaml` file. Similarly to 
-compositions they may also come from a remote URL however as they often contain 
+directory and enabled in the `kustomization.yaml` file. Similarly to
+compositions they may also come from a remote URL however as they often contain
 data considered to be more sensitive, it is not recommended that they are
 stored publically.
 
