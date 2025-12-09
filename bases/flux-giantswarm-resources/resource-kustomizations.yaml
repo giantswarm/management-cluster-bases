@@ -56,13 +56,6 @@ spec:
     kind: GitRepository
     name: management-clusters-fleet
     namespace: flux-giantswarm
-  postBuild:
-    substitute:
-      var_substitution_enabled: "true"
-    substituteFrom:
-    - kind: ConfigMap
-      name: flux-extras-pssenforced
-      optional: true
   timeout: 3m
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
