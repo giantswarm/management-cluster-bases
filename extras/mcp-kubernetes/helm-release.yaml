@@ -28,4 +28,4 @@ spec:
     # ConfigMap rendered by Konfiguration from shared-configs template
     - kind: ConfigMap
       name: mcp-kubernetes-konfiguration
-      valuesKey: values
+      valuesKey: configmap-values.yaml
