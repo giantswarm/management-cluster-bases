@@ -16,15 +16,10 @@ metadata:
   name: crossplane
   namespace: flux-giantswarm
 spec:
-  chart:
-    spec:
-      chart: crossplane
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: OCIRepository
-        name: crossplane
-        namespace: flux-giantswarm
-      version: 2.5.0
+  chartRef:
+    kind: OCIRepository
+    name: crossplane
+    namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
