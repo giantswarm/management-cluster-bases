@@ -7,7 +7,7 @@ spec:
   interval: 1h
   provider: generic
   ref:
-    tag: 2.5.0
+    tag: 2.5.1-b191811dc8c641c4daed4a6091c57e03812f75d5 # TODO bump to actual X.Y.Z release (needs new release since we only just enabled pushing to gsoci)
   url: oci://gsoci.azurecr.io/charts/giantswarm/crossplane
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
