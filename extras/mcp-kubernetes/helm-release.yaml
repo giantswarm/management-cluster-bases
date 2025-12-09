@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: giantswarm-catalog
         namespace: flux-giantswarm
-      version: 0.0.73
+      version: 0.0.77
   install:
     remediation:
       retries: 10
