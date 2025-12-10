@@ -41,15 +41,19 @@ spec:
       architecture: standalone
       # Pod security context for Kyverno compliance
       podSecurityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      # Container security context for Kyverno compliance
-      containerSecurityContext:
-        allowPrivilegeEscalation: false
-        seccompProfile:
-          type: RuntimeDefault
-      # Init container security context
-      initContainerSecurityContext:
+      # Container security context for Kyverno compliance (used by main and init containers)
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
         allowPrivilegeEscalation: false
         seccompProfile:
           type: RuntimeDefault
