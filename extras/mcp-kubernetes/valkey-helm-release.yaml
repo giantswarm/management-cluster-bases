@@ -69,6 +69,18 @@ spec:
             memory: 64Mi
       metrics:
         enabled: true
+        # Metrics exporter security context for Kyverno compliance
+        exporter:
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
         podMonitor:
           enabled: true
           additionalLabels:
