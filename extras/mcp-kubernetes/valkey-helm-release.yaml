@@ -26,11 +26,19 @@ spec:
       remediateLastFailure: false
   values:
     # Valkey standalone mode for mcp-kubernetes session storage
+    # Auth configuration at root level for subchart
+    auth:
+      enabled: true
+      # Use existing secret created per-cluster (SOPS encrypted)
+      usersExistingSecret: "mcp-kubernetes-valkey-auth"
+      # Default user with full access
+      aclUsers:
+        default:
+          permissions: "~* &* +@all"
+          # Password from secret key matching username
+          passwordKey: "default"
     valkey:
       architecture: standalone
-      auth:
-        enabled: true
-        # Password will be auto-generated and stored in secret: mcp-kubernetes-valkey
       master:
         persistence:
           enabled: false  # Session data doesn't need persistence
