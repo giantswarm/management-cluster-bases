@@ -39,6 +39,20 @@ spec:
           passwordKey: "default"
     valkey:
       architecture: standalone
+      # Pod security context for Kyverno compliance
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      # Container security context for Kyverno compliance
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        seccompProfile:
+          type: RuntimeDefault
+      # Init container security context
+      initContainerSecurityContext:
+        allowPrivilegeEscalation: false
+        seccompProfile:
+          type: RuntimeDefault
       master:
         persistence:
           enabled: false  # Session data doesn't need persistence
