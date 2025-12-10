@@ -1,0 +1,16 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: atlas-grafanapostgresqlrecoverytestfailed
+  annotations:
+    motivation: Just to avoid noise if today's fix does not work as expected
+    valid-until: "2025-12-12"
+  namespace: monitoring
+spec:
+  matchers:
+    - name: alertname
+      value: GrafanaPostgresqlRecoveryTestFailed
+      matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
