@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./valkey-helm-release.yaml
   - ./helm-release.yaml
   - ./konfiguration.yaml
