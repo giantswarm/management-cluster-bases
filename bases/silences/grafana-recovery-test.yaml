@@ -4,7 +4,7 @@ metadata:
   name: atlas-grafanapostgresqlrecoverytestfailed
   annotations:
     motivation: Just to avoid noise if today's fix does not work as expected
-    valid-until: "2025-12-12"
+    valid-until: "2025-12-11"
   namespace: monitoring
 spec:
   matchers:
