@@ -3,3 +3,4 @@ resources:
   - jobscrapingfailure.yaml
   - atlas-mimirrulerruleevaluationfailures.yaml
   - mimiralertmanagernotificationsfailing.yaml
+  - grafana-recovery-test.yaml
