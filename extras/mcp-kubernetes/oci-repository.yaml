@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mcp-kubernetes
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-kubernetes
+  ref:
+    # Auto-update: deploy latest version automatically
+    semver: ">=0.0.0"
+  provider: generic
+

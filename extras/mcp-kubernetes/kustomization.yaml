@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
-  - ./valkey-helm-release.yaml
+  - ./oci-repository.yaml
+  - ./valkey-oci-repository.yaml
   - ./helm-release.yaml
+  - ./valkey-helm-release.yaml
   - ./konfiguration.yaml
