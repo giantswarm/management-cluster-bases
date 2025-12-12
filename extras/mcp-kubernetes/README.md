@@ -1,28 +1,37 @@
-# mcp-kubernetes MCB Extra
+# MCP Kubernetes
 
-This directory contains the MCB extra for deploying mcp-kubernetes as a HelmRelease
-with configuration rendered by the Konfiguration operator.
+## Description
 
-## How it works
+MCP Kubernetes server provides a Kubernetes API endpoint for MCP (Model Context Protocol) integration.
+It includes a Valkey instance for OAuth session persistence.
 
-1. **Konfiguration CR** (`konfiguration.yaml`) - Tells the Konfiguration operator to render
-   the templates from `shared-configs/default/apps/mcp-kubernetes/` with cluster-specific variables.
+## Usage
 
-2. **HelmRelease** (`helm-release.yaml`) - References the Konfiguration-rendered ConfigMap:
-   - `mcp-kubernetes-konfiguration` ConfigMap - Contains rendered values from shared-configs template
+Reference this extra in your cluster's extras:
 
-3. **Configuration Sources**:
-   - Template: `shared-configs/default/apps/mcp-kubernetes/configmap-values.yaml.template`
-   - Variables: Cluster-specific values from `shared-configs/default/config.yaml`
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - https://github.com/giantswarm/management-cluster-bases//extras/mcp-kubernetes?ref=main
+  - oauth-credentials.enc.yaml
+  - valkey-credentials.enc.yaml
+```
 
-4. **Secrets**: OAuth credentials are stored directly as a Kubernetes Secret in each cluster's
-   extras directory (`oauth-credentials.enc.yaml`), encrypted with SOPS.
+## Configuration
+
+- **Templates**: `shared-configs/default/apps/mcp-kubernetes/`
+- **Secrets**: Inline Kubernetes Secrets in `<customer>-management-clusters/management-clusters/<mc>/extras/mcp-kubernetes/`
+
+## Version Strategy
+
+Auto-updates enabled via SemVer range `>=0.0.0`. New versions deploy automatically when pushed to the OCI registry.
 
 ## Prerequisites
 
 For the Konfiguration to work, the `flux-extras` Kustomization must pass the `cluster_name` variable.
 
-Add this target to the `replacements` section in `giantswarm-management-clusters/management-clusters/<cluster>/kustomization.yaml`:
+Add this target to the `replacements` section in `<customer>-management-clusters/management-clusters/<cluster>/kustomization.yaml`:
 
 ```yaml
 replacements:
@@ -43,16 +52,17 @@ replacements:
           create: true
 ```
 
-## Deploying to a cluster
+## Deploying to a Cluster
 
-1. Add the extra to the cluster's `extras/kustomization.yaml`:
+### 1. Create the cluster extras directory
 
-```yaml
-resources:
-  - ./mcp-kubernetes/
+```bash
+mkdir -p <customer>-management-clusters/management-clusters/<mc>/extras/mcp-kubernetes
 ```
 
-2. Create `extras/mcp-kubernetes/kustomization.yaml`:
+### 2. Create the kustomization
+
+Create `<customer>-management-clusters/management-clusters/<mc>/extras/mcp-kubernetes/kustomization.yaml`:
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -60,9 +70,12 @@ kind: Kustomization
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/mcp-kubernetes?ref=main
   - oauth-credentials.enc.yaml
+  - valkey-credentials.enc.yaml
 ```
 
-3. Create `extras/mcp-kubernetes/oauth-credentials.enc.yaml` with SOPS-encrypted OAuth secrets:
+### 3. Create the OAuth credentials secret
+
+Create `oauth-credentials.enc.yaml`:
 
 ```yaml
 apiVersion: v1
@@ -72,12 +85,70 @@ metadata:
   namespace: mcp-kubernetes
 type: Opaque
 stringData:
-  dex-client-secret: <encrypted-secret>
-  registration-token: ""
-  oauth-encryption-key: <encrypted-key>
+  dex-client-secret: "your-dex-client-secret"
+  oauth-encryption-key: "your-32-byte-encryption-key"
 ```
 
-Then encrypt with SOPS using the cluster's age key.
+Encrypt with SOPS:
 
-4. The configuration will be automatically rendered by Konfiguration using shared-configs
-   and cluster-specific values from CMC repositories.
+```bash
+export SOPS_AGE_KEY="op://Dev Common/<mc>.agekey/notesPlain"
+op run -- sops -e -i oauth-credentials.enc.yaml
+```
+
+### 4. Create the Valkey credentials secret
+
+Create `valkey-credentials.enc.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mcp-kubernetes-valkey-auth
+  namespace: mcp-kubernetes
+type: Opaque
+stringData:
+  default: "your-valkey-password"
+```
+
+Encrypt with SOPS.
+
+### 5. Add to the extras kustomization
+
+Add to `<customer>-management-clusters/management-clusters/<mc>/extras/kustomization.yaml`:
+
+```yaml
+resources:
+  # ... existing extras ...
+  - ./mcp-kubernetes/
+```
+
+## Troubleshooting
+
+### OCIRepository Not Ready
+
+```bash
+kubectl get ocirepository mcp-kubernetes -n flux-giantswarm
+kubectl describe ocirepository mcp-kubernetes -n flux-giantswarm
+```
+
+### Konfiguration Not Creating ConfigMap
+
+```bash
+kubectl get konfiguration mcp-kubernetes-konfiguration -n flux-giantswarm
+kubectl logs -n flux-giantswarm deployment/konfiguration-controller
+```
+
+### HelmRelease Issues
+
+```bash
+kubectl get helmrelease mcp-kubernetes -n flux-giantswarm
+kubectl describe helmrelease mcp-kubernetes -n flux-giantswarm
+```
+
+### Valkey Connection Issues
+
+```bash
+kubectl get pods -n mcp-kubernetes
+kubectl logs -n mcp-kubernetes -l app.kubernetes.io/name=valkey
+```
