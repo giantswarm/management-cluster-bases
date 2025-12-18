@@ -5,7 +5,7 @@ metadata:
   annotations:
     motivation: Some rules are failing but this causing noise
     pm: https://github.com/giantswarm/giantswarm/issues/34742
-    valid-until: "2025-11-30"
+    valid-until: "2026-01-30"
   namespace: monitoring
 spec:
   matchers:
