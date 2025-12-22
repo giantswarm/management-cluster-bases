@@ -1,0 +1,85 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: muster-valkey
+  namespace: flux-giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: muster-valkey
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: muster
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  values:
+    # Valkey standalone mode for muster OAuth session storage
+    # Auth configuration at root level for subchart
+    auth:
+      enabled: true
+      # Use existing secret created per-cluster (SOPS encrypted)
+      usersExistingSecret: "muster-valkey-auth"
+      # Default user with full access
+      aclUsers:
+        default:
+          permissions: "~* &* +@all"
+          # Password from secret key matching username
+          passwordKey: "default"
+    valkey:
+      architecture: standalone
+      # Pod security context for Kyverno compliance
+      podSecurityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      # Container security context for Kyverno compliance
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+        allowPrivilegeEscalation: false
+        seccompProfile:
+          type: RuntimeDefault
+      master:
+        persistence:
+          enabled: false  # Session data doesn't need persistence
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+      metrics:
+        enabled: true
+        # Metrics exporter security context for Kyverno compliance
+        exporter:
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+        podMonitor:
+          enabled: true
+          additionalLabels:
+            application.giantswarm.io/team: planeteers
+    ciliumNetworkPolicy:
+      enabled: true
+
