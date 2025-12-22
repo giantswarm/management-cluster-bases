@@ -68,7 +68,7 @@ resources:
 
 ## Dependencies
 
-- dex-app >= 2.1.5 (for musterAgent static client support)
+- dex-app >= 2.1.5 (for muster static client support)
 - shared-configs with muster app templates
 
 ## Related
