@@ -1,0 +1,27 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: muster
+  namespace: flux-giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: muster
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: muster
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
+    - kind: ConfigMap
+      name: muster-konfiguration
+      valuesKey: configmap-values.yaml
+
