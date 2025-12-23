@@ -4,6 +4,9 @@ metadata:
   name: mcp-kubernetes
   namespace: flux-giantswarm
 spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  # when targetNamespace differs from HelmRelease namespace
+  releaseName: mcp-kubernetes
   chartRef:
     kind: OCIRepository
     name: mcp-kubernetes

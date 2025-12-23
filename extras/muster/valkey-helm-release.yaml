@@ -4,6 +4,8 @@ metadata:
   name: muster-valkey
   namespace: flux-giantswarm
 spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  releaseName: muster-valkey
   chartRef:
     kind: OCIRepository
     name: muster-valkey

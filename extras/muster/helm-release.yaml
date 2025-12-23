@@ -4,6 +4,9 @@ metadata:
   name: muster
   namespace: flux-giantswarm
 spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  # when targetNamespace differs from HelmRelease namespace
+  releaseName: muster
   chartRef:
     kind: OCIRepository
     name: muster

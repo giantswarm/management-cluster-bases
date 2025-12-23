@@ -4,6 +4,8 @@ metadata:
   name: mcp-kubernetes-valkey
   namespace: flux-giantswarm
 spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  releaseName: mcp-kubernetes-valkey
   chartRef:
     kind: OCIRepository
     name: mcp-kubernetes-valkey
