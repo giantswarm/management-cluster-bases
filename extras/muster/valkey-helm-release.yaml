@@ -21,6 +21,8 @@ spec:
       remediateLastFailure: false
   values:
     # Valkey standalone mode for muster OAuth session storage
+    # Override fullname to avoid double naming (muster-valkey-valkey -> muster-valkey)
+    fullnameOverride: muster-valkey
     # Auth configuration at root level for subchart
     auth:
       enabled: true
