@@ -1,0 +1,5 @@
+components:
+  - ../../base
+patches: []
+resources:
+  - ../../../shared/stages/testing
