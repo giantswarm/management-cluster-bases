@@ -1,0 +1,8 @@
+resources:
+  - ../stable/app-platform
+  - ../stable/konfigure-operator
+  - ../stable/observability-bundle
+  - ../stable/organization-operator
+  - ../stable/rbac-operator
+  - ../stable/releases
+  - ../stable/silence-operator
