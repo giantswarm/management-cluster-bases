@@ -1,8 +1,8 @@
 resources:
-  - ../stable/app-platform
-  - ../stable/konfigure-operator
-  - ../stable/observability-bundle
-  - ../stable/organization-operator
-  - ../stable/rbac-operator
-  - ../stable/releases
-  - ../stable/silence-operator
+  - ../testing/app-platform
+  - ../testing/konfigure-operator
+  - ../testing/observability-bundle
+  - ../testing/organization-operator
+  - ../testing/rbac-operator
+  - ../testing/releases
+  - ../testing/silence-operator
