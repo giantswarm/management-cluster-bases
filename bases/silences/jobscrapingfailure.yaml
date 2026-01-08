@@ -5,7 +5,7 @@ metadata:
   annotations:
     motivation: Trying to figure out what to do with this alert.
     github_issue: https://github.com/giantswarm/giantswarm/issues/34422
-    valid-until: "2026-01-06"
+    valid-until: "2026-03-10"
   namespace: kube-system
 spec:
   matchers:
@@ -15,3 +15,5 @@ spec:
     - name: cluster_id
       value: ".*"
       matchType: "=~"
+    - name: job
+      value: "giantswarm/dns-operator-azure|cert-manager-app-cainjector"
