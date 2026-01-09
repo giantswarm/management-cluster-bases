@@ -12,11 +12,18 @@ spec:
             - "my-app"
             kinds:
             - HelmRelease
+            operations:
+            - CREATE
+            - UPDATE
       context:
       - name: chartname
         apiCall:
           urlPath: "/apis/source.toolkit.fluxcd.io/v1beta2/namespaces/{{ request.object.spec.chartRef.namespace || request.object.metadata.namespace }}/ocirepositories/{{ request.object.spec.chartRef.name }}"
           jmesPath: "spec.url | split(@,'/')[5]"
+          # this is needed for deletion, seems context is called anyway,
+          # but OCIRepository might be gone, in which case Helm Controller
+          # won't be able to remove its finalizer to let the resource go.
+          default: noteam
       - name: mapping
         configMap:
           name: teams-mapping
