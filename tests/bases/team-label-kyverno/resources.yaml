@@ -1,0 +1,11 @@
+# This is a HelmRelease we want a team label on
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  interval: 10m
+  chartRef:
+    kind: OCIRepository
+    name: my-app

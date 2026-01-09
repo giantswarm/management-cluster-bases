@@ -1,0 +1,17 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: add-team-label-to-helmreleases
+policies:
+  - ../../../bases/clusterpolicies/team-label.yaml
+resources:
+  - resources.yaml
+variables: variables.yaml
+results:
+  - policy: add-team-label-to-helmreleases
+    rule: addTeamLabel
+    resources:
+    - default/my-app
+    patchedResources: patched.yaml
+    kind: ConfigMap
+    result: pass

@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-team-label-to-helmreleases
+spec:
+    rules:
+    - name: addTeamLabel
+      match:
+        any:
+        - resources:
+            names:
+            - "my-app"
+            kinds:
+            - HelmRelease
+      context:
+      - name: chartname
+        apiCall:
+          urlPath: "/apis/source.toolkit.fluxcd.io/v1beta2/namespaces/{{ request.object.spec.chartRef.namespace || request.object.metadata.namespace }}/ocirepositories/{{ request.object.spec.chartRef.name }}"
+          jmesPath: "spec.url | split(@,'/')[5]"
+      - name: mapping
+        configMap:
+          name: teams-mapping
+          namespace: default
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              application.giantswarm.io/team: "{{ mapping.data.\"{{ chartname }}\" || 'noteam' }}"

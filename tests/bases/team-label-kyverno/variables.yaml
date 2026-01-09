@@ -1,0 +1,12 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Values
+metadata:
+  name: values
+policies:
+  - name: add-team-label-to-helmreleases
+    resources:
+      - name: my-app
+        values:
+          mapping.data.my-app: honeybadger
+          mapping.data.other-app: cabbage
+          chartname: my-app
