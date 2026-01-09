@@ -1,0 +1,4 @@
+resources:
+  - ../../../flux-app-v2
+  - ../../../flux-operator
+  - ../../../giantswarm/stages/staging
