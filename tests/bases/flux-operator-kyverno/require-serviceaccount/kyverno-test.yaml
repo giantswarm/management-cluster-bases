@@ -3,17 +3,17 @@ kind: Test
 metadata:
   name: require-serviceaccount
 policies:
-  - ../../../resource-kyverno-policies.yaml
+  - ../../../../bases/flux-operator/clusterpolicy.yaml
 resources:
   - resources.yaml
 results:
-  - policy: flux-multi-tenancy
+  - policy: flux-operator-multi-tenancy
     rule: serviceAccountNameMustBeSet
     resources:
     - ns1/test
     kind: ResourceSet
     result: fail
-  - policy: flux-multi-tenancy
+  - policy: flux-operator-multi-tenancy
     rule: serviceAccountNameMustBeSet
     resources:
     - ns2/test
