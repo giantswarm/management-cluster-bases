@@ -15,5 +15,3 @@ spec:
     - name: cluster_id
       value: ".*"
       matchType: "=~"
-    - name: job
-      value: "giantswarm/dns-operator-azure|cert-manager-app-cainjector"
