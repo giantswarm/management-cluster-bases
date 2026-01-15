@@ -3,3 +3,4 @@ components:
 patches: []
 resources:
   - ../../../shared/stages/testing
+  - capa-iam-operator
