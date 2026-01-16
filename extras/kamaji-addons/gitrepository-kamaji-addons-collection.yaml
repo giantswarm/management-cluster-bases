@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kamaji-addons-collection
+  namespace: flux-giantswarm
+spec:
+  interval: 30s
+  ref:
+    branch: main
+  url: https://github.com/giantswarm/kamaji-addons-app-collection
