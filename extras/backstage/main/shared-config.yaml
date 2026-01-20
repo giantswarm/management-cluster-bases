@@ -30,6 +30,35 @@ data:
           url: "https://happa.$${{BASE_DOMAIN}}"
           clusterType: management
 
+      csp:
+        connectSrc:
+          - "'self'"
+          - 'http:'
+          - 'https:'
+        imgSrc:
+          - "'self'"
+          - 'data:'
+          - 'https://api.securityscorecards.dev'
+          - 'https://avatars.githubusercontent.com'
+          - 'https://circleci.com'
+          - 'https://codecov.io'
+          - 'https://developer.mend.io'
+          - 'https://dl.circleci.com'
+          - 'https://github.com'
+          - 'https://godoc.org'
+          - 'https://goreportcard.com'
+          - 'https://img.shields.io'
+          - 'https://pkg.go.dev'
+          - 'https://user-images.githubusercontent.com'
+        scriptSrc:
+          - "'self'"
+          - "'unsafe-eval'"
+          - 'https://use.fortawesome.com'
+        workerSrc:
+          - "'self'"
+          - "'unsafe-eval'"
+          - 'blob:'
+
       homepageResources:
         gsDocs:
           label: "Giant Swarm \n Docs"
