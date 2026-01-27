@@ -1,4 +1,3 @@
 patches: []
 resources:
   - ../../base
-  - konfigure-operator

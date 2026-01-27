@@ -1,1 +1,2 @@
-resources: []
+resources:
+  - konfigure-operator.yaml
