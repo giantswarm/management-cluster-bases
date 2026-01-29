@@ -1,3 +1,4 @@
 resources:
+  - app-exporter.yaml
   - app-operator.yaml
   - konfigure-operator.yaml
