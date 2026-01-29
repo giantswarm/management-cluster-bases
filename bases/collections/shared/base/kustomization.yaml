@@ -1,2 +1,3 @@
 resources:
+  - app-operator.yaml
   - konfigure-operator.yaml
