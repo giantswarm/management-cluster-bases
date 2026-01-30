@@ -1,0 +1,43 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: app-admission-controller
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/app-admission-controller
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: app-admission-controller
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-admission-controller
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: app-admission-controller
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: app-admission-controller-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: app-admission-controller-konfiguration
+    valuesKey: secret-values.yaml
