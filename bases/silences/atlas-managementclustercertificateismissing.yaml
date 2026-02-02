@@ -1,0 +1,20 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: atlas-managementclustercertificateismissing
+  annotations:
+    motivation: We are changing the observability platform API ingress tls secrets.
+    github_issue: https://github.com/giantswarm/observability-platform-api/pull/35
+    valid-until: "2026-02-10"
+  namespace: monitoring
+spec:
+  matchers:
+    - name: alertname
+      value: ManagementClusterCertificateIsMissing
+      matchType: "="
+    - name: exported_namespace
+      value: "monitoring|loki|mimir|tempo"
+      matchType: "=~"
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
