@@ -1,0 +1,15 @@
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-azure-storage
+  namespace: crossplane
+spec:
+  ignoreCrossplaneConstraints: false
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: true
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-azure-storage:v1.13.0
+  runtimeConfigRef:
+    name: upbound-provider-family-azure
