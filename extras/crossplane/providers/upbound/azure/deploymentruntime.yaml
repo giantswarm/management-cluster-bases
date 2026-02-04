@@ -25,6 +25,7 @@ spec:
               args:
                 - --debug
 ---
+# DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
