@@ -3,3 +3,4 @@ resources:
 - polex.yaml
 - provider.yaml
 - service-account.yaml
+- storage.yaml
