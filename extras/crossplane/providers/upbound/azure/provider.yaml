@@ -13,6 +13,6 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-family-azure:v${azureversion:=1.0.0}
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-family-azure:v1.12.1
   runtimeConfigRef:
     name: upbound-provider-family-azure
