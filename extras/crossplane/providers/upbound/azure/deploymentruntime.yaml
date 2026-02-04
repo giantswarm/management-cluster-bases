@@ -1,5 +1,4 @@
 ---
-# DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
@@ -9,9 +8,15 @@ metadata:
     provider-family-member: azure-family
 spec:
   deploymentTemplate:
+    metadata:
+      annotations:
+        azure.workload.identity/use: "true"
     spec:
       selector: {}
       template:
+        metadata:
+          annotations:
+            azure.workload.identity/use: "true"
         spec:
           serviceAccountName: upbound-provider-family-azure
           containers:
@@ -19,21 +24,26 @@ spec:
               args:
                 - --debug
 ---
-# DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
-  name: upbound-provider-azure
+  name: upbound-provider-azure-storage
   labels:
     provider-family: azure
     provider-family-member: azure-provider
 spec:
   deploymentTemplate:
+    metadata:
+      annotations:
+        azure.workload.identity/use: "true"
     spec:
       selector: {}
       template:
+        metadata:
+          annotations:
+            azure.workload.identity/use: "true"
         spec:
-          serviceAccountName: replaced by kustomization
+          serviceAccountName: upbound-provider-azure-storage
           containers:
             - name: package-runtime
               args:
