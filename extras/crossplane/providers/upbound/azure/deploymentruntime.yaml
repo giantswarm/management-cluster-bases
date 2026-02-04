@@ -1,32 +1,32 @@
 ---
-# DeploymentRuntimeConfig for AWS resources
+# DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
-  name: upbound-provider-family-aws
+  name: upbound-provider-family-azure
   labels:
-    provider-family: aws
-    provider-family-member: aws-family
+    provider-family: azure
+    provider-family-member: azure-family
 spec:
   deploymentTemplate:
     spec:
       selector: {}
       template:
         spec:
-          serviceAccountName: upbound-provider-family-aws
+          serviceAccountName: upbound-provider-family-azure
           containers:
             - name: package-runtime
               args:
                 - --debug
 ---
-# DeploymentRuntimeConfig for AWS resources
+# DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
-  name: upbound-provider-aws
+  name: upbound-provider-azure
   labels:
-    provider-family: aws
-    provider-family-member: aws-provider
+    provider-family: azure
+    provider-family-member: azure-provider
 spec:
   deploymentTemplate:
     spec:
