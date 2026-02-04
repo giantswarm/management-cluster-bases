@@ -1,4 +1,5 @@
 resources:
+- deploymentruntime.yaml
+- polex.yaml
 - provider.yaml
 - service-account.yaml
-- deploymentruntime.yaml
