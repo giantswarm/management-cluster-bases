@@ -43,7 +43,7 @@ spec:
           annotations:
             azure.workload.identity/use: "true"
         spec:
-          serviceAccountName: upbound-provider-azure-storage
+          serviceAccountName: upbound-provider-azure
           containers:
             - name: package-runtime
               args:
