@@ -10,6 +10,6 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-azure-storage:v1.13.4
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-azure-storage:v1.13.1
   runtimeConfigRef:
     name: upbound-provider-family-azure
