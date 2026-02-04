@@ -9,9 +9,15 @@ metadata:
     provider-family-member: azure-family
 spec:
   deploymentTemplate:
+    metadata:
+      annotations:
+        azure.workload.identity/use: "true"
     spec:
       selector: {}
       template:
+        metadata:
+          annotations:
+            azure.workload.identity/use: "true"
         spec:
           serviceAccountName: upbound-provider-family-azure
           containers:
@@ -29,11 +35,17 @@ metadata:
     provider-family-member: azure-provider
 spec:
   deploymentTemplate:
+    metadata:
+      annotations:
+        azure.workload.identity/use: "true"
     spec:
       selector: {}
       template:
+        metadata:
+          annotations:
+            azure.workload.identity/use: "true"
         spec:
-          serviceAccountName: replaced by kustomization
+          serviceAccountName: upbound-provider-azure
           containers:
             - name: package-runtime
               args:
