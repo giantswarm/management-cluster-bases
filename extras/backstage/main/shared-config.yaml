@@ -49,6 +49,7 @@ data:
           - 'https://goreportcard.com'
           - 'https://img.shields.io'
           - 'https://pkg.go.dev'
+          - 'https://s.giantswarm.io'
           - 'https://user-images.githubusercontent.com'
         scriptSrc:
           - "'self'"
