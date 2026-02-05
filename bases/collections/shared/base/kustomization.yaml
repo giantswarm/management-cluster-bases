@@ -5,3 +5,4 @@ resources:
   - cluster-apps-operator.yaml
   - happa.yaml
   - konfigure-operator.yaml
+  - prometheus-rules.yaml
