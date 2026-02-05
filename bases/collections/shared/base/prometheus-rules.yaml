@@ -27,7 +27,8 @@ spec:
       retries: 10
   interval: 5m
   releaseName: prometheus-rules
-  targetNamespace: giantswarm
+  storageNamespace: monitoring
+  targetNamespace: monitoring
   timeout: 10m
   upgrade:
     remediation:
