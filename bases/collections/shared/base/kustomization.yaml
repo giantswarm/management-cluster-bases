@@ -2,5 +2,6 @@ resources:
   - app-admission-controller.yaml
   - app-exporter.yaml
   - app-operator.yaml
+  - cluster-apps-operator.yaml
   - happa.yaml
   - konfigure-operator.yaml
