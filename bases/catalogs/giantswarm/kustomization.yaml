@@ -1,5 +1,6 @@
 resources:
   - appcatalog-cluster.yaml
+  - appcatalog-cluster-releases.yaml
   - appcatalog-cluster-test.yaml
   - appcatalog-control-plane-catalog.yaml
   - appcatalog-control-plane-test-catalog.yaml
