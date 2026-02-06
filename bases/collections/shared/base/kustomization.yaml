@@ -3,6 +3,7 @@ resources:
   - app-exporter.yaml
   - app-operator.yaml
   - athena.yaml
+  - cloudnative-pg.yaml
   - cluster-apps-operator.yaml
   - happa.yaml
   - konfigure-operator.yaml
