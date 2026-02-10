@@ -6,6 +6,7 @@ resources:
   - cloudnative-pg.yaml
   - cluster-apps-operator.yaml
   - cluster-cleaner.yaml
+  - grafana.yaml
   - happa.yaml
   - konfigure-operator.yaml
   - prometheus-rules.yaml
