@@ -5,6 +5,7 @@ resources:
   - athena.yaml
   - cloudnative-pg.yaml
   - cluster-apps-operator.yaml
+  - cluster-cleaner.yaml
   - happa.yaml
   - konfigure-operator.yaml
   - prometheus-rules.yaml
