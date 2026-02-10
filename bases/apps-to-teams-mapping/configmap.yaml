@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    apps-to-teams-mapping: "true"
+  name: apps-to-teams-mapping
+  namespace: giantswarm
