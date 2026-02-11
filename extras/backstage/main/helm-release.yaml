@@ -6,38 +6,15 @@ metadata:
   labels:
     backstage.io/kubernetes-id: backstage
 spec:
-  chart:
-    spec:
-      chart: backstage
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-control-plane-catalog
-        namespace: flux-giantswarm
-      version: SHOULD-PATCH-THIS-IN-CMC-REPOSITORY
+  chartRef:
+    kind: OCIRepository
+    name: backstage
+    namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
       remediateLastFailure: false
   interval: 1m
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              group: apps
-              version: v1
-              kind: Deployment
-              name: backstage
-            patch: |-
-              - op: add
-                path: /metadata/labels/backstage.io~1kubernetes-id
-                value: backstage
-              - op: add
-                path: /spec/selector/matchLabels/backstage.io~1kubernetes-id
-                value: backstage
-              - op: add
-                path: /spec/template/metadata/labels/backstage.io~1kubernetes-id
-                value: backstage
   targetNamespace: backstage
   timeout: 10m
   upgrade:
