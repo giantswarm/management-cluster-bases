@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: backstage
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    tag: SHOULD-PATCH-THIS-IN-CMC-REPOSITORY
+  url: oci://gsoci.azurecr.io/charts/giantswarm/backstage
