@@ -4,6 +4,7 @@ resources:
   - app-operator.yaml
   - athena.yaml
   - cloudnative-pg.yaml
+  - cluster-api-events.yaml
   - cluster-api.yaml
   - cluster-apps-operator.yaml
   - cluster-cleaner.yaml
