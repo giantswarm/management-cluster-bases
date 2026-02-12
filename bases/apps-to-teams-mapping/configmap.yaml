@@ -73,8 +73,6 @@ data:
   csi-external-snapshotter-app: rocket
   dashboards: atlas
   debug-toolbox: planeteers
-  descheduler: phoenix
-  descheduler: planeteers
   dex-app: shield
   dex-operator: shield
   dns-operator-azure: phoenix
