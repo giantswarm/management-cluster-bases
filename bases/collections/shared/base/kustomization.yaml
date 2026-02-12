@@ -12,4 +12,5 @@ resources:
   - grafana.yaml
   - happa.yaml
   - konfigure-operator.yaml
+  - kube-downscaler.yaml
   - prometheus-rules.yaml

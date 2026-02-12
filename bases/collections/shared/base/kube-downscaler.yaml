@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: kube-downscaler
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/kube-downscaler
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-downscaler
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kube-downscaler
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: kube-downscaler
+  storageNamespace: kube-system
+  targetNamespace: kube-system
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: kube-downscaler-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: kube-downscaler-konfiguration
+    valuesKey: secret-values.yaml
