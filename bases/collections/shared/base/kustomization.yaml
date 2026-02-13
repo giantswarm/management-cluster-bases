@@ -13,4 +13,5 @@ resources:
   - happa.yaml
   - konfigure-operator.yaml
   - kube-downscaler.yaml
+  - kyverno-policies-observability.yaml
   - prometheus-rules.yaml
