@@ -183,6 +183,7 @@ data:
   security-bundle: shield
   shoot-controller: phoenix
   sloth: atlas
+  sloth-rules: atlas
   squid-proxy: phoenix
   starboard-exporter: shield
   team-stamper: honeybadger
