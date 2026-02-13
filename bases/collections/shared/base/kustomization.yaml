@@ -15,4 +15,5 @@ resources:
   - kube-downscaler.yaml
   - kyverno-policies-observability.yaml
   - prometheus-rules.yaml
+  - sloth-rules.yaml
   - sloth.yaml
