@@ -122,6 +122,7 @@ data:
   karpenter-crossplane-resources: phoenix
   keda: atlas
   klaus: planeteers
+  klaus-operator: planeteers
   konfigure-operator: honeybadger
   kong-app: cabbage
   kube-downscaler: planeteers
