@@ -9,6 +9,15 @@ ingress:
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
 
+route:
+  parentRefs:
+    - name: giantswarm-default
+      namespace: envoy-gateway-system
+  backendTrafficPolicy:
+    enabled: true
+    connection:
+      bufferLimit: 1Gi
+
 strategy:
   type: Recreate
 
