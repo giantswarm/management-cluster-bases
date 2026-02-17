@@ -10,6 +10,26 @@ data:
         - giantswarm-ad:giantswarm-admins
         - giantswarm-github:giantswarm:giantswarm-admins
 
+      catalog:
+        orphanStrategy: delete
+        orphanProviderStrategy: delete
+        rules:
+          - allow:
+              - API
+              - Component
+              - Domain
+              - Group
+              - Location
+              - Resource
+              - System
+              - User
+              - Template
+        locations:
+          - type: url
+            target: https://github.com/giantswarm/backstage-catalogs/blob/main/catalogs/*.yaml
+          - type: url
+            target: https://github.com/giantswarm/backstage-catalogs-private/blob/main/catalogs/users.yaml
+
       clusterDetailsResources:
         overviewDashboard:
           label: "Cluster overview \n dashboard"
