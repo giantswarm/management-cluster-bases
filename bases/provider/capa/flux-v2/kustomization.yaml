@@ -7,4 +7,5 @@ resources:
   - ../../../flux-giantswarm-resources
   - ../../../flux-operator
   - ../releases
+  - ../../eks/releases
   - configmap-provider-data.yaml
