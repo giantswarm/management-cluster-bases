@@ -18,6 +18,7 @@ resources:
   - kyverno-policies-observability.yaml
   - kyverno-policies-ux.yaml
   - observability-operator.yaml
+  - observability-platform-api.yaml
   - prometheus-rules.yaml
   - sloth-rules.yaml
   - sloth.yaml
