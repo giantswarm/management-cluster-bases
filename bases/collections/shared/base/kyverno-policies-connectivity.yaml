@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: kyverno-policies-connectivity
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/kyverno-policies-connectivity
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kyverno-policies-connectivity
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kyverno-policies-connectivity
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: kyverno-policies-connectivity
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: kyverno-policies-connectivity-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: kyverno-policies-connectivity-konfiguration
+    valuesKey: secret-values.yaml
