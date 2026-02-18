@@ -25,5 +25,6 @@ resources:
   - plugin-barman-cloud.yaml
   - prometheus-remotewrite.yaml
   - prometheus-rules.yaml
+  - silence-operator.yaml
   - sloth-rules.yaml
   - sloth.yaml
