@@ -13,3 +13,4 @@ resources:
 - cloudfront.yaml
 - acm.yaml
 - route53.yaml
+- efs.yaml
