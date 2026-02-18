@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: prometheus-remotewrite
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/prometheus-remotewrite
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-remotewrite
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: prometheus-remotewrite
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: prometheus-remotewrite
+  storageNamespace: monitoring
+  targetNamespace: monitoring
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: prometheus-remotewrite-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: prometheus-remotewrite-konfiguration
+    valuesKey: secret-values.yaml
