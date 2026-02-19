@@ -20,6 +20,7 @@ resources:
   - kyverno-policies-observability.yaml
   - kyverno-policies-ux.yaml
   - loki.yaml
+  - mimir.yaml
   - observability-operator.yaml
   - observability-platform-api.yaml
   - organization-operator.yaml
