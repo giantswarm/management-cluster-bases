@@ -30,6 +30,7 @@ data:
   azure-ad-pod-identity-app: phoenix
   azure-cloud-controller-manager-app: phoenix
   azure-cloud-node-manager-app: phoenix
+  azure-private-dns-crossplane-resources: phoenix
   azure-private-endpoint-operator: phoenix
   azure-workload-identity-webhook: phoenix
   azuredisk-csi-driver-app: phoenix
@@ -37,6 +38,7 @@ data:
   backstage: honeybadger
   caicloud-event-exporter-app: honeybadger
   capa-iam-operator: phoenix
+  capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
   cert-manager-app: shield
   chart-operator: honeybadger
@@ -170,6 +172,7 @@ data:
   priority-classes: tenet
   prometheus-blackbox-exporter: phoenix
   prometheus-operator-crd: atlas
+  prometheus-remotewrite: atlas
   prometheus-rules: atlas
   proxmox-csi-plugin: rocket
   proxysocks: cabbage
