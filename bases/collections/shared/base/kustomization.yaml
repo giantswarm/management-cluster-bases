@@ -30,3 +30,4 @@ resources:
   - silence-operator.yaml
   - sloth-rules.yaml
   - sloth.yaml
+  - starboard-exporter.yaml
