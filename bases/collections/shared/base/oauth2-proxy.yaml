@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: oauth2-proxy
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/oauth2-proxy
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: oauth2-proxy
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: oauth2-proxy
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: oauth2-proxy
+  storageNamespace: monitoring
+  targetNamespace: monitoring
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: oauth2-proxy-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: oauth2-proxy-konfiguration
+    valuesKey: secret-values.yaml
