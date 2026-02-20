@@ -13,6 +13,7 @@ resources:
   - grafana.yaml
   - happa.yaml
   - ingress-nginx.yaml
+  - keda.yaml
   - konfigure-operator.yaml
   - kube-downscaler.yaml
   - kyverno-policies-connectivity.yaml
