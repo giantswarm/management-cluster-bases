@@ -10,6 +10,7 @@ resources:
   - cluster-cleaner.yaml
   - dashboards.yaml
   - encryption-provider-operator.yaml
+  - fluent-logshipping-app.yaml
   - grafana.yaml
   - happa.yaml
   - ingress-nginx.yaml
