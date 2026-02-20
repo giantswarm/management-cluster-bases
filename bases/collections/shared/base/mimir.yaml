@@ -29,7 +29,7 @@ spec:
   releaseName: mimir
   storageNamespace: mimir
   targetNamespace: mimir
-  timeout: 10m
+  timeout: 30m
   upgrade:
     remediation:
       remediateLastFailure: true
