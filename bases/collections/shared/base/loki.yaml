@@ -29,7 +29,7 @@ spec:
   releaseName: loki
   storageNamespace: loki
   targetNamespace: loki
-  timeout: 10m
+  timeout: 30m
   upgrade:
     remediation:
       remediateLastFailure: true
