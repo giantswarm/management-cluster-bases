@@ -12,6 +12,7 @@ resources:
   - deletion-blocker-operator.yaml
   - encryption-provider-operator.yaml
   - fluent-logshipping-app.yaml
+  - gateway-api-bundle.yaml
   - grafana.yaml
   - happa.yaml
   - ingress-nginx.yaml
