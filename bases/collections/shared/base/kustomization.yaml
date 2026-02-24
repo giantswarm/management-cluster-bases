@@ -11,6 +11,7 @@ resources:
   - dashboards.yaml
   - deletion-blocker-operator.yaml
   - encryption-provider-operator.yaml
+  - falco.yaml
   - fluent-logshipping-app.yaml
   - gateway-api-bundle.yaml
   - grafana.yaml
