@@ -9,6 +9,7 @@ resources:
   - cluster-apps-operator.yaml
   - cluster-cleaner.yaml
   - dashboards.yaml
+  - deletion-blocker-operator.yaml
   - encryption-provider-operator.yaml
   - fluent-logshipping-app.yaml
   - grafana.yaml

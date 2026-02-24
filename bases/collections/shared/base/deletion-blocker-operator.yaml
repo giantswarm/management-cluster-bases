@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: deletion-blocker-operator
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/deletion-blocker-operator
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: deletion-blocker-operator
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: deletion-blocker-operator
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: deletion-blocker-operator
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: deletion-blocker-operator-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: deletion-blocker-operator-konfiguration
+    valuesKey: secret-values.yaml
