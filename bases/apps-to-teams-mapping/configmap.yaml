@@ -142,6 +142,7 @@ data:
   kyverno-policies-observability: atlas
   kyverno-policies-ux: honeybadger
   kyverno-policy-operator: shield
+  llm-testing: planeteers
   loadtest-app: cabbage
   local-path-provisioner: rocket
   loki: atlas
