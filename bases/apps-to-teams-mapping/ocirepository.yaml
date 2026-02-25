@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: team-stamper
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/team-stamper
+  ref:
+    tag: 0.0.0-b4fedb2785dd08cf2da9696d2fbf61946d564824
+  provider: generic
