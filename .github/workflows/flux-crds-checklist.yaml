@@ -27,9 +27,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          SECTION: $'### Up-to-date Flux version\nMake sure Flux version in the `bases/crds/flux-app-v2/kustomization.yaml` is up-to-date'
+          SECTION: "### Up-to-date Flux version\nMake sure Flux version in the `bases/crds/flux-app-v2/kustomization.yaml` is up-to-date"
         run: |
           BODY=$(gh pr view "$PR_NUMBER" --json body -q .body)
           if ! echo "$BODY" | grep -qF "Up-to-date Flux version"; then
-            gh pr edit "$PR_NUMBER" --body "${BODY}"$'\n\n'"${SECTION}"
+            gh pr edit "$PR_NUMBER" --body "$(printf '%s\n\n%s' "${BODY}" "${SECTION}")"
           fi
