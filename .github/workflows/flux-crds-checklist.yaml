@@ -1,0 +1,33 @@
+name: Flux CRDs checklist
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  flux-crds-version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Validate Flux app version label
+        run: |
+          CHART_VERSION=$(yq '.helmCharts[0].version' bases/flux-app-v2/giantswarm/kustomization.yaml)
+          echo "Chart version: $CHART_VERSION"
+
+          APP_VERSION=$(curl -sSf "https://raw.githubusercontent.com/giantswarm/flux-app/v${CHART_VERSION}/helm/flux-app/Chart.yaml" | yq '.appVersion')
+          echo "App version from Chart.yaml: $APP_VERSION"
+
+          LABEL_VERSION=$(yq '.labels[0].pairs["app.kubernetes.io/version"]' bases/crds/flux-app-v2/kustomization.yaml)
+          echo "Label version: $LABEL_VERSION"
+
+          if [ "$APP_VERSION" != "$LABEL_VERSION" ]; then
+            echo "::error::Version mismatch: appVersion in Chart.yaml ($APP_VERSION) does not match app.kubernetes.io/version label ($LABEL_VERSION) in bases/crds/flux-app-v2/kustomization.yaml"
+            exit 1
+          fi
+
+          echo "Version check passed: $LABEL_VERSION"

@@ -1,2 +1,5 @@
+labels:
+  - pairs:
+      app.kubernetes.io/version: "2.5.1"
 resources:
   - crds.yaml
