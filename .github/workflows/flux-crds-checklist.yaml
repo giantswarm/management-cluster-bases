@@ -1,0 +1,35 @@
+name: Flux CRDs checklist
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  flux-crds-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Check if Flux CRDs file changed
+        id: changed
+        run: |
+          git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^bases/crds/flux-app-v2/crds.yaml$" \
+            && echo "changed=true" >> $GITHUB_OUTPUT \
+            || echo "changed=false" >> $GITHUB_OUTPUT
+
+      - name: Add checklist entry to PR description
+        if: steps.changed.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CHECKBOX: "- [ ] Flux version is up-to-date in the `bases/crds/flux-app-v2/kustomization.yaml`"
+        run: |
+          BODY=$(gh pr view "$PR_NUMBER" --json body -q .body)
+          if ! echo "$BODY" | grep -qF "Flux version is up-to-date"; then
+            gh pr edit "$PR_NUMBER" --body "${BODY}"$'\n'"${CHECKBOX}"
+          fi
