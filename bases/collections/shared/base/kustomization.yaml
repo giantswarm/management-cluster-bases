@@ -40,4 +40,5 @@ resources:
   - sloth.yaml
   - starboard-exporter.yaml
   - tempo.yaml
+  - trivy-operator.yaml
   - trivy.yaml
