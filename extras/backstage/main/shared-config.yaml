@@ -29,6 +29,8 @@ data:
             target: https://github.com/giantswarm/backstage-catalogs/blob/main/catalogs/*.yaml
           - type: url
             target: https://github.com/giantswarm/backstage-catalogs-private/blob/main/catalogs/users.yaml
+          - type: url
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.1.0/templates/app-deployment/template.yaml
 
       clusterDetailsResources:
         overviewDashboard:
@@ -79,6 +81,39 @@ data:
           - "'self'"
           - "'unsafe-eval'"
           - 'blob:'
+
+      extensions:
+        - api:home/visits
+        - app-root-element:home/visit-listener
+        - page:gs/clusters
+        - nav-item:gs/clusters
+        - page:gs/deployments
+        - nav-item:gs/deployments
+        - page:flux
+        - nav-item:flux
+        # Disable extensions that target inputs on pages we fully override
+        # (our custom pages compose their own UI, not extension slots)
+        - home-page-widget:home/toolkit: false
+        - home-page-widget:home/starred-entities: false
+        - home-page-widget:home/random-joke: false
+        - catalog-filter:catalog/kind: false
+        - catalog-filter:catalog/type: false
+        - catalog-filter:catalog/list: false
+        - catalog-filter:catalog/mode: false
+        - catalog-filter:catalog/lifecycle: false
+        - catalog-filter:catalog/tag: false
+        - catalog-filter:catalog/processing-status: false
+        - catalog-filter:catalog/namespace: false
+        - entity-content:catalog/overview: false
+        - entity-content:techdocs: false
+        - entity-content:kubernetes/kubernetes: false
+        - entity-content:api-docs/definition: false
+        - entity-content:api-docs/apis: false
+        - entity-context-menu-item:catalog/unregister-entity: false
+        - entity-context-menu-item:catalog/inspect-entity: false
+        - entity-context-menu-item:catalog/copy-entity-url: false
+        - search-result-list-item:catalog: false
+        - search-result-list-item:techdocs: false
 
       homepageResources:
         gsDocs:
