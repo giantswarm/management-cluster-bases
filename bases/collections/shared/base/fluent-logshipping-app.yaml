@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: fluent-logshipping-app
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/fluent-logshipping-app
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: fluent-logshipping-app
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: fluent-logshipping-app
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: fluent-logshipping-app
+  storageNamespace: monitoring
+  targetNamespace: monitoring
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: fluent-logshipping-app-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: fluent-logshipping-app-konfiguration
+    valuesKey: secret-values.yaml

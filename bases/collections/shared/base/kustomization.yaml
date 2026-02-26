@@ -9,7 +9,12 @@ resources:
   - cluster-apps-operator.yaml
   - cluster-cleaner.yaml
   - dashboards.yaml
+  - deletion-blocker-operator.yaml
   - encryption-provider-operator.yaml
+  - etcd-backup-operator.yaml
+  - falco.yaml
+  - fluent-logshipping-app.yaml
+  - gateway-api-bundle.yaml
   - grafana.yaml
   - happa.yaml
   - ingress-nginx.yaml
@@ -35,3 +40,4 @@ resources:
   - sloth.yaml
   - starboard-exporter.yaml
   - tempo.yaml
+  - trivy.yaml
