@@ -2,18 +2,19 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: team-stamper
-  namespace: flux-giantswarm
+  namespace: giantswarm
 spec:
   chartRef:
     kind: OCIRepository
     name: team-stamper
-    namespace: flux-giantswarm
+    namespace: giantswarm
   install:
     remediation:
       retries: 3
       remediateLastFailure: false
   interval: 10m
-  targetNamespace: flux-giantswarm
+  releaseName: team-stamper
+  targetNamespace: giantswarm
   timeout: 10m
   upgrade:
     remediation:
