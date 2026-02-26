@@ -39,4 +39,5 @@ resources:
   - sloth-rules.yaml
   - sloth.yaml
   - starboard-exporter.yaml
+  - tempo.yaml
   - trivy.yaml
