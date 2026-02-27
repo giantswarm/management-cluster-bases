@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: aws-lb-controller-bundle
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/aws-lb-controller-bundle
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: aws-lb-controller-bundle
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: aws-lb-controller-bundle
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: aws-lb-controller-bundle
+  storageNamespace: org-giantswarm
+  targetNamespace: org-giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: aws-lb-controller-bundle-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: aws-lb-controller-bundle-konfiguration
+    valuesKey: secret-values.yaml
