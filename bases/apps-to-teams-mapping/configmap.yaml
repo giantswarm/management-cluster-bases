@@ -150,6 +150,7 @@ data:
   mcp-prometheus: planeteers
   metrics-server-app: atlas
   mimir: atlas
+  multus-cni: rocket
   muster: planeteers
   n8n: planeteers
   net-exporter: cabbage
