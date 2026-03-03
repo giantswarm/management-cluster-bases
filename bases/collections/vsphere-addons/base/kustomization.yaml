@@ -1,2 +1,3 @@
 resources:
+  - cluster-api-ipam-provider-in-cluster.yaml
   - image-distribution-operator.yaml
