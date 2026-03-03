@@ -3,4 +3,5 @@ kind: Component
 patches: []
 resources:
   - azure-private-dns-crossplane-resources.yaml
+  - azure-private-endpoint-operator.yaml
   - object-storage-operator.yaml
