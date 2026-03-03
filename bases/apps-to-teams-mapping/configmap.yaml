@@ -207,4 +207,5 @@ data:
   vertical-pod-autoscaler-app: tenet
   vertical-pod-autoscaler-crd: tenet
   vsphere-csi-driver: rocket
+  whereabouts: rocket
   zot: honeybadger
