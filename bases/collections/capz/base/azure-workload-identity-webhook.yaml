@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: azure-workload-identity-webhook
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/azure-workload-identity-webhook
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: azure-workload-identity-webhook
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: azure-workload-identity-webhook
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: azure-workload-identity-webhook
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: azure-workload-identity-webhook-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: azure-workload-identity-webhook-konfiguration
+    valuesKey: secret-values.yaml
