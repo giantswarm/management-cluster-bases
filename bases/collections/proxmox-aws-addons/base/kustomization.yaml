@@ -1,0 +1,5 @@
+resources:
+  - cluster-api-ipam-provider-in-cluster.yaml
+  - cluster-api-provider-proxmox.yaml
+  - image-distribution-operator.yaml
+  - konfiguration.yaml
