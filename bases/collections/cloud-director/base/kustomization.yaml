@@ -2,4 +2,5 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 patches: []
 resources:
+  - cluster-api-provider-cloud-director.yaml
   - image-distribution-operator.yaml
