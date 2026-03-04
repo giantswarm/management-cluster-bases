@@ -5,4 +5,5 @@ resources:
   - azure-private-dns-crossplane-resources.yaml
   - azure-private-endpoint-operator.yaml
   - azure-workload-identity-webhook.yaml
+  - dns-operator-azure.yaml
   - object-storage-operator.yaml
