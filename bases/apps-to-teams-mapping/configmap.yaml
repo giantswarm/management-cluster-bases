@@ -152,7 +152,6 @@ data:
   mimir: atlas
   multus-cni: rocket
   muster: planeteers
-  n8n: planeteers
   net-exporter: cabbage
   network-policies: cabbage
   node-exporter-app: tenet
