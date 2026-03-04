@@ -3,3 +3,4 @@ kind: Component
 patches: []
 resources:
   - cluster-api-ipam-provider-in-cluster.yaml
+  - cluster-api-provider-proxmox.yaml
