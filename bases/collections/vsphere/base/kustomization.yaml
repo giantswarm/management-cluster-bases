@@ -3,4 +3,5 @@ kind: Component
 patches: []
 resources:
   - cluster-api-ipam-provider-in-cluster.yaml
+  - cluster-api-provider-vsphere.yaml
   - image-distribution-operator.yaml
