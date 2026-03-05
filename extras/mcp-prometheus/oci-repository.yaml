@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: mcp-prometheus
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-prometheus
+  ref:
+    semver: ">=0.0.0"
+  provider: generic
