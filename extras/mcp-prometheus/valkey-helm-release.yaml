@@ -1,0 +1,77 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mcp-prometheus-valkey
+  namespace: flux-giantswarm
+spec:
+  releaseName: mcp-prometheus-valkey
+  chartRef:
+    kind: OCIRepository
+    name: mcp-prometheus-valkey
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: mcp-prometheus
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  values:
+    auth:
+      enabled: true
+      usersExistingSecret: "mcp-prometheus-valkey-auth"
+      aclUsers:
+        default:
+          permissions: "~* &* +@all"
+          passwordKey: "default"
+    valkey:
+      architecture: standalone
+      podSecurityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+        allowPrivilegeEscalation: false
+        seccompProfile:
+          type: RuntimeDefault
+      master:
+        persistence:
+          enabled: false
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+      metrics:
+        enabled: true
+        exporter:
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+        podMonitor:
+          enabled: true
+          additionalLabels:
+            application.giantswarm.io/team: tenet
+    ciliumNetworkPolicy:
+      enabled: true
