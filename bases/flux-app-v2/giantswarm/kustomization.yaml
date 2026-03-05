@@ -125,7 +125,7 @@ patches:
           - --concurrent-ssa=15
           - --interval-jitter-percentage=10
       - op: replace
-        path: /spec/template/spec/volumes/0
+        path: /spec/template/spec/volumes/3
         value:
           name: temp
           emptyDir:
