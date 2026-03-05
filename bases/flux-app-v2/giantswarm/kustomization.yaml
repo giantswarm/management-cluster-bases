@@ -121,6 +121,9 @@ patches:
           - --log-level=info
           - --log-encoding=json
           - --enable-leader-election
+          - --concurrent=15
+          - --concurrent-ssa=15
+          - --interval-jitter-percentage=10
   - target:
       kind: Deployment
       name: notification-controller
@@ -148,6 +151,11 @@ patches:
           - --enable-leader-election
           - --storage-path=/data
           - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
+          - --concurrent=15s
+          - --interval-jitter-percentage=15
+          - --helm-cache-max-size=6
+          - --helm-cache-ttl=1h
+          - --helm-cache-purge-interval=10m
 resources:
   - resource-kyverno-policies.yaml
   - resource-namespace.yaml
