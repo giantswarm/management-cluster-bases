@@ -151,7 +151,7 @@ patches:
           - --enable-leader-election
           - --storage-path=/data
           - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
-          - --concurrent=15s
+          - --concurrent=15
           - --interval-jitter-percentage=15
           - --helm-cache-max-size=6
           - --helm-cache-ttl=1h
