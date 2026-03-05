@@ -4,4 +4,5 @@ patches: []
 resources:
   - cluster-api-cleaner-cloud-director.yaml
   - cluster-api-provider-cloud-director.yaml
+  - dns-operator-route53.yaml
   - image-distribution-operator.yaml
