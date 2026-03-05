@@ -72,6 +72,6 @@ spec:
         podMonitor:
           enabled: true
           additionalLabels:
-            application.giantswarm.io/team: tenet
+            application.giantswarm.io/team: atlas
     ciliumNetworkPolicy:
       enabled: true
