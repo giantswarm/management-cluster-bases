@@ -1,0 +1,33 @@
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: proxmox-vsphere-addons-collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    schema:
+      reference:
+        name: management-cluster-configuration
+        namespace: giantswarm
+    defaults:
+      variables:
+        - name: installation
+          value: "${cluster_name}"
+    iterations:
+      cluster-api-provider-proxmox:
+        variables:
+          - name: app
+            value: cluster-api-provider-proxmox
+  destination:
+    namespace: giantswarm
+    naming:
+      suffix: konfiguration
+  reconciliation:
+    interval: 1m
+    retryInterval: 10s
+    suspend: false
+  sources:
+    flux:
+      gitRepository:
+        name: "giantswarm-config"
+        namespace: "flux-giantswarm"
