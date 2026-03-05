@@ -124,6 +124,12 @@ patches:
           - --concurrent=15
           - --concurrent-ssa=15
           - --interval-jitter-percentage=10
+      - op: replace
+        path: /spec/template/spec/volumes/0
+        value:
+          name: temp
+          emptyDir:
+            medium: Memory
   - target:
       kind: Deployment
       name: notification-controller
