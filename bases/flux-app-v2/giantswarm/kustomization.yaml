@@ -164,9 +164,6 @@ patches:
           - "--storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc"
           - --concurrent=10
           - --interval-jitter-percentage=15
-          - --helm-cache-max-size=6
-          - --helm-cache-ttl=1h
-          - --helm-cache-purge-interval=10m
 resources:
   - resource-kyverno-policies.yaml
   - resource-namespace.yaml
