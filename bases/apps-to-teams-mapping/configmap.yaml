@@ -112,7 +112,6 @@ data:
   ingress-nginx: cabbage
   ingress-sla: cabbage
   inspektor-gadget: planeteers
-  irsa-operator: phoenix
   irsa-servicemonitors: phoenix
   jiralert: shield
   k8s-audit-metrics: tenet
@@ -146,6 +145,7 @@ data:
   loadtest-app: cabbage
   local-path-provisioner: rocket
   loki: atlas
+  mcp-capi: planeteers
   mcp-kubernetes: planeteers
   mcp-prometheus: planeteers
   metrics-server-app: atlas
