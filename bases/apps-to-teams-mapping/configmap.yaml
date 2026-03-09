@@ -157,7 +157,6 @@ data:
   node-exporter-app: tenet
   node-problem-detector: phoenix
   nos: planeteers
-  object-storage-operator: atlas
   observability-bundle: atlas
   observability-platform-api: atlas
   observability-policies: atlas

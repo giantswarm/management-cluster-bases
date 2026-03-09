@@ -7,4 +7,3 @@ resources:
   - azure-workload-identity-webhook.yaml
   - cluster-api-provider-azure.yaml
   - dns-operator-azure.yaml
-  - object-storage-operator.yaml
