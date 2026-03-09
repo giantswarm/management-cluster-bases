@@ -7,4 +7,3 @@ resources:
   - aws-vpc-operator.yaml
   - capa-iam-operator.yaml
   - cluster-api-provider-aws.yaml
-  - object-storage-operator.yaml
