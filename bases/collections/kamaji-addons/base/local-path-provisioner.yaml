@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: local-path-provisioner
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/local-path-provisioner
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: local-path-provisioner
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: local-path-provisioner
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: local-path-provisioner
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: local-path-provisioner-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: local-path-provisioner-konfiguration
+    valuesKey: secret-values.yaml
