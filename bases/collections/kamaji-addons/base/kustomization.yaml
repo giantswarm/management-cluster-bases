@@ -1,2 +1,3 @@
 resources:
   - cluster-api-control-plane-provider-kamaji.yaml
+  - kamaji.yaml
