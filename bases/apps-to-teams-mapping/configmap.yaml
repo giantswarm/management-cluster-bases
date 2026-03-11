@@ -80,8 +80,8 @@ data:
   dns-operator-azure: phoenix
   dns-operator-route53: rocket
   docs-indexer-app: honeybadger
-  encryption-config-hasher: phoenix
-  encryption-provider-operator: phoenix
+  encryption-config-hasher: tenet
+  encryption-provider-operator: tenet
   envoy-ai-gateway: cabbage
   envoy-gateway: cabbage
   etcd-backup-operator: tenet
