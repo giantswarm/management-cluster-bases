@@ -65,7 +65,7 @@ configFiles:
           "dedupe": false,
           "gc": true,
           "gcInterval": "24h",
-          "retention": 
+          "retention":
           {
             "dryRun": false,
             "policies": [
@@ -145,9 +145,7 @@ configFiles:
             "credentialsFile": "/secret/credentials",
             "registries": [
               {
-                "urls": [
-                  "https://gsoci.azurecr.io"
-                ],
+                "urls": [${zot_upstream_registry_url:="https://gsoci.azurecr.io"}],
                 "onDemand": true,
                 "tlsVerify": true,
                 "maxRetries": 3,
