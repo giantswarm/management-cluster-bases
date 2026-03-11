@@ -62,6 +62,7 @@ data:
   cluster-api-provider-vsphere: rocket
   cluster-apps-operator: honeybadger
   cluster-autoscaler-app: tenet
+  cluster-autoscaler-crossplane-resources: tenet
   cluster-aws: phoenix
   cluster-azure: phoenix
   cluster-cleaner: tenet
@@ -80,8 +81,8 @@ data:
   dns-operator-azure: phoenix
   dns-operator-route53: rocket
   docs-indexer-app: honeybadger
-  encryption-config-hasher: phoenix
-  encryption-provider-operator: phoenix
+  encryption-config-hasher: tenet
+  encryption-provider-operator: tenet
   envoy-ai-gateway: cabbage
   envoy-gateway: cabbage
   etcd-backup-operator: tenet
@@ -149,6 +150,7 @@ data:
   mcp-kubernetes: planeteers
   mcp-prometheus: planeteers
   metrics-server-app: atlas
+  microservices-demo-app: cabbage
   mimir: atlas
   multus-cni: rocket
   muster: planeteers
