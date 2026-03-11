@@ -149,6 +149,7 @@ data:
   mcp-kubernetes: planeteers
   mcp-prometheus: planeteers
   metrics-server-app: atlas
+  microservices-demo-app: cabbage
   mimir: atlas
   multus-cni: rocket
   muster: planeteers
