@@ -62,6 +62,7 @@ data:
   cluster-api-provider-vsphere: rocket
   cluster-apps-operator: honeybadger
   cluster-autoscaler-app: tenet
+  cluster-autoscaler-crossplane-resources: tenet
   cluster-aws: phoenix
   cluster-azure: phoenix
   cluster-cleaner: tenet
