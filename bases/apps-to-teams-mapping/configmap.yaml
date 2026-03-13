@@ -41,6 +41,7 @@ data:
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
   cert-manager-app: shield
+  cert-manager-crossplane-resources: shield
   chart-operator: honeybadger
   cilium: cabbage
   cilium-crossplane-resources: phoenix
