@@ -4,3 +4,4 @@ resources:
   - cluster-api-provider-vsphere.yaml
   - dns-operator-route53.yaml
   - image-distribution-operator.yaml
+  - konfiguration.yaml

@@ -2,7 +2,7 @@
 apiVersion: konfigure.giantswarm.io/v1alpha1
 kind: Konfiguration
 metadata:
-  name: proxmox-vsphere-addons-collection-konfiguration
+  name: kamaji-addons-collection-konfiguration
   namespace: giantswarm
 spec:
   targets:
@@ -15,10 +15,18 @@ spec:
         - name: installation
           value: "${cluster_name}"
     iterations:
-      cluster-api-provider-proxmox:
+      cluster-api-control-plane-provider-kamaji:
         variables:
           - name: app
-            value: cluster-api-provider-proxmox
+            value: cluster-api-control-plane-provider-kamaji
+      kamaji:
+        variables:
+          - name: app
+            value: kamaji
+      local-path-provisioner:
+        variables:
+          - name: app
+            value: local-path-provisioner
   destination:
     namespace: giantswarm
     naming:

@@ -1,0 +1,29 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      azure-private-dns-crossplane-resources:
+        variables:
+          - name: app
+            value: azure-private-dns-crossplane-resources
+      azure-private-endpoint-operator:
+        variables:
+          - name: app
+            value: azure-private-endpoint-operator
+      azure-workload-identity-webhook:
+        variables:
+          - name: app
+            value: azure-workload-identity-webhook
+      cluster-api-provider-azure:
+        variables:
+          - name: app
+            value: cluster-api-provider-azure
+      dns-operator-azure:
+        variables:
+          - name: app
+            value: dns-operator-azure
