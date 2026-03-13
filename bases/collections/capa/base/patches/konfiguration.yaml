@@ -1,0 +1,29 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      aws-lb-controller-bundle:
+        variables:
+          - name: app
+            value: aws-lb-controller-bundle
+      aws-resolver-rules-operator:
+        variables:
+          - name: app
+            value: aws-resolver-rules-operator
+      aws-vpc-operator:
+        variables:
+          - name: app
+            value: aws-vpc-operator
+      capa-iam-operator:
+        variables:
+          - name: app
+            value: capa-iam-operator
+      cluster-api-provider-aws:
+        variables:
+          - name: app
+            value: cluster-api-provider-aws

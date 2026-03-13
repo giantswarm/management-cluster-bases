@@ -1,0 +1,29 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      cluster-api-cleaner-vsphere:
+        variables:
+          - name: app
+            value: cluster-api-cleaner-vsphere
+      cluster-api-ipam-provider-in-cluster:
+        variables:
+          - name: app
+            value: cluster-api-ipam-provider-in-cluster
+      cluster-api-provider-vsphere:
+        variables:
+          - name: app
+            value: cluster-api-provider-vsphere
+      dns-operator-route53:
+        variables:
+          - name: app
+            value: dns-operator-route53
+      image-distribution-operator:
+        variables:
+          - name: app
+            value: image-distribution-operator
