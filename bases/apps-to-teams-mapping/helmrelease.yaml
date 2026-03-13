@@ -20,3 +20,11 @@ spec:
     remediation:
       retries: 3
       remediateLastFailure: false
+  values:
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
