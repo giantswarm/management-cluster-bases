@@ -11,6 +11,8 @@ data:
   app-admission-controller: honeybadger
   app-exporter: honeybadger
   app-operator: honeybadger
+  appcatalog: honeybadger
+  apptest-app: honeybadger
   athena: shield
   auth-bundle: shield
   aws-cloud-controller-manager-app: phoenix
@@ -43,6 +45,7 @@ data:
   cert-manager-app: shield
   cert-manager-crossplane-resources: shield
   chart-operator: honeybadger
+  chart-operator-extensions: honeybadger
   cilium: cabbage
   cilium-crossplane-resources: phoenix
   cilium-servicemonitors: cabbage
@@ -52,6 +55,8 @@ data:
   cloudnative-pg: shield
   cluster: tenet
   cluster-api: tenet
+  cluster-api-cleaner-cloud-director: rocket
+  cluster-api-cleaner-vsphere: rocket
   cluster-api-control-plane-provider-kamaji: rocket
   cluster-api-events: tenet
   cluster-api-ipam-provider-in-cluster: rocket
@@ -77,11 +82,13 @@ data:
   csi-external-snapshotter-app: rocket
   dashboards: atlas
   debug-toolbox: planeteers
+  deletion-blocker-operator: rocket
   dex-app: shield
   dex-operator: shield
   dns-operator-azure: phoenix
   dns-operator-route53: rocket
   docs-indexer-app: honeybadger
+  docs-proxy-app: honeybadger
   encryption-config-hasher: tenet
   encryption-provider-operator: tenet
   envoy-ai-gateway: cabbage
@@ -111,6 +118,7 @@ data:
   headlamp: planeteers
   hello-world: honeybadger
   image-distribution-operator: rocket
+  important-service: honeybadger
   ingress-nginx: cabbage
   ingress-sla: cabbage
   inspektor-gadget: planeteers
@@ -161,6 +169,7 @@ data:
   node-problem-detector: phoenix
   nos: planeteers
   observability-bundle: atlas
+  observability-operator: atlas
   observability-platform-api: atlas
   observability-policies: atlas
   oncall-shift-reporter: planeteers
@@ -188,7 +197,10 @@ data:
   schema-server: honeybadger
   search-mcp: honeybadger
   security-bundle: shield
+  shoot: phoenix
   shoot-controller: phoenix
+  silence-operator: atlas
+  sitesearch: honeybadger
   sloth: atlas
   sloth-rules: atlas
   squid-proxy: phoenix
