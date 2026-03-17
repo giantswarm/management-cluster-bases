@@ -31,14 +31,6 @@ spec:
         variables:
           - name: app
             value: image-distribution-operator
-      konfiguration:
-        variables:
-          - name: app
-            value: konfiguration
-      kustomization:
-        variables:
-          - name: app
-            value: kustomization
   destination:
     namespace: giantswarm
     naming:
