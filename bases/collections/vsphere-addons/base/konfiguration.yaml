@@ -2,7 +2,7 @@
 apiVersion: konfigure.giantswarm.io/v1alpha1
 kind: Konfiguration
 metadata:
-  name: CHANGE_ME
+  name: vsphere-addons-collection-konfiguration
   namespace: giantswarm
 spec:
   targets:
