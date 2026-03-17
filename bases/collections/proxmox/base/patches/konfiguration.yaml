@@ -1,0 +1,21 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      cluster-api-ipam-provider-in-cluster:
+        variables:
+          - name: app
+            value: cluster-api-ipam-provider-in-cluster
+      cluster-api-provider-proxmox:
+        variables:
+          - name: app
+            value: cluster-api-provider-proxmox
+      dns-operator-route53:
+        variables:
+          - name: app
+            value: dns-operator-route53

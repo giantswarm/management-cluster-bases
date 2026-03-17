@@ -1,0 +1,25 @@
+---
+apiVersion: konfigure.giantswarm.io/v1alpha1
+kind: Konfiguration
+metadata:
+  name: collection-konfiguration
+  namespace: giantswarm
+spec:
+  targets:
+    iterations:
+      cluster-api-cleaner-cloud-director:
+        variables:
+          - name: app
+            value: cluster-api-cleaner-cloud-director
+      cluster-api-provider-cloud-director:
+        variables:
+          - name: app
+            value: cluster-api-provider-cloud-director
+      dns-operator-route53:
+        variables:
+          - name: app
+            value: dns-operator-route53
+      image-distribution-operator:
+        variables:
+          - name: app
+            value: image-distribution-operator
