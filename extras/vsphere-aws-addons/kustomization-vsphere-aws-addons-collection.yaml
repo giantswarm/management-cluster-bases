@@ -9,7 +9,7 @@ spec:
   force: false
   interval: 5m
   path: ./kustomize
-  prune: true
+  prune: false
   sourceRef:
     kind: GitRepository
     name: vsphere-aws-addons-collection
