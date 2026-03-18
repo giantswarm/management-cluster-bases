@@ -10,6 +10,7 @@ resources:
   - cluster-cleaner.yaml
   - dashboards.yaml
   - deletion-blocker-operator.yaml
+  - dex-app.yaml
   - dex-operator.yaml
   - encryption-provider-operator.yaml
   - etcd-backup-operator.yaml

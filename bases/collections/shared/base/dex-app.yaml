@@ -1,0 +1,44 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: dex-app
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/dex-app
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dex-app
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: dex-app
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: dex-app
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: dex-app-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: dex-app-konfiguration
+    valuesKey: secret-values.yaml
