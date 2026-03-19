@@ -7,5 +7,5 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/team-stamper
   ref:
-    tag: 0.0.0-5888446bd27bd03ab1bcb5555ae4712f69725aa3
+    tag: 0.1.0
   provider: generic
