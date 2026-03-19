@@ -28,7 +28,6 @@ spec:
   interval: 5m
   releaseName: dex-app
   storageNamespace: giantswarm
-  suspend: true
   targetNamespace: giantswarm
   timeout: 10m
   upgrade:
