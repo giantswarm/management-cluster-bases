@@ -17,6 +17,20 @@ spec:
     remediation:
       retries: 3
   interval: 10m
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              version: monitoring.coreos.com/v1
+              kind: ServiceMonitor
+              name: flux-operator
+            patch: |
+              - op: add
+                path: /spec/endpoints/0/metricRelabelings
+                value:
+                  - sourceLabels: [__name__]
+                    regex: "flux_resource_info"
+                    action: drop
   releaseName: flux-operator
   timeout: 5m
   upgrade:
