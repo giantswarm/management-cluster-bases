@@ -21,7 +21,8 @@ spec:
     - kustomize:
         patches:
           - target:
-              version: monitoring.coreos.com/v1
+              group: monitoring.coreos.com
+              version: v1
               kind: ServiceMonitor
               name: flux-operator
             patch: |
