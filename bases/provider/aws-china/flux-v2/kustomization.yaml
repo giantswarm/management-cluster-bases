@@ -4,7 +4,6 @@ patches:
   - path: patch-helm-controller.yaml
   - path: patch-kustomize-controller.yaml
   - path: patch-source-controller.yaml
-  - path: patch-collection-gitrepository.yaml
   - path: patch-control-plane-catalog-helmrepository.yaml
   - path: patch-giantswarm-catalog-helmrepository.yaml
 images:
