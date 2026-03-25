@@ -6,7 +6,9 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-catalog/
     releaseName: flux-giantswarm
-    version: 1.8.0
+    version: 1.9.2
+    apiVersions:
+    - autoscaling.k8s.io/v1
     valuesInline:
       images:
         registry: gsoci.azurecr.io
