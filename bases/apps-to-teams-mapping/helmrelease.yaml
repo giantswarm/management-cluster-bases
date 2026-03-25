@@ -1,0 +1,30 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: team-stamper
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: team-stamper
+    namespace: giantswarm
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: false
+  interval: 10m
+  releaseName: team-stamper
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 3
+      remediateLastFailure: false
+  values:
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
