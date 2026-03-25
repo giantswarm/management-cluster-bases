@@ -1,3 +1,0 @@
-resources:
-- gitrepository-vsphere-addons-collection.yaml
-- kustomization-vsphere-addons-collection.yaml

@@ -1,13 +1,3 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: collection
-  namespace: flux-giantswarm
-spec:
-  interval: 30s
-  ref:
-    branch: master
-  timeout: 5m
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
