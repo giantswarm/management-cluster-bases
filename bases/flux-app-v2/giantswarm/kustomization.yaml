@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: https://giantswarm.github.io/giantswarm-test-catalog/
     releaseName: flux-giantswarm
-    version: 1.8.2-425e6ac14ce5d91a9d010ff11abeb42390ae0a6d
+    version: 1.8.2-8424bdfe43411a462853b53df098dc8d30dae08f
     apiVersions:
     - autoscaling.k8s.io/v1
     valuesInline:
