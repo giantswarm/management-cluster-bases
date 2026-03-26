@@ -6,3 +6,4 @@ patches:
     patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "stable-testing"}}]'
 resources:
   - ../../base
+  - ../../../../apps-to-teams-mapping
