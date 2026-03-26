@@ -25,6 +25,7 @@ spec:
               version: v1
               kind: ServiceMonitor
               name: flux-operator
+              namespace: flux-giantswarm
             patch: |
               - op: add
                 path: /spec/endpoints/0/metricRelabelings
