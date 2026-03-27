@@ -51,8 +51,8 @@ $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone /tmp/mcb.${MCB_BRANCH}/bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
 
 .PHONY: $(BUILD_FLUX_APP_TARGETS)
-build-flux-app-customer: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
-build-flux-app-giantswarm: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_VPA=1.
+build-flux-app-customer: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_FLUX_KSM=1 DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
+build-flux-app-giantswarm: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_FLUX_KSM=1 DISABLE_VPA=1.
 $(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
 $(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
@@ -66,6 +66,10 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	rm -rf $(TMP_BASE)
 
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION}/${SUFFIX} $(TMP_BASE)
+ifeq ($(DISABLE_FLUX_KSM),1)
+	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.kubeStateMetrics.enabled) = false' $(TMP_BASE)/kustomization.yaml
+endif
 ifeq ($(DISABLE_KYVERNO),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
 	$(YQ) e -i '.resources -= ["resource-kyverno-policies.yaml"]' $(TMP_BASE)/kustomization.yaml
