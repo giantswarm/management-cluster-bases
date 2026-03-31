@@ -48,3 +48,4 @@ resources:
   - tempo.yaml
   - trivy-operator.yaml
   - trivy.yaml
+  - ../../../apps-to-teams-mapping
