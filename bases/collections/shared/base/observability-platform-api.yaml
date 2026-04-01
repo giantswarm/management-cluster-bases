@@ -22,6 +22,7 @@ spec:
     name: observability-platform-api
     namespace: giantswarm
   install:
+    createNamespace: true
     remediation:
       remediateLastFailure: false
       retries: 10

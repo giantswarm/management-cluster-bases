@@ -22,6 +22,7 @@ spec:
     name: sloth
     namespace: giantswarm
   install:
+    createNamespace: true
     remediation:
       remediateLastFailure: false
       retries: 10
