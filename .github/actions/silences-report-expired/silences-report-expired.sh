@@ -5,9 +5,8 @@ set -euo pipefail
 YQ="bin/yq"
 KUSTOMIZATION_FILENAME="kustomization.yaml"
 
-DEFAULT_EXPIRATION="14 days"
 COMMIT_MESSAGE_PREFIX="remove expired silence - "
-PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename $0) script.
+PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename "$0") script.
 
 If you are assigned for review, this means you created a silence which is **now expired** based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
 
@@ -19,19 +18,19 @@ If you are assigned for review, this means you created a silence which is **expi
 If this is correct, please approve this PR or update the \`valid-until\` annotation. See: https://intranet.giantswarm.io/docs/observability/silences/#when-to-delete-a-silence"
 PULL_REQUEST_REMINDER="Please merge this PR to delete this silence or update the \`valid-until\` annotation."
 
-SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 DATE="$(command -v gdate || command -v date)"
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
+
+DRY_RUN=false
 
 print_usage() {
         echo "Usage: $(basename "$0") <action> <name>
 
 Check for expired Silences
 
-A silence is considered expired $DEFAULT_EXPIRATION after their creation date (git commit date where the file was added).
-This can be overrided using the valid-until annotation, when present the given date is used as expiration date.
+A silence is considered expired when its valid-until annotation is in the past.
 The owner of a silence is considered to be the author of the git commit where the file was added.
 
 -r, --report  generate 1 pull request for each expired silence and ask its owner for review
@@ -42,7 +41,6 @@ The owner of a silence is considered to be the author of the git commit where th
 find_expired() {
   local directory="$1"
   local today_date
-  local commit
   local latest_commit
   local expiration_date
   local valid_until_annotation
@@ -61,19 +59,22 @@ find_expired() {
 
     echo -n "> checking $f" >&2
     # Produce json of commit where the file was last modified
-    latest_commit="$(git log --format='{"timestamp": "%at", "hash": "%H", "author": "%an", "email": "%ae", "file": "'"$f"'"}' "$f" | head -1)"
+    latest_commit="$(git log -1 --format='{"timestamp": "%at", "hash": "%H", "author": "%an", "email": "%ae"}' "$f" | jq -c --arg file "$f" '. + {file: $file}')"
 
     # Use valid-until annotation.
     # In case the annotation does not exist we want to get rid of this silence.
     expiration_date="0"
     valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$f")"
     if [[ -n "$valid_until_annotation" ]] && [[ "$valid_until_annotation" != "null" ]]; then
-      expiration_date="$($DATE "+%s" -d "${valid_until_annotation}")"
+      if ! expiration_date="$($DATE "+%s" -d "${valid_until_annotation}")" ; then
+          echo "${RED} - invalid valid-until annotation, skipping${NC}" >&2
+          continue
+      fi
     fi
 
     # Check if Silence is about to expire or already expired
     warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
-     if [ "$expiration_date" -le "$today_date" ]; then
+    if [ "$expiration_date" -le "$today_date" ]; then
       printf "${RED} - EXPIRED${NC}" >&2
       expired+=("$latest_commit")
     elif [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
@@ -93,6 +94,14 @@ find_expired() {
   done
 }
 
+function _run () {
+    if $DRY_RUN; then
+        echo "$*"
+    else
+        "$@"
+    fi
+}
+
 report() {
   local file="$1"
   local directory="$2"
@@ -108,17 +117,9 @@ report() {
 
   message="${COMMIT_MESSAGE_PREFIX}${file}"
 
-  function _run () {
-      if $DRY_RUN; then
-          echo "$*"
-      else
-          "$@"
-      fi
-  }
-
   # Create the git branch
   $DRY_RUN && echo "> dry run active, otherwise would run..."
-  _run git checkout --quiet -b "$branch_name" "$start_branch"
+  _run git checkout --quiet -B "$branch_name" "$start_branch"
   _run git rm --quiet -- "$file"
   if [ -f "$directory/$KUSTOMIZATION_FILENAME" ]; then
     filename="${file##*/}"
@@ -126,30 +127,31 @@ report() {
     _run git add "$directory/$KUSTOMIZATION_FILENAME"
   fi
   _run git commit --quiet --all --message="${message}"
-  _run git push --force --quiet --set-upstream origin "$branch_name"
+  _run git push --force-with-lease --quiet --set-upstream origin "$branch_name"
 
   pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
   pr_status="$(echo "$pr_data" | $YQ e '.state')"
-  pr_link="$(echo "$pr_data" | $YQ e '.url')"
   pr_body="$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")"
 
   if [[ "$pr_status" == "OPEN" ]]; then
     _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
-    
+
     _run gh pr edit "$branch_name" --body "$pr_body"
   else
-    pr_link=$(_run gh pr create \
+    _run gh pr create \
       --head "$branch_name" \
       --reviewer "${userGithubHandle}" \
       --assignee "${userGithubHandle}" \
       --title "${message}" \
-      --body "$pr_body")
+      --body "$pr_body"
 
     [[ "$mode" == "expired" ]] && _run gh pr merge --squash --auto "$branch_name" || true
   fi
-  }
+
+  _run git checkout --quiet "$start_branch"
+}
+
 main() {
-  local DRY_RUN=false
   local reporting=false
 
   args=()
@@ -193,8 +195,6 @@ main() {
     fi
   done
 
-  local error=false
-
   # Report expired silences via github pull requests
   # 1 pull request is created for each expired silence, and the owner is assigned for review.
   if $reporting; then
@@ -220,10 +220,6 @@ main() {
       commit_sha="$(echo "$commit" | $YQ e '.hash')"
       report "$file" "$directory" "$commit_sha" "$start_branch" "$repository_name" "soon"
     done
-  fi
-
-  if $error; then
-    exit 1
   fi
 }
 
