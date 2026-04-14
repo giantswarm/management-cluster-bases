@@ -31,9 +31,9 @@ data:
           - type: giantswarm
             target: https://github.com/giantswarm/backstage-catalogs-private/blob/main/catalogs/users.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.2.2/templates/app-deployment/template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.3.0/templates/app-deployment/template.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.2.2/templates/app-deployment/edit-template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.3.0/templates/app-deployment/edit-template.yaml
 
       clusterDetailsResources:
         overviewDashboard:
