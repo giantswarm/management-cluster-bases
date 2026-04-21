@@ -1,0 +1,14 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: mimirrulerruleevaluationfailures
+  namespace: monitoring
+  annotations:
+    motivation: SLOs are failing after the observability platform incident.
+    github_issue: https://gigantic.slack.com/archives/C6L8J93N0/p1772717821267619
+    valid-until: 2026-05-22
+spec:
+  matchers:
+    - name: alertname
+      value: "MimirRulerRuleEvaluationFailures"
+      matchType: "="
