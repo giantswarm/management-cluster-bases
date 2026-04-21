@@ -12,3 +12,6 @@ spec:
     - name: alertname
       value: "MimirRulerRuleEvaluationFailures"
       matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
