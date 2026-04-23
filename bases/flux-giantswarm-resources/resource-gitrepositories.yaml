@@ -45,7 +45,7 @@ metadata:
 spec:
   interval: 30s
   ref:
-    branch: crossplane-functions
+    branch: main
   secretRef:
     name: shared-configs-ssh-credentials
   timeout: 60s
