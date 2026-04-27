@@ -1,2 +1,3 @@
 resources:
-  - https://raw.githubusercontent.com/giantswarm/observability-operator/refs/tags/v0.54.0/config/crd/bases/observability.giantswarm.io_grafanaorganizations.yaml
+  - https://raw.githubusercontent.com/giantswarm/observability-operator/refs/tags/v0.68.0/config/crd/bases/observability.giantswarm.io_agentcredentials.yaml
+  - https://raw.githubusercontent.com/giantswarm/observability-operator/refs/tags/v0.68.0/config/crd/bases/observability.giantswarm.io_grafanaorganizations.yaml
