@@ -1,3 +1,4 @@
 namePrefix: common-
 resources:
   - mimir-ruler-evaluation-failures.yaml
+  - olly-op-reconciliations.yaml
