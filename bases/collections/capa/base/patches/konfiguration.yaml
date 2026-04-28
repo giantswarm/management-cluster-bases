@@ -27,3 +27,11 @@ spec:
         variables:
           - name: app
             value: cluster-api-provider-aws
+      crossplane-fn-irsa:
+        variables:
+          - name: app
+            value: crossplane-fn-irsa
+      crossplane-fn-mcoidc:
+        variables:
+          - name: app
+            value: crossplane-fn-mcoidc
