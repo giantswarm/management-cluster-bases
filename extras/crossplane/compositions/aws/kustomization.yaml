@@ -1,6 +1,4 @@
-resources:
-- https://github.com/giantswarm/crossplane-fn-irsa//api/composition?ref=main
-- https://github.com/giantswarm/crossplane-fn-mcoidc//api/composition?ref=main
+resources: []
 
 commonAnnotations:
   kustomize.toolkit.fluxcd.io/prune: disabled
