@@ -19,6 +19,7 @@ resources:
   - fluent-logshipping-app.yaml
   - gateway-api-bundle.yaml
   - grafana.yaml
+  - grafana-organization-giantswarm-security-default.yaml
   - happa.yaml
   - ingress-nginx.yaml
   - keda.yaml

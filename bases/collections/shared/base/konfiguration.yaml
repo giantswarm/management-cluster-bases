@@ -95,6 +95,10 @@ spec:
         variables:
           - name: app
             value: grafana
+      grafana-organization-giantswarm-security-default:
+        variables:
+          - name: app
+            value: grafana-organization-giantswarm-security-default
       happa:
         variables:
           - name: app
