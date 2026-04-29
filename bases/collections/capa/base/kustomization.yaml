@@ -8,5 +8,3 @@ resources:
   - aws-vpc-operator.yaml
   - capa-iam-operator.yaml
   - cluster-api-provider-aws.yaml
-  - crossplane-fn-irsa.yaml
-  - crossplane-fn-mcoidc.yaml
