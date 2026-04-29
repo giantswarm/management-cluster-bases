@@ -9,7 +9,7 @@ spec:
   provider: generic
   ref:
     semver: x.x.x
-  url: oci://gsoci.azurecr.io/charts/giantswarm/grafana-organization-app
+  url: oci://gsoci.azurecr.io/charts/giantswarm/grafana-organization
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
