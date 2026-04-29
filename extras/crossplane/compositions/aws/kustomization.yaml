@@ -1,4 +1,1 @@
 resources: []
-
-commonAnnotations:
-  kustomize.toolkit.fluxcd.io/prune: disabled
