@@ -12,7 +12,9 @@ spec:
   chart:
     spec:
       chart: muster
-      version: 0.0.0-tb-integration+51e7bd5
+      # Per-PR builds use base-chart-version + full-sha, NOT the
+      # 0.0.0-<branch>+<sha7> form deploy.md guessed.
+      version: 0.1.131-51e7bd5ba438d6004d9276c163e6c114332e955f
       sourceRef:
         kind: HelmRepository
         name: muster
