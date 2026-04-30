@@ -7,10 +7,16 @@ spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
   releaseName: muster
-  chartRef:
-    kind: OCIRepository
-    name: muster
-    namespace: flux-giantswarm
+  # PILOT (feat/muster-tb-pilot): pinned to per-PR chart from
+  # giantswarm-test-catalog. Revert to chartRef:OCIRepository before merge.
+  chart:
+    spec:
+      chart: muster
+      version: 0.0.0-tb-integration+51e7bd5
+      sourceRef:
+        kind: HelmRepository
+        name: muster
+        namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
