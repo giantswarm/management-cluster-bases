@@ -234,4 +234,3 @@ data:
   vsphere-csi-driver: rocket
   whereabouts: rocket
   zot: honeybadger
-  {MCP-NAME}: bumblebee
