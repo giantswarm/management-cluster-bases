@@ -14,7 +14,7 @@ spec:
       chart: muster
       # Per-PR builds use base-chart-version + full-sha, NOT the
       # 0.0.0-<branch>+<sha7> form deploy.md guessed.
-      version: 0.1.131-51e7bd5ba438d6004d9276c163e6c114332e955f
+      version: 0.1.131-11f3c2513191d178ba7cd1f006a051fc1b2f61f7
       sourceRef:
         kind: HelmRepository
         name: muster
