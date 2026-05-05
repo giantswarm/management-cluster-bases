@@ -22,13 +22,8 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: false
-  values:
-    image:
-      repository: gsociprivate.azurecr.io/giantswarm/mcp-runbooks
-    mcp:
-      transport: http
-      addr: ":8080"
-    runbooks:
-      # Use runbooks embedded in the image rather than a ConfigMap
-      useConfigMap: false
-      path: /app/runbooks
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
+    - kind: ConfigMap
+      name: mcp-runbooks-konfiguration
+      valuesKey: configmap-values.yaml

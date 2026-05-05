@@ -15,14 +15,43 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/mcp-runbooks?ref=main
+  - pull-secret.enc.yaml
 ```
 
-No per-cluster secrets are required.
+## Configuration
+
+- **Templates**: `shared-configs/default/apps/mcp-runbooks/`
+- **Secrets**: Inline Kubernetes Secrets in `<customer>-management-clusters/management-clusters/<mc>/extras/mcp-runbooks/`
 
 ## Version Strategy
 
 Auto-updates enabled via SemVer range `>=0.0.0`. New versions deploy
 automatically when pushed to the OCI registry.
+
+## Prerequisites
+
+For the Konfiguration to work, the `flux-extras` Kustomization must pass the `cluster_name` variable.
+
+Add this target to the `replacements` section in `<customer>-management-clusters/management-clusters/<cluster>/kustomization.yaml`:
+
+```yaml
+replacements:
+  - source:
+      kind: ConfigMap
+      name: management-cluster-metadata
+      namespace: flux-giantswarm
+      fieldPath: data.NAME
+    targets:
+      # ... existing targets ...
+      - select:
+          kind: Kustomization
+          name: flux-extras
+          namespace: flux-giantswarm
+        fieldPaths:
+          - spec.postBuild.substitute.cluster_name
+        options:
+          create: true
+```
 
 ## Deploying to a Cluster
 
@@ -41,9 +70,32 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/mcp-runbooks?ref=main
+  - pull-secret.enc.yaml
 ```
 
-### 3. Add to the extras kustomization
+### 3. Create the image pull secret
+
+Create `pull-secret.enc.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mcp-runbooks-pull-secret
+  namespace: mcp-runbooks
+type: kubernetes.io/dockerconfigjson
+stringData:
+  .dockerconfigjson: "your-dockerconfigjson"
+```
+
+Encrypt with SOPS:
+
+```bash
+export SOPS_AGE_KEY="op://Dev Common/<mc>.agekey/notesPlain"
+op run -- sops -e -i pull-secret.enc.yaml
+```
+
+### 4. Add to the extras kustomization
 
 Add to `<customer>-management-clusters/management-clusters/<mc>/extras/kustomization.yaml`:
 
@@ -60,6 +112,13 @@ resources:
 ```bash
 kubectl get ocirepository mcp-runbooks -n flux-giantswarm
 kubectl describe ocirepository mcp-runbooks -n flux-giantswarm
+```
+
+### Konfiguration Not Creating ConfigMap
+
+```bash
+kubectl get konfiguration mcp-runbooks-konfiguration -n flux-giantswarm
+kubectl logs -n flux-giantswarm deployment/konfiguration-controller
 ```
 
 ### HelmRelease Issues
