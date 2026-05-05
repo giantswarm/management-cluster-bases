@@ -129,6 +129,7 @@ data:
   inspektor-gadget: planeteers
   irsa-servicemonitors: phoenix
   jiralert: shield
+  k6-operator: cabbage
   k8s-audit-metrics: tenet
   k8s-dns-node-cache-app: cabbage
   kamaji-etcd: rocket
