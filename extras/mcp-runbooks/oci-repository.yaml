@@ -5,7 +5,7 @@ metadata:
   namespace: flux-giantswarm
 spec:
   interval: 10m
-  url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-runbooks
+  url: oci://gsociprivate.azurecr.io/giantswarm/mcp-runbooks
   ref:
     # Auto-update: deploy latest version automatically
     semver: ">=0.0.0"
