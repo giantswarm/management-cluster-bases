@@ -7,5 +7,5 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/k6-operator
   ref:
-    semver: ">=0.0.0"
+    semver: x.x.x
   provider: generic

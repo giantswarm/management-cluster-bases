@@ -1,9 +1,9 @@
 apiVersion: v1
 data:
-  values.yaml: |
+  values: |
     k6operator:
       enabled: true
 kind: ConfigMap
 metadata:
   name: k6-operator-user-values
-  namespace: k6-operator
+  namespace: flux-giantswarm
