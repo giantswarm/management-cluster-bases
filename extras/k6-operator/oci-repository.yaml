@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: k6-operator
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/k6-operator
+  ref:
+    semver: x.x.x
+  provider: generic
