@@ -10,3 +10,5 @@ spec:
     # Auto-update: deploy latest version automatically
     semver: ">=0.0.0"
   provider: generic
+  secretRef:
+    name: mcp-runbooks-flux-pull-secret
