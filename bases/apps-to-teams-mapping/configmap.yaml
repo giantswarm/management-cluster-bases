@@ -25,7 +25,6 @@ data:
   aws-load-balancer-controller: phoenix
   aws-node-termination-handler: phoenix
   aws-nth-bundle: phoenix
-  aws-nth-crossplane-resources: phoenix
   aws-pod-identity-webhook: phoenix
   aws-resolver-rules-operator: phoenix
   aws-vpc-operator: phoenix
