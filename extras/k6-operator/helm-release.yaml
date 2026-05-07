@@ -23,4 +23,4 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: k6-operator-user-values
-      valuesKey: values.yaml
+      valuesKey: values
