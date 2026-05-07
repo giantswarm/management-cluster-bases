@@ -1,8 +1,7 @@
 apiVersion: v1
 data:
   values: |
-    k6operator:
-      enabled: true
+    k6operatorEnabled: true
 kind: ConfigMap
 metadata:
   name: k6-operator-user-values
