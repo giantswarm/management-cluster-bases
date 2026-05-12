@@ -2,6 +2,10 @@ apiVersion: v1
 data:
   values: |
     k6operatorEnabled: true
+    k6operator:
+      manager:
+        extraArgs:
+          - --metrics-secure=false
 kind: ConfigMap
 metadata:
   name: k6-operator-user-values
