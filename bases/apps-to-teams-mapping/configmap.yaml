@@ -121,6 +121,7 @@ data:
   happa: bumblebee
   headlamp: planeteers
   hello-world: honeybadger
+  hr-recovery-controller: bumblebee
   image-distribution-operator: rocket
   important-service: honeybadger
   ingress-nginx: cabbage
