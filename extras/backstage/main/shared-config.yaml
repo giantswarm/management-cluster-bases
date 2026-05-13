@@ -100,6 +100,15 @@ data:
         - page:flux
         - nav-item:flux
 
+        - entity-card:pagerduty/EntityPagerDutyCard: false
+        - entity-card:pagerduty/EntityPagerDutySmallCard: false
+        - nav-item:pagerduty/PagerDutyNavBarItem: false
+        - page:pagerduty: false
+
+        - entity-card:gs/app-deployment
+        - entity-card:catalog/who-is-on-call
+        - entity-card:catalog/about
+
         - entity-card:catalog/depends-on-components: false
         - entity-card:catalog/depends-on-resources: false
         - entity-card:catalog/has-subcomponents: false
@@ -117,6 +126,13 @@ data:
         - entity-content:api-docs/apis: false
 
         - entity-context-menu-item:catalog/unregister-entity: false
+
+        - page:scaffolder:
+            config:
+              title: Create things
+        - sub-page:scaffolder/actions: false
+        - sub-page:scaffolder/editor: false
+        - sub-page:scaffolder/templating-extensions: false
 
       routes:
         bindings:
