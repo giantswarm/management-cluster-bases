@@ -13,6 +13,11 @@ data:
       catalog:
         orphanStrategy: delete
         orphanProviderStrategy: delete
+        processors:
+          latestRelease:
+            enabled: true
+          sbomDependencies:
+            enabled: true
         readonly: true
         rules:
           - allow:
