@@ -1,0 +1,27 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pro
+  namespace: flux-giantswarm
+spec:
+  releaseName: pro
+  chartRef:
+    kind: OCIRepository
+    name: pro
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: mcp-pro
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
+    - kind: ConfigMap
+      name: pro-konfiguration
+      valuesKey: configmap-values.yaml
