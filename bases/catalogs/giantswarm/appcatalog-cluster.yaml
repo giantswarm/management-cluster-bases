@@ -38,4 +38,4 @@ spec:
         URL: "https://giantswarm.github.io/cluster-catalog/"
       repositories:
         - type: oci
-          URL: "oci://giantswarmpublic.azurecr.io/cluster-catalog/"
+          URL: "oci://gsoci.azurecr.io/charts/giantswarm/"

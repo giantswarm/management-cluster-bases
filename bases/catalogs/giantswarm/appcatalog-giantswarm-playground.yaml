@@ -38,4 +38,4 @@ spec:
         URL: "https://giantswarm.github.io/giantswarm-playground-catalog/"
       repositories:
         - type: oci
-          URL: "oci://giantswarmpublic.azurecr.io/giantswarm-playground-catalog/"
+          URL: "oci://gsoci.azurecr.io/charts/giantswarm/"
