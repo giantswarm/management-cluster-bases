@@ -37,7 +37,7 @@ spec:
         URL: "https://giantswarm.github.io/giantswarm-operations-platform-catalog/"
       repositories:
         - type: oci
-          URL: "oci://giantswarmpublic.azurecr.io/giantswarm-operations-platform-catalog/"
+          URL: "oci://gsoci.azurecr.io/charts/giantswarm/"
       config:
         configMap:
           values:

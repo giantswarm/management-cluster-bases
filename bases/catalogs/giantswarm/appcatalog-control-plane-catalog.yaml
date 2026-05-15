@@ -38,7 +38,7 @@ spec:
         URL: "https://giantswarm.github.io/control-plane-catalog/"
       repositories:
         - type: oci
-          URL: "oci://giantswarmpublic.azurecr.io/control-plane-catalog/"
+          URL: "oci://gsoci.azurecr.io/charts/giantswarm/"
       config:
         configMap:
           name: "draughtsman-values-configmap"
