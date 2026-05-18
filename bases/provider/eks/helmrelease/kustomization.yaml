@@ -10,6 +10,5 @@ resources:
 - grafana
 - loki
 - promtail
-- ingress-nginx
 - external-dns
 - hello-world
