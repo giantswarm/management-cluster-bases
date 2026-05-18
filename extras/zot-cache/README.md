@@ -12,29 +12,25 @@ resources:
   - https://github.com/giantswarm/management-cluster-bases/extras/zot-cache?ref=main
 ```
 
-Now, let's say, we need to add `Ingress`
+By default, a `Route` using the `giantswarm-default` gateway in `envoy-gateway-system` is enabled.
 
-1. We need to add another entry to the values configmap (or we can create another configmap/secret)
+### Customizing the Route
+
+To override the route configuration, add an entry to the values configmap:
+
+1. Add another entry to the values configmap (or create another configmap/secret)
 
 ```yaml
-# Here I'm adding an additional entry
 # ./patches/zot-additional-values.yaml
 - op: add
   path: /data/custom-values.yaml
   value: |
-    ingress:
-      enabled: true
-      hosts:
-        - host: zot.golem.gaws.gigantic.io
-          paths:
-            - path: /
-      tls:
-        - secretName: zot-tls
-          hosts:
-            - zot.golem.gaws.gigantic.io
+    route:
+      hostnames:
+        - zot.mycluster.example.gigantic.io
 ```
 
-2. We need to let flux know that these values should be used
+2. Let flux know that these values should be used
 
 ```yaml
 # ./patches/zot-release.yaml
@@ -63,16 +59,6 @@ patches:
       kind: HelmRelease
       name: zot
     path: ./patches/zot-release.yaml
-```
-
-### Private clusters
-
-For private cluster the ingress annotation should use a different cluster issuer.
-
-```yaml
-ingress:
-  annotations:
-    cert-manager.io/cluster-issuer: private-giantswarm
 ```
 
 ## Auth
