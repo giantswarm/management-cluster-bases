@@ -103,10 +103,6 @@ spec:
         variables:
           - name: app
             value: happa
-      ingress-nginx:
-        variables:
-          - name: app
-            value: ingress-nginx
       keda:
         variables:
           - name: app
