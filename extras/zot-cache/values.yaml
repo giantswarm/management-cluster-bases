@@ -4,12 +4,10 @@ service:
 # To enable ingress, please add an additional
 # values file. See the README.md in this directory
 ingress:
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-giantswarm
-    kubernetes.io/tls-acme: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+  enabled: false
 
 route:
+  enabled: true
   parentRefs:
     - name: giantswarm-default
       namespace: envoy-gateway-system

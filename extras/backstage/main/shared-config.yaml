@@ -5,6 +5,13 @@ metadata:
   namespace: flux-giantswarm
 data:
   values: |
+    ingress:
+      enabled: false
+    route:
+      enabled: true
+      parentRefs:
+        - name: giantswarm-default
+          namespace: envoy-gateway-system
     sharedConfig: |
       adminGroups:
         - giantswarm-ad:giantswarm-admins
