@@ -16,8 +16,8 @@ if [[ "$VERSION" == "v1" ]]; then
   EXPECTED_NOTIFICATION_CONTROLLER_VERSION="v0.33.0"
   EXPECTED_SOURCE_CONTROLLER_VERSION="v0.36.1"
 
-  EXPECTED_GITREPO_API_VERSION="source.toolkit.fluxcd.io/v1beta2"
-  EXPECTED_KUSTOMIZATION_API_VERSION="kustomize.toolkit.fluxcd.io/v1beta2"
+  EXPECTED_GITREPO_API_VERSION="source.toolkit.fluxcd.io/v1"
+  EXPECTED_KUSTOMIZATION_API_VERSION="kustomize.toolkit.fluxcd.io/v1"
 elif [[ "$VERSION" == "v2" ]]; then
   echo "Checking for version: ${VERSION}"
 

@@ -1,4 +1,4 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
   name: muster-valkey
@@ -9,4 +9,3 @@ spec:
   ref:
     semver: ">=0.0.0"
   provider: generic
-
