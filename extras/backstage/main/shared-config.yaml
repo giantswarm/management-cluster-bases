@@ -20,6 +20,9 @@ data:
       catalog:
         orphanStrategy: delete
         orphanProviderStrategy: delete
+        processors:
+          latestOciRelease:
+            enabled: true
         readonly: true
         rules:
           - allow:
@@ -126,6 +129,7 @@ data:
         - entity-content:kubernetes/kubernetes: false
         - entity-content:api-docs/definition: false
         - entity-content:api-docs/apis: false
+        - entity-content:catalog/dependencies: false
 
         - entity-context-menu-item:catalog/unregister-entity: false
 
