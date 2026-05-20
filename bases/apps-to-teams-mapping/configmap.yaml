@@ -6,6 +6,7 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
+  agentic-platform: bumblebee
   alertmanager-to-github: atlas
   alloy: atlas
   app-admission-controller: honeybadger
