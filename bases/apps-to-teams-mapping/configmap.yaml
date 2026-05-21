@@ -228,6 +228,7 @@ data:
   test-app: honeybadger
   trivy-operator: shield
   trivy: shield
+  tunnelport: bumblebee
   valkey: planeteers
   velero: tenet
   vertical-pod-autoscaler-app: tenet
