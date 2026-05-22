@@ -52,6 +52,7 @@ data:
   cloud-provider-cloud-director: rocket
   cloud-provider-vsphere: rocket
   cloudnative-pg: shield
+  cluster-aks: phoenix
   cluster-api-cleaner-cloud-director: rocket
   cluster-api-cleaner-vsphere: rocket
   cluster-api-control-plane-provider-kamaji: rocket
