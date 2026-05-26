@@ -96,6 +96,7 @@ data:
   encryption-config-hasher: tenet
   encryption-provider-operator: tenet
   envoy-ai-gateway: cabbage
+  envoy-gateway-crds: cabbage
   envoy-gateway: cabbage
   etcd-backup-operator: tenet
   etcd-defrag: tenet
