@@ -61,7 +61,7 @@ and `valkey.valkey.auth.usersExistingSecret`):
 
 ```bash
 kubectl create secret generic agentic-platform-secrets \
-  --namespace muster \
+  --namespace agentic-platform \
   --from-literal=dex-client-secret=<dex-client-secret> \
   --from-literal=registration-token=$(openssl rand -hex 32) \
   --from-literal=oauth-encryption-key=$(openssl rand -base64 32) \
