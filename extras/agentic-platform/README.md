@@ -19,19 +19,15 @@ CiliumNetworkPolicies wiring the controller and data plane.
 
 ## Prerequisites
 
-The umbrella does **not** ship the agentgateway CRDs — they're a cluster
-prerequisite:
+As of chart **v0.2.0** the agentgateway CRDs (`AgentgatewayParameters` /
+`Policy` / `Backend`) are bundled as a sub-chart — no separate install needed.
+Muster's CRDs (`MCPServer`, `ServiceClass`, `Workflow`) likewise ship inside the
+umbrella via the muster sub-chart's `templates/crds.yaml`. Remove any standalone
+references to `giantswarm/muster/v*/helm/muster/crds/*.yaml` from the cluster's
+`crds/kustomization.yaml`.
 
-```
-helm install agentgateway-crds \
-  oci://cr.agentgateway.dev/charts/agentgateway-crds --version v1.2.1 \
-  -n muster --create-namespace
-```
-
-Muster's CRDs (`MCPServer`, `ServiceClass`, `Workflow`) ship inside the
-umbrella via the muster sub-chart's `templates/crds.yaml`. Remove any
-standalone references to `giantswarm/muster/v*/helm/muster/crds/*.yaml`
-from the cluster's `crds/kustomization.yaml`.
+The Gateway API v1 CRDs and a Gateway to attach muster's public `HTTPRoute` to
+(e.g. `envoy-gateway-system/giantswarm-default`) remain cluster prerequisites.
 
 ## Configuration
 
@@ -109,7 +105,7 @@ patches:
 ## Dependencies
 
 - dex-app >= 2.1.5 (for muster static client support)
-- agentgateway-crds chart pre-installed
+- Gateway API v1 CRDs + a public Gateway to attach muster's HTTPRoute to
 - shared-configs with an `agentic-platform` app template (renders values
   under the `muster:` umbrella prefix)
 

@@ -7,5 +7,7 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform
   ref:
-    semver: ">=0.1.0"
+    # Floor at 0.2.0 — the first release that bundles the agentgateway CRDs.
+    # 0.1.0 expects them as a cluster prerequisite and would fail to reconcile.
+    semver: ">=0.2.0"
   provider: generic
