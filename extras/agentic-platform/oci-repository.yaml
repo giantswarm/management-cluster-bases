@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: agentic-platform
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform
+  ref:
+    # Floor at 0.2.0 — the first release that bundles the agentgateway CRDs.
+    # 0.1.0 expects them as a cluster prerequisite and would fail to reconcile.
+    semver: ">=0.2.0"
+  provider: generic

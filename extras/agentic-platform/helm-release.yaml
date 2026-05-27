@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: agentic-platform
+  namespace: flux-giantswarm
+spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  # when targetNamespace differs from HelmRelease namespace
+  releaseName: agentic-platform
+  chartRef:
+    kind: OCIRepository
+    name: agentic-platform
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: agentic-platform
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template.
+    # NOTE: requires a matching `agentic-platform` template in giantswarm-config
+    # that renders values under the umbrella's `muster:` subchart prefix
+    # (e.g. muster.muster.oauth.server.baseUrl, not oauth.server.baseUrl).
+    - kind: ConfigMap
+      name: agentic-platform-konfiguration
+      valuesKey: configmap-values.yaml
