@@ -4,5 +4,7 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./oci-repository.yaml
+  - ./oci-repository-crds.yaml
   - ./helm-release.yaml
+  - ./helm-release-crds.yaml
   - ./konfiguration.yaml

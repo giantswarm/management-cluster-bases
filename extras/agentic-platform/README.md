@@ -19,12 +19,19 @@ CiliumNetworkPolicies wiring the controller and data plane.
 
 ## Prerequisites
 
-As of chart **v0.2.0** the agentgateway CRDs (`AgentgatewayParameters` /
-`Policy` / `Backend`) are bundled as a sub-chart — no separate install needed.
-Muster's CRDs (`MCPServer`, `ServiceClass`, `Workflow`) likewise ship inside the
-umbrella via the muster sub-chart's `templates/crds.yaml`. Remove any standalone
-references to `giantswarm/muster/v*/helm/muster/crds/*.yaml` from the cluster's
-`crds/kustomization.yaml`.
+As of chart **v0.3.0** the agentic-platform umbrella no longer ships any CRDs.
+They have been extracted into a dedicated sibling chart,
+`agentic-platform-crds`, that bundles the agentgateway CRDs
+(`AgentgatewayParameters` / `AgentgatewayPolicy` / `AgentgatewayBackend`) and
+the muster CRDs (`MCPServer`, `Workflow`) as sub-chart dependencies
+(`agentgateway-crds` + `muster-crds`).
+
+This kustomization deploys both releases — `agentic-platform-crds` and
+`agentic-platform` — and the platform's `HelmRelease` declares `dependsOn` the
+crds `HelmRelease`, so Flux will not reconcile the platform release until the
+CRDs release reports Ready. No manual `helm install` for CRDs is required, and
+any standalone references to `giantswarm/muster/v*/helm/muster/crds/*.yaml`
+should be removed from the cluster's `crds/kustomization.yaml`.
 
 The Gateway API v1 CRDs and a Gateway to attach muster's public `HTTPRoute` to
 (e.g. `envoy-gateway-system/giantswarm-default`) remain cluster prerequisites.
