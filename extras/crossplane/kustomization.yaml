@@ -1,6 +1,5 @@
 resources:
 - helmrelease-crossplane.yaml
-- helmrelease-event-exporter.yaml
 - namespace-crossplane.yaml
 - podmonitor-crossplane.yaml
 - providers-kustomization.yaml
