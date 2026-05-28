@@ -16,7 +16,7 @@ spec:
       retries: 10
       remediateLastFailure: false
   interval: 10m
-  targetNamespace: muster
+  targetNamespace: agentic-platform
   timeout: 10m
   upgrade:
     remediation:
