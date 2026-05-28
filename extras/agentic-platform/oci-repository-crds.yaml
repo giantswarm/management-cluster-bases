@@ -1,0 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: agentic-platform-crds
+  namespace: flux-giantswarm
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform-crds
+  ref:
+    # Floor at 0.3.0 — the agentic-platform release that splits CRDs out into
+    # this dedicated sibling chart (agentgateway-crds + muster-crds sub-charts).
+    # Until 0.3.0 ships to the prod catalog this OCIRepository will not resolve
+    # and the platform HelmRelease's dependsOn will hold its reconciliation.
+    semver: ">=0.3.0"
+  provider: generic
