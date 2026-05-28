@@ -20,7 +20,7 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: Rendered manifest diff
       - name: Delete diff comments
-        uses: jungwinter/comment@v1
+        uses: jungwinter/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1
         continue-on-error: true
         with:
           type: delete
