@@ -7,6 +7,7 @@ metadata:
   namespace: giantswarm
 data:
   agentic-platform-crds: bumblebee
+  agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
   alertmanager-to-github: atlas
   alloy: atlas
