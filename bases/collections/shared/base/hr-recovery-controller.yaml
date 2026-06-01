@@ -1,0 +1,37 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: hr-recovery-controller
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/hr-recovery-controller
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hr-recovery-controller
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: hr-recovery-controller
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: hr-recovery-controller
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 5m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
