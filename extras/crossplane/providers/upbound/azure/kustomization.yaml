@@ -1,5 +1,6 @@
 resources:
 - deploymentruntime.yaml
+- managedidentity.yaml
 - network.yaml
 - polex.yaml
 - provider.yaml
