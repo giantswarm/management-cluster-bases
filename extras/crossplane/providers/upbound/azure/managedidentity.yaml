@@ -2,7 +2,7 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: upbounder-provider-azure-managedidentity
+  name: upbound-provider-azure-managedidentity
   namespace: crossplane
 spec:
   ignoreCrossplaneConstraints: false
