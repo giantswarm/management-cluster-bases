@@ -7,7 +7,12 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform
   ref:
-    # Floor at 0.2.0 — the first release that bundles the agentgateway CRDs.
-    # 0.1.0 expects them as a cluster prerequisite and would fail to reconcile.
-    semver: ">=0.2.0"
+    # Pinned to 1.0.0 — the release that introduces the breaking `ingress.mode`
+    # topology refactor (removes gateway.enabled/httpRoute/backendTrafficPolicy;
+    # the umbrella now owns muster's public route). The matching values
+    # migration lives in shared-configs (default/apps/agentic-platform). Pinning
+    # (rather than a floating range) makes the cutover deliberate: this pin and
+    # the shared-configs migration must land together, else the chart and its
+    # rendered values disagree. Bump deliberately on future upgrades.
+    semver: "1.0.0"
   provider: generic
