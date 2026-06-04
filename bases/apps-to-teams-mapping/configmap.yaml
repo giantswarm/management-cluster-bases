@@ -10,6 +10,7 @@ data:
   agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
   alertmanager-to-github: atlas
+  alloy-podlogs-crds: atlas
   alloy: atlas
   app-admission-controller: honeybadger
   app-exporter: honeybadger
