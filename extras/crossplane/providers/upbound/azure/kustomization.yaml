@@ -1,4 +1,5 @@
 resources:
+- authorization.yaml
 - deploymentruntime.yaml
 - managedidentity.yaml
 - network.yaml
