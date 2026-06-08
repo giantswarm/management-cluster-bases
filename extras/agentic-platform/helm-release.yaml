@@ -24,7 +24,7 @@ spec:
       remediateLastFailure: false
   interval: 10m
   targetNamespace: agentic-platform
-  timeout: 10m
+  timeout: 20m
   upgrade:
     remediation:
       retries: 10
@@ -37,3 +37,11 @@ spec:
     - kind: ConfigMap
       name: agentic-platform-konfiguration
       valuesKey: configmap-values.yaml
+    # Secret rendered by Konfiguration from the shared-configs secret-values template.
+    # Per-cluster overrides (e.g. kagent.providers.anthropic.apiKey) are
+    # SOPS-encrypted in giantswarm-configs under installations/<cluster>/apps/agentic-platform/.
+    # optional: true so clusters without a secret override still reconcile.
+    - kind: Secret
+      name: agentic-platform-konfiguration
+      valuesKey: secret-values.yaml
+      optional: true
