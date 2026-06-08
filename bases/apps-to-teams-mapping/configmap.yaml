@@ -172,6 +172,7 @@ data:
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
+  mcp-pagerduty: planeteers
   mcp-prometheus: bumblebee
   metrics-server-app: atlas
   microservices-demo-app: cabbage
@@ -214,8 +215,6 @@ data:
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
-  shoot-controller: phoenix
-  shoot: phoenix
   silence-operator: atlas
   sitesearch: bumblebee
   sloth-rules: atlas
