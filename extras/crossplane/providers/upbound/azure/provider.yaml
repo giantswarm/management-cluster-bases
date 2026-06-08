@@ -28,4 +28,4 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-contrib-provider-kubernetes:v1.2.1
+  package: gsoci.azurecr.io/giantswarm/crossplane-contrib-provider-kubernetes:v1.2.1
