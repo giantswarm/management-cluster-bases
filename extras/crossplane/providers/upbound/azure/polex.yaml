@@ -22,6 +22,7 @@ spec:
         - Pod
         names:
         - upbound-provider*
+        - upbound-contrib-provider*
         - crossplane-contrib-provider*
         - function*
         namespaces:
