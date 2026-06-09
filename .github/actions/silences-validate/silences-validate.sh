@@ -74,6 +74,22 @@ validate_v1alpha2_namespace() {
   fi
 }
 
+# warn_force_all posts a PR comment when the force-all annotation is set to "true"
+warn_force_all() {
+  local force_all
+  force_all="$($YQ e '.metadata.annotations["silence.application.giantswarm.io/force-all"]' "$1")"
+  if [[ "$force_all" != "true" ]]; then
+    return
+  fi
+  echo "  [warn] silence.application.giantswarm.io/force-all is set to true"
+  if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
+    # We can't comment if there's no PR
+    return
+  fi
+  force_all_msg=":warning: The silence \`$(basename "$1")\` has the \`silence.application.giantswarm.io/force-all\` annotation set to \`true\`. This makes the silence apply to alerts regardless of their \`all_pipelines\` label. Please make sure this is intended. See https://docs.giantswarm.io/overview/observability/alert-management/silences/ for more information."
+  gh pr comment "$(git branch --show-current)" --body "$force_all_msg"
+}
+
 notify_expiry_on_weekend(){
   if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
     # We can't comment if there's no PR
@@ -147,6 +163,9 @@ main() {
     valid_until_date "$file_path"             || has_error=true
     validate_kustomization_resources "$file"  || has_error=true
     has_cluster_id_matcher "$file_path"       || has_error=true
+
+    # Non-blocking: warn in the PR thread when force-all is enabled
+    warn_force_all "$file_path"
 
   done
 
