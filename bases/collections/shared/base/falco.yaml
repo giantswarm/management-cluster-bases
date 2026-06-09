@@ -29,7 +29,7 @@ spec:
   releaseName: falco
   storageNamespace: giantswarm
   targetNamespace: giantswarm
-  timeout: 10m
+  timeout: 45m
   upgrade:
     remediation:
       remediateLastFailure: true
