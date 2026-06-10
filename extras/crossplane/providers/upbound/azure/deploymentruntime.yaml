@@ -57,6 +57,9 @@ kind: DeploymentRuntimeConfig
 metadata:
   name: upbound-contrib-provider-kubernetes
 spec:
-  deploymentTemplate:
-    spec:
-      serviceAccountName: upbound-contrib-provider-kubernetes
+  # deploymentTemplate:
+  #   spec:
+  #     serviceAccountName: upbound-contrib-provider-kubernetes
+  serviceAccountTemplate:
+    metadata:
+      name: upbound-contrib-provider-kubernetes
