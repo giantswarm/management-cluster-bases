@@ -29,3 +29,5 @@ spec:
   revisionHistoryLimit: 0
   skipDependencyResolution: true
   package: gsoci.azurecr.io/giantswarm/crossplane-contrib-provider-kubernetes:v1.2.1
+  runtimeConfigRef:
+    name: upbound-contrib-provider-kubernetes
