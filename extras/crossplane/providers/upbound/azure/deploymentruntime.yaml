@@ -63,3 +63,7 @@ spec:
       template:
         spec:
           serviceAccountName: upbound-contrib-provider-kubernetes
+          containers:
+            - name: package-runtime
+              args:
+                - --debug
