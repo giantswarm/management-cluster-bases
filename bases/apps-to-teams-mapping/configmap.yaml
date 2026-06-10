@@ -33,6 +33,7 @@ data:
   aws-resolver-rules-operator: phoenix
   aws-vpc-operator: phoenix
   azure-ad-pod-identity-app: phoenix
+  azure-aks-extras: phoenix
   azure-cloud-controller-manager-app: phoenix
   azure-cloud-node-manager-app: phoenix
   azure-private-dns-crossplane-resources: phoenix
