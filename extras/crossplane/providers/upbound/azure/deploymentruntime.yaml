@@ -59,6 +59,7 @@ metadata:
 spec:
   deploymentTemplate:
     spec:
+      selector: {}
       template:
         spec:
           serviceAccountName: upbound-contrib-provider-kubernetes
