@@ -23,20 +23,31 @@ spec:
               properties:
                 clusterID:
                   type: string
+                clusterType:
+                  type: string
+                  enum:
+                    - aks
+                    - azure
                 location:
                   type: string
                 subscriptionId:
                   type: string
                 resourceGroupName:
                   type: string
+                subject:
+                  type: string
               required:
                 - clusterID
+                - clusterType
                 - location
                 - subscriptionId
                 - resourceGroupName
+                - subject
             status:
               type: object
               properties:
+                issuerUrl:
+                  type: string
                 principalId:
                   type: string
                 clientId:
