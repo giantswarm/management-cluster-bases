@@ -10,8 +10,8 @@ spec:
     - name: crossplane-providers
       namespace: flux-giantswarm
   interval: 5m
-  # IMPORTANT: The `crossplane-providers` folder and the `kustomization.yaml` file must be created in the folder pointed
-  # to and include providers from `extras/crossplane/providers`
+  # IMPORTANT: The `crossplane-functions` folder and the `kustomization.yaml` file must be created in the folder pointed
+  # to and include functions from `extras/crossplane/functions`
   #
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/crossplane/functions"
