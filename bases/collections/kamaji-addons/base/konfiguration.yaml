@@ -19,14 +19,20 @@ spec:
         variables:
           - name: app
             value: cluster-api-control-plane-provider-kamaji
+          - name: team
+            value: rocket
       kamaji:
         variables:
           - name: app
             value: kamaji
+          - name: team
+            value: rocket
       local-path-provisioner:
         variables:
           - name: app
             value: local-path-provisioner
+          - name: team
+            value: rocket
   destination:
     namespace: giantswarm
     naming:

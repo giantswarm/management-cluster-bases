@@ -19,6 +19,8 @@ spec:
         variables:
           - name: app
             value: mcp-prometheus
+          - name: team
+            value: bumblebee
   destination:
     namespace: flux-giantswarm
     naming:
