@@ -19,6 +19,8 @@ spec:
         variables:
           - name: app
             value: app-admission-controller
+          - name: team
+            value: honeybadger
       app-exporter:
         variables:
           - name: app
