@@ -4,6 +4,15 @@ set -euo pipefail
 
 YQ="bin/yq"
 KUSTOMIZATION_FILENAME="kustomization.yaml"
+PROMETHEUS_RULES_CHART="oci://gsoci.azurecr.io/charts/giantswarm/prometheus-rules"
+# Latest release of the public prometheus-rules repo pins the chart version
+# templated for the impacted-alerts lookup (see build_all_pipelines_alerts). The
+# repo is public, so no authentication is required.
+PROMETHEUS_RULES_LATEST_RELEASE_URL="https://api.github.com/repos/giantswarm/prometheus-rules/releases/latest"
+
+# Cache for the prometheus-rules all_pipelines alert lookup (see build_all_pipelines_alerts).
+ALL_PIPELINES_BUILT=""        # cache state: "" (not attempted), "ok", or "failed"
+ALL_PIPELINES_ALERTS_FILE=""  # file with "<alert>|<runbook_url>" lines once built
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -74,20 +83,137 @@ validate_v1alpha2_namespace() {
   fi
 }
 
-# warn_force_all posts a PR comment when the force-all annotation is set to "true"
+# build_all_pipelines_alerts templates the prometheus-rules chart once and caches
+# the list of alerts carrying the all_pipelines="true" label as "<alert>|<runbook_url>"
+# lines in $ALL_PIPELINES_ALERTS_FILE. Returns non-zero (once) if the list could
+# not be built, so callers can fall back to a plain warning. Memoized across calls.
+build_all_pipelines_alerts() {
+  case "$ALL_PIPELINES_BUILT" in
+    ok) return 0 ;;
+    failed) return 1 ;;
+  esac
+
+  if ! command -v helm >/dev/null 2>&1; then
+    error "  [warn] helm not found; skipping impacted-alerts lookup"
+    ALL_PIPELINES_BUILT="failed"
+    return 1
+  fi
+
+  # Resolve the chart version from the latest GitHub release. The release tag
+  # (e.g. v4.107.1) maps to the chart version (4.107.1).
+  local version
+  version="$(curl -fsSL "$PROMETHEUS_RULES_LATEST_RELEASE_URL" 2>/dev/null | $YQ '.tag_name' 2>/dev/null)"
+  version="${version#v}"
+  if [[ -z "$version" || "$version" == "null" ]]; then
+    error "  [warn] could not resolve latest prometheus-rules version; skipping impacted-alerts lookup"
+    ALL_PIPELINES_BUILT="failed"
+    return 1
+  fi
+
+  local tmpdir
+  tmpdir="$(mktemp -d)"
+  if ! helm template prometheus-rules "$PROMETHEUS_RULES_CHART" --version "$version" --output-dir "$tmpdir" >/dev/null 2>&1; then
+    error "  [warn] could not template $PROMETHEUS_RULES_CHART $version; skipping impacted-alerts lookup"
+    ALL_PIPELINES_BUILT="failed"
+    return 1
+  fi
+
+  ALL_PIPELINES_ALERTS_FILE="$tmpdir/all_pipelines_alerts.txt"
+  local files
+  files="$(grep -rl 'all_pipelines' "$tmpdir" 2>/dev/null || true)"
+  if [[ -n "$files" ]]; then
+    # Each line: "<alert>|<runbook_url>" (runbook query string stripped). Alert
+    # names and runbook URLs never contain "|", so it is a safe separator.
+    # shellcheck disable=SC2086
+    $YQ ea -N '.spec.groups[].rules[] | select(.labels.all_pipelines == "true") | .alert + "|" + (.annotations.runbook_url // "" | sub("\?.*$"; ""))' $files 2>/dev/null \
+      | grep -v '^[[:space:]]*$' | sort -u > "$ALL_PIPELINES_ALERTS_FILE" || true
+  else
+    : > "$ALL_PIPELINES_ALERTS_FILE"
+  fi
+
+  ALL_PIPELINES_BUILT="ok"
+  return 0
+}
+
+# alertname_matches returns 0 if alert name $1 satisfies the Alertmanager matcher
+# described by matchType $2 and value $3. Regex matchers are fully anchored, as in
+# Alertmanager.
+alertname_matches() {
+  local alert="$1" mtype="$2" value="$3"
+  case "$mtype" in
+    "="|"") [[ "$alert" == "$value" ]] ;;
+    "!=")   [[ "$alert" != "$value" ]] ;;
+    "=~")   [[ "$alert" =~ ^($value)$ ]] ;;
+    "!~")   ! [[ "$alert" =~ ^($value)$ ]] ;;
+    *)      return 1 ;;
+  esac
+}
+
+# impacted_alerts_for prints a markdown bullet list of the cached all_pipelines
+# alerts whose name satisfies every alertname matcher of the silence file $1.
+# With no alertname matcher, all all_pipelines alerts are listed.
+impacted_alerts_for() {
+  local file_path="$1"
+  local -a matchers
+  mapfile -t matchers < <($YQ e -N '.spec.matchers[] | select(.name == "alertname") | (.matchType // "=") + " " + .value' "$file_path" 2>/dev/null | grep -v '^[[:space:]]*$' || true)
+
+  local line alert runbook m mtype mval ok
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    alert="${line%%|*}"
+    runbook="${line#*|}"
+    ok=true
+    for m in "${matchers[@]}"; do
+      mtype="${m%% *}"
+      mval="${m#* }"
+      if ! alertname_matches "$alert" "$mtype" "$mval"; then
+        ok=false
+        break
+      fi
+    done
+    $ok || continue
+    if [[ -n "$runbook" ]]; then
+      printf -- '- `%s` ([runbook](%s))\n' "$alert" "$runbook"
+    else
+      printf -- '- `%s`\n' "$alert"
+    fi
+  done < "$ALL_PIPELINES_ALERTS_FILE"
+}
+
+# warn_force_all posts a PR comment when the force-all annotation is set to "true",
+# listing the all_pipelines alerts this silence would override (best effort).
 warn_force_all() {
+  local file_path="$1"
   local force_all
-  force_all="$($YQ e '.metadata.annotations["silence.application.giantswarm.io/force-all"]' "$1")"
+  force_all="$($YQ e '.metadata.annotations["silence.application.giantswarm.io/force-all"]' "$file_path")"
   if [[ "$force_all" != "true" ]]; then
     return
   fi
   echo "  [warn] silence.application.giantswarm.io/force-all is set to true"
+
   if ! gh pr view "$(git branch --show-current)" --json number >/dev/null 2>&1; then
     # We can't comment if there's no PR
     return
   fi
-  force_all_msg=":warning: The silence \`$(basename "$1")\` has the \`silence.application.giantswarm.io/force-all\` annotation set to \`true\`. This makes the silence apply to alerts regardless of their \`all_pipelines\` label. Please make sure this is intended. See https://docs.giantswarm.io/overview/observability/alert-management/silences/ for more information."
-  gh pr comment "$(git branch --show-current)" --body "$force_all_msg"
+
+  local body
+  body=":warning: The silence \`$(basename "$file_path")\` sets \`silence.application.giantswarm.io/force-all: \"true\"\`, which makes it apply to alerts regardless of their \`all_pipelines\` label."
+
+  # Best effort: list the all_pipelines alerts this silence would reach.
+  if build_all_pipelines_alerts; then
+    local impacted
+    impacted="$(impacted_alerts_for "$file_path" || true)"
+    if [[ -n "$impacted" ]]; then
+      body+=$'\n\n'"It would override the \`all_pipelines\` protection for at least the following alerts:"$'\n'"$impacted"
+    else
+      body+=$'\n\n'"_No \`all_pipelines\` alert from the \`prometheus-rules\` chart matches this silence's \`alertname\` matcher(s)._"
+    fi
+    body+=$'\n\n'"_This list is derived from the \`prometheus-rules\` chart, which is the main but not the only source of alerts, so it may be incomplete._"
+  fi
+
+  body+=$'\n\n'"Please make sure this is intended. See https://docs.giantswarm.io/overview/observability/alert-management/silences/ for more information."
+
+  gh pr comment "$(git branch --show-current)" --body "$body"
 }
 
 notify_expiry_on_weekend(){
