@@ -11,8 +11,8 @@ PROMETHEUS_RULES_CHART="oci://gsoci.azurecr.io/charts/giantswarm/prometheus-rule
 PROMETHEUS_RULES_LATEST_RELEASE_URL="https://api.github.com/repos/giantswarm/prometheus-rules/releases/latest"
 
 # Cache for the prometheus-rules all_pipelines alert lookup (see build_all_pipelines_alerts).
-ALL_PIPELINES_BUILT=""        # cache state: "" (not attempted), "ok", or "failed"
-ALL_PIPELINES_ALERTS_FILE=""  # file with "<alert>|<runbook_url>" lines once built
+ALL_PIPELINES_BUILT=""    # cache state: "" (not attempted), "ok", or "failed"
+ALL_PIPELINES_ALERTS=()   # "<alert>|<runbook_url>" entries once built
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -50,7 +50,7 @@ validate_v1alpha2_apiversion() {
   local file_path="$1"
   local api_version
   api_version="$(get_api_version "$file_path")"
-  
+
   if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
     echo "  [ok] v1alpha2 apiVersion correct"
     return 0
@@ -68,7 +68,7 @@ validate_v1alpha2_namespace() {
   local file_path="$1"
   local api_version
   api_version="$(get_api_version "$file_path")"
-  
+
   # Only validate namespace for v1alpha2
   if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
     local namespace
@@ -84,9 +84,9 @@ validate_v1alpha2_namespace() {
 }
 
 # build_all_pipelines_alerts templates the prometheus-rules chart once and caches
-# the list of alerts carrying the all_pipelines="true" label as "<alert>|<runbook_url>"
-# lines in $ALL_PIPELINES_ALERTS_FILE. Returns non-zero (once) if the list could
-# not be built, so callers can fall back to a plain warning. Memoized across calls.
+# the alerts carrying the all_pipelines="true" label as "<alert>|<runbook_url>"
+# entries in the ALL_PIPELINES_ALERTS array. Returns non-zero (once) if the list
+# could not be built, so callers can fall back to a plain warning. Memoized.
 build_all_pipelines_alerts() {
   case "$ALL_PIPELINES_BUILT" in
     ok) return 0 ;;
@@ -110,41 +110,33 @@ build_all_pipelines_alerts() {
     return 1
   fi
 
-  local tmpdir
-  tmpdir="$(mktemp -d)"
-  if ! helm template prometheus-rules "$PROMETHEUS_RULES_CHART" --version "$version" --output-dir "$tmpdir" >/dev/null 2>&1; then
+  local manifests
+  if ! manifests="$(helm template prometheus-rules "$PROMETHEUS_RULES_CHART" --version "$version" 2>/dev/null)"; then
     error "  [warn] could not template $PROMETHEUS_RULES_CHART $version; skipping impacted-alerts lookup"
     ALL_PIPELINES_BUILT="failed"
     return 1
   fi
 
-  ALL_PIPELINES_ALERTS_FILE="$tmpdir/all_pipelines_alerts.txt"
-  local files
-  files="$(grep -rl 'all_pipelines' "$tmpdir" 2>/dev/null || true)"
-  if [[ -n "$files" ]]; then
-    # Each line: "<alert>|<runbook_url>" (runbook query string stripped). Alert
-    # names and runbook URLs never contain "|", so it is a safe separator.
-    # shellcheck disable=SC2086
-    $YQ ea -N '.spec.groups[].rules[] | select(.labels.all_pipelines == "true") | .alert + "|" + (.annotations.runbook_url // "" | sub("\?.*$"; ""))' $files 2>/dev/null \
-      | grep -v '^[[:space:]]*$' | sort -u > "$ALL_PIPELINES_ALERTS_FILE" || true
-  else
-    : > "$ALL_PIPELINES_ALERTS_FILE"
-  fi
+  # Each entry: "<alert>|<runbook_url>" (runbook query string stripped). Alert
+  # names and runbook URLs never contain "|", so it is a safe separator.
+  mapfile -t ALL_PIPELINES_ALERTS < <(printf '%s' "$manifests" \
+    | $YQ ea -N 'select(.kind == "PrometheusRule") | .spec.groups[].rules[] | select(.labels.all_pipelines == "true") | .alert + "|" + (.annotations.runbook_url // "" | sub("\?.*$"; ""))' 2>/dev/null \
+    | grep -v '^[[:space:]]*$' | sort -u || true)
 
   ALL_PIPELINES_BUILT="ok"
   return 0
 }
 
 # alertname_matches returns 0 if alert name $1 satisfies the Alertmanager matcher
-# described by matchType $2 and value $3. Regex matchers are fully anchored, as in
-# Alertmanager.
+# described by match type $2 and match value $3. Regex matchers are fully anchored,
+# as in Alertmanager.
 alertname_matches() {
-  local alert="$1" mtype="$2" value="$3"
-  case "$mtype" in
-    "="|"") [[ "$alert" == "$value" ]] ;;
-    "!=")   [[ "$alert" != "$value" ]] ;;
-    "=~")   [[ "$alert" =~ ^($value)$ ]] ;;
-    "!~")   ! [[ "$alert" =~ ^($value)$ ]] ;;
+  local alert_name="$1" match_type="$2" match_value="$3"
+  case "$match_type" in
+    "="|"") [[ "$alert_name" == "$match_value" ]] ;;
+    "!=")   [[ "$alert_name" != "$match_value" ]] ;;
+    "=~")   [[ "$alert_name" =~ ^($match_value)$ ]] ;;
+    "!~")   ! [[ "$alert_name" =~ ^($match_value)$ ]] ;;
     *)      return 1 ;;
   esac
 }
@@ -153,31 +145,30 @@ alertname_matches() {
 # alerts whose name satisfies every alertname matcher of the silence file $1.
 # With no alertname matcher, all all_pipelines alerts are listed.
 impacted_alerts_for() {
-  local file_path="$1"
-  local -a matchers
-  mapfile -t matchers < <($YQ e -N '.spec.matchers[] | select(.name == "alertname") | (.matchType // "=") + " " + .value' "$file_path" 2>/dev/null | grep -v '^[[:space:]]*$' || true)
+  local silence_file="$1"
+  local -a alertname_matchers
+  mapfile -t alertname_matchers < <($YQ e -N '.spec.matchers[] | select(.name == "alertname") | (.matchType // "=") + " " + .value' "$silence_file" 2>/dev/null | grep -v '^[[:space:]]*$' || true)
 
-  local line alert runbook m mtype mval ok
-  while IFS= read -r line; do
-    [[ -z "$line" ]] && continue
-    alert="${line%%|*}"
-    runbook="${line#*|}"
-    ok=true
-    for m in "${matchers[@]}"; do
-      mtype="${m%% *}"
-      mval="${m#* }"
-      if ! alertname_matches "$alert" "$mtype" "$mval"; then
-        ok=false
+  local alert_entry alert_name runbook_url matcher match_type match_value alert_is_impacted
+  for alert_entry in "${ALL_PIPELINES_ALERTS[@]}"; do
+    alert_name="${alert_entry%%|*}"
+    runbook_url="${alert_entry#*|}"
+    alert_is_impacted=true
+    for matcher in "${alertname_matchers[@]}"; do
+      match_type="${matcher%% *}"
+      match_value="${matcher#* }"
+      if ! alertname_matches "$alert_name" "$match_type" "$match_value"; then
+        alert_is_impacted=false
         break
       fi
     done
-    $ok || continue
-    if [[ -n "$runbook" ]]; then
-      printf -- '- `%s` ([runbook](%s))\n' "$alert" "$runbook"
+    $alert_is_impacted || continue
+    if [[ -n "$runbook_url" ]]; then
+      printf -- '- `%s` ([runbook](%s))\n' "$alert_name" "$runbook_url"
     else
-      printf -- '- `%s`\n' "$alert"
+      printf -- '- `%s`\n' "$alert_name"
     fi
-  done < "$ALL_PIPELINES_ALERTS_FILE"
+  done
 }
 
 # warn_force_all posts a PR comment when the force-all annotation is set to "true",
@@ -211,7 +202,7 @@ warn_force_all() {
     body+=$'\n\n'"_This list is derived from the \`prometheus-rules\` chart, which is the main but not the only source of alerts, so it may be incomplete._"
   fi
 
-  body+=$'\n\n'"Please make sure this is intended. See https://docs.giantswarm.io/overview/observability/alert-management/silences/ for more information."
+  body+=$'\n\n'"Please make sure this is intended. See [documentation](https://docs.giantswarm.io/overview/observability/alert-management/silences/) for more information."
 
   gh pr comment "$(git branch --show-current)" --body "$body"
 }
@@ -240,7 +231,7 @@ valid_until_date() {
     return 1
   fi
   echo "  [ok] valid until correct $valid_until"
-  
+
   # notify if silence expires on a weekend
   if [[ $(date -d "$valid_until" +%u) -gt 5 ]]; then
     notify_expiry_on_weekend "$1"
