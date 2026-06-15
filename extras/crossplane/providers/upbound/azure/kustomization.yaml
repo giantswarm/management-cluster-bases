@@ -1,7 +1,10 @@
 resources:
+- authorization.yaml
 - deploymentruntime.yaml
+- managedidentity.yaml
 - network.yaml
 - polex.yaml
 - provider.yaml
+- providerconfig.yaml
 - service-account.yaml
 - storage.yaml

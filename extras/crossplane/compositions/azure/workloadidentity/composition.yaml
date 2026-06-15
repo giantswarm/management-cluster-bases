@@ -1,0 +1,201 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: workloadidentity
+spec:
+  compositeTypeRef:
+    apiVersion: crossplane.giantswarm.io/v1alpha1
+    kind: XWorkloadIdentity
+  mode: Pipeline
+  pipeline:
+    - step: resolve-issuer-url
+      functionRef:
+        name: function-kcl
+      input:
+        apiVersion: krm.kcl.dev/v1alpha1
+        kind: KCLInput
+        spec:
+          source: |
+            oxr = option("params").oxr
+            _extra = option("params").extraResources or {}
+
+            clusterID = oxr.spec.clusterID
+            clusterType = oxr.spec.clusterType
+            # CAPZ cluster objects live in the org namespace; assumed here to
+            # match the claim namespace. Adjust if clusters live elsewhere.
+            namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
+
+            # Select which cluster object holds the OIDC issuer for this cluster type.
+            _kinds = {
+                aks = {
+                    apiVersion = "containerservice.azure.com/v1api20240901"
+                    kind = "ManagedCluster"
+                }
+                azure = {
+                    apiVersion = "infrastructure.cluster.x-k8s.io/v1beta1"
+                    kind = "AzureCluster"
+                }
+            }
+            _selected = _kinds[clusterType]
+
+            # Dynamically request that object by name. function-kcl feeds it back
+            # via option("params").extraResources on the next reconcile pass.
+            _requirement = {
+                apiVersion = "meta.krm.kcl.dev/v1alpha1"
+                kind = "ExtraResources"
+                requirements = {
+                    cluster = {
+                        apiVersion = _selected.apiVersion
+                        kind = _selected.kind
+                        matchName = clusterID
+                        namespace = namespace
+                    }
+                }
+            }
+
+            # Read the issuer once the object is available. Both kinds are assumed
+            # to expose it at the same status path (AzureCluster does not yet).
+            _list = _extra["cluster"] if "cluster" in _extra else []
+            _source = _list[0] if len(_list) > 0 else Undefined
+            issuer = _source?.status?.oidcIssuerProfile?.issuerUrl
+
+            # Export the resolved issuer onto the composite's status.
+            _xrStatus = {
+                apiVersion = oxr.apiVersion
+                kind = oxr.kind
+                status = {
+                    issuerUrl = issuer
+                }
+            }
+
+            items = [_requirement] + ([_xrStatus] if issuer else [])
+
+    - step: patch-and-transform
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: user-assigned-identity
+            base:
+              apiVersion: managedidentity.azure.upbound.io/v1beta1
+              kind: UserAssignedIdentity
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterID
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.forProvider.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.location
+                toFieldPath: spec.forProvider.location
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.resourceGroupName
+                toFieldPath: spec.forProvider.resourceGroupName
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.principalId
+                toFieldPath: status.principalId
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.clientId
+                toFieldPath: status.clientId
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.tenantId
+                toFieldPath: status.tenantId
+
+          - name: federated-identity-credential
+            base:
+              apiVersion: managedidentity.azure.upbound.io/v1beta1
+              kind: FederatedIdentityCredential
+              spec:
+                forProvider:
+                  audience:
+                    - api://AzureADTokenExchange
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.issuerUrl
+                toFieldPath: spec.forProvider.issuer
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterID
+                toFieldPath: spec.forProvider.parentIdRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.resourceGroupName
+                toFieldPath: spec.forProvider.resourceGroupName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.subject
+                toFieldPath: spec.forProvider.subject
+
+          - name: role-assignment
+            base:
+              apiVersion: authorization.azure.upbound.io/v1beta1
+              kind: RoleAssignment
+              spec:
+                forProvider:
+                  roleDefinitionName: Contributor
+                  principalType: ServicePrincipal
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterID
+                toFieldPath: spec.providerConfigRef.name
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.subscriptionId
+                    - fromFieldPath: spec.resourceGroupName
+                  strategy: string
+                  string:
+                    fmt: "/subscriptions/%s/resourceGroups/%s"
+                toFieldPath: spec.forProvider.scope
+
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.principalId
+                toFieldPath: spec.forProvider.principalId
+                policy:
+                  fromFieldPath: Required
+
+          - name: config-map
+            base:
+              apiVersion: kubernetes.crossplane.io/v1alpha2
+              kind: Object
+              spec:
+                forProvider:
+                  manifest:
+                    apiVersion: v1
+                    kind: ConfigMap
+                    metadata:
+                      name: ""
+                      namespace: default
+                    data:
+                      values: ""
+                providerConfigRef:
+                  name: in-cluster
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.labels['crossplane.io/claim-namespace']
+                toFieldPath: spec.forProvider.manifest.metadata.namespace
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.clusterID
+                    - fromFieldPath: metadata.labels['crossplane.io/claim-name']
+                  strategy: string
+                  string:
+                    fmt: "%s-%s-identity"
+                toFieldPath: spec.forProvider.manifest.metadata.name
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: status.clientId
+                    - fromFieldPath: status.tenantId
+                  strategy: string
+                  string:
+                    # Construct the values fed into a HelmRelease that uses this WorkloadIdentity.
+                    fmt: |
+                      workloadIdentity:
+                        clientID: %s
+                        tenantID: %s
+                toFieldPath: spec.forProvider.manifest.data.values
+                policy:
+                  fromFieldPath: Required
