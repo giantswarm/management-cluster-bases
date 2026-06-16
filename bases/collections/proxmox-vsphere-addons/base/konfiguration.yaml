@@ -19,6 +19,8 @@ spec:
         variables:
           - name: app
             value: cluster-api-provider-proxmox
+          - name: team
+            value: rocket
   destination:
     namespace: giantswarm
     naming:
