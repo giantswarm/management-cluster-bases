@@ -58,7 +58,7 @@ spec:
             # to expose it at the same status path (AzureCluster does not yet).
             _list = _extra["cluster"] if "cluster" in _extra else []
             _source = _list[0] if len(_list) > 0 else Undefined
-            issuer = _source?.status?.oidcIssuerProfile?.issuerUrl
+            issuer = _source?.status?.oidcIssuerProfile?.issuerURL
 
             # Export the resolved issuer onto the composite's status.
             _xrStatus = {
