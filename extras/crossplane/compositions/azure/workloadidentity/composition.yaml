@@ -18,12 +18,11 @@ spec:
         spec:
           source: |
             oxr = option("params").oxr
-            _extra = option("params").extraResources or {}
+            # Prefixing with an underscore makes it mutable.
+            _dxr = option("params").dxr
 
             clusterID = oxr.spec.clusterID
             clusterType = oxr.spec.clusterType
-            # CAPZ cluster objects live in the org namespace; assumed here to
-            # match the claim namespace. Adjust if clusters live elsewhere.
             namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
 
             # Select which cluster object holds the OIDC issuer for this cluster type.
@@ -31,45 +30,45 @@ spec:
                 aks = {
                     apiVersion = "containerservice.azure.com/v1api20240901"
                     kind = "ManagedCluster"
+                    matchLabels = {
+                      "serviceoperator.azure.com/owner-name" = clusterID
+                    }
                 }
                 azure = {
                     apiVersion = "infrastructure.cluster.x-k8s.io/v1beta1"
                     kind = "AzureCluster"
+                    matchLabels = {
+                      "cluster.x-k8s.io/cluster-name" = clusterID
+                    }
                 }
             }
             _selected = _kinds[clusterType]
 
             # Dynamically request that object by name. function-kcl feeds it back
             # via option("params").extraResources on the next reconcile pass.
-            _requirement = {
+            cluster = {
                 apiVersion = "meta.krm.kcl.dev/v1alpha1"
                 kind = "ExtraResources"
                 requirements = {
                     cluster = {
                         apiVersion = _selected.apiVersion
                         kind = _selected.kind
-                        matchName = clusterID
-                        namespace = namespace
+                        matchLabels = _selected.matchLabels
                     }
                 }
             }
 
-            # Read the issuer once the object is available. Both kinds are assumed
-            # to expose it at the same status path (AzureCluster does not yet).
-            _list = _extra["cluster"] if "cluster" in _extra else []
-            _source = _list[0] if len(_list) > 0 else Undefined
-            issuer = _source?.status?.oidcIssuerProfile?.issuerURL
 
-            # Export the resolved issuer onto the composite's status.
-            _xrStatus = {
-                apiVersion = oxr.apiVersion
-                kind = oxr.kind
-                status = {
-                    issuerUrl = issuer
-                }
-            }
+            # Read the issuer once the object is available.
+            er = option("params")?.extraResources
 
-            items = [_requirement] + ([_xrStatus] if issuer else [])
+            if er?.cluster:
+              issuerUrl = er?.cluster[0]?.Resource?.status?.oidcIssuerProfile?.issuerURL
+              _dxr.status.issuerUrl = issuerUrl
+
+            items = [
+              cluster, _dxr
+            ]
 
     - step: patch-and-transform
       functionRef:
