@@ -19,126 +19,188 @@ spec:
         variables:
           - name: app
             value: app-admission-controller
+          - name: team
+            value: honeybadger
       app-exporter:
         variables:
           - name: app
             value: app-exporter
+          - name: team
+            value: honeybadger
       app-operator:
         variables:
           - name: app
             value: app-operator
+          - name: team
+            value: honeybadger
       athena:
         variables:
           - name: app
             value: athena
+          - name: team
+            value: shield
       cloudnative-pg:
         variables:
           - name: app
             value: cloudnative-pg
+          - name: team
+            value: shield
       cluster-api:
         variables:
           - name: app
             value: cluster-api
+          - name: team
+            value: tenet
       cluster-api-events:
         variables:
           - name: app
             value: cluster-api-events
+          - name: team
+            value: tenet
       cluster-apps-operator:
         variables:
           - name: app
             value: cluster-apps-operator
+          - name: team
+            value: honeybadger
       cluster-cleaner:
         variables:
           - name: app
             value: cluster-cleaner
+          - name: team
+            value: tenet
       dashboards:
         variables:
           - name: app
             value: dashboards
+          - name: team
+            value: atlas
       deletion-blocker-operator:
         variables:
           - name: app
             value: deletion-blocker-operator
+          - name: team
+            value: rocket
       dex-app:
         variables:
           - name: app
             value: dex-app
+          - name: team
+            value: shield
       dex-operator:
         variables:
           - name: app
             value: dex-operator
+          - name: team
+            value: shield
       encryption-provider-operator:
         variables:
           - name: app
             value: encryption-provider-operator
+          - name: team
+            value: tenet
       etcd-backup-operator:
         variables:
           - name: app
             value: etcd-backup-operator
+          - name: team
+            value: tenet
       event-exporter-app:
         variables:
           - name: app
             value: event-exporter-app
+          - name: team
+            value: tenet
       falco:
         variables:
           - name: app
             value: falco
+          - name: team
+            value: shield
       fluent-logshipping-app:
         variables:
           - name: app
             value: fluent-logshipping-app
+          - name: team
+            value: atlas
       gateway-api-bundle:
         variables:
           - name: app
             value: gateway-api-bundle
+          - name: team
+            value: cabbage
       grafana:
         variables:
           - name: app
             value: grafana
+          - name: team
+            value: atlas
       grafana-organization-giantswarm-security-default:
         variables:
           - name: app
             value: grafana-organization-giantswarm-security-default
+          - name: team
+            value: shield
       happa:
         variables:
           - name: app
             value: happa
+          - name: team
+            value: bumblebee
       keda:
         variables:
           - name: app
             value: keda
+          - name: team
+            value: atlas
       konfigure-operator:
         variables:
           - name: app
             value: konfigure-operator
+          - name: team
+            value: honeybadger
       kube-downscaler:
         variables:
           - name: app
             value: kube-downscaler
+          - name: team
+            value: planeteers
       kyverno-policies-connectivity:
         variables:
           - name: app
             value: kyverno-policies-connectivity
+          - name: team
+            value: cabbage
       kyverno-policies-dx:
         variables:
           - name: app
             value: kyverno-policies-dx
+          - name: team
+            value: honeybadger
       kyverno-policies-observability:
         variables:
           - name: app
             value: kyverno-policies-observability
+          - name: team
+            value: atlas
       kyverno-policies-ux:
         variables:
           - name: app
             value: kyverno-policies-ux
+          - name: team
+            value: honeybadger
       loki:
         variables:
           - name: app
             value: loki
+          - name: team
+            value: atlas
       mimir:
         variables:
           - name: app
             value: mimir
+          - name: team
+            value: atlas
       oauth2-proxy:
         variables:
           - name: app
@@ -147,66 +209,98 @@ spec:
         variables:
           - name: app
             value: observability-operator
+          - name: team
+            value: atlas
       observability-platform-api:
         variables:
           - name: app
             value: observability-platform-api
+          - name: team
+            value: atlas
       organization-operator:
         variables:
           - name: app
             value: organization-operator
+          - name: team
+            value: shield
       plugin-barman-cloud:
         variables:
           - name: app
             value: plugin-barman-cloud
+          - name: team
+            value: atlas
       prometheus-remotewrite:
         variables:
           - name: app
             value: prometheus-remotewrite
+          - name: team
+            value: atlas
       prometheus-rules:
         variables:
           - name: app
             value: prometheus-rules
+          - name: team
+            value: atlas
       rbac-operator:
         variables:
           - name: app
             value: rbac-operator
+          - name: team
+            value: shield
       silence-operator:
         variables:
           - name: app
             value: silence-operator
+          - name: team
+            value: atlas
       sloth:
         variables:
           - name: app
             value: sloth
+          - name: team
+            value: atlas
       sloth-rules:
         variables:
           - name: app
             value: sloth-rules
+          - name: team
+            value: atlas
       starboard-exporter:
         variables:
           - name: app
             value: starboard-exporter
+          - name: team
+            value: shield
       teleport-operator:
         variables:
           - name: app
             value: teleport-operator
+          - name: team
+            value: shield
       teleport-tbot:
         variables:
           - name: app
             value: teleport-tbot
+          - name: team
+            value: shield
       tempo:
         variables:
           - name: app
             value: tempo
+          - name: team
+            value: atlas
       trivy:
         variables:
           - name: app
             value: trivy
+          - name: team
+            value: shield
       trivy-operator:
         variables:
           - name: app
             value: trivy-operator
+          - name: team
+            value: shield
   destination:
     namespace: giantswarm
     naming:

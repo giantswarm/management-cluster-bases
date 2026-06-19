@@ -10,6 +10,7 @@ data:
   agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
   alertmanager-to-github: atlas
+  alloy-podlogs-crds: atlas
   alloy: atlas
   app-admission-controller: honeybadger
   app-exporter: honeybadger
@@ -32,6 +33,7 @@ data:
   aws-resolver-rules-operator: phoenix
   aws-vpc-operator: phoenix
   azure-ad-pod-identity-app: phoenix
+  azure-aks-extras: phoenix
   azure-cloud-controller-manager-app: phoenix
   azure-cloud-node-manager-app: phoenix
   azure-private-dns-crossplane-resources: phoenix
@@ -192,6 +194,7 @@ data:
   openssf-scorecard-exporter: shield
   operational-load-exporter: planeteers
   organization-operator: shield
+  pagerduty-mcp-server: planeteers
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
   policy-api-crds: shield
@@ -213,8 +216,6 @@ data:
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
-  shoot-controller: phoenix
-  shoot: phoenix
   silence-operator: atlas
   sitesearch: bumblebee
   sloth-rules: atlas

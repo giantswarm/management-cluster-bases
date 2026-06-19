@@ -19,22 +19,32 @@ spec:
         variables:
           - name: app
             value: cluster-api-cleaner-vsphere
+          - name: team
+            value: rocket
       cluster-api-ipam-provider-in-cluster:
         variables:
           - name: app
             value: cluster-api-ipam-provider-in-cluster
+          - name: team
+            value: rocket
       cluster-api-provider-vsphere:
         variables:
           - name: app
             value: cluster-api-provider-vsphere
+          - name: team
+            value: rocket
       dns-operator-route53:
         variables:
           - name: app
             value: dns-operator-route53
+          - name: team
+            value: rocket
       image-distribution-operator:
         variables:
           - name: app
             value: image-distribution-operator
+          - name: team
+            value: rocket
   destination:
     namespace: giantswarm
     naming:
