@@ -64,7 +64,8 @@ spec:
 
             if er?.cluster:
               issuerUrl = er?.cluster[0]?.Resource?.status?.oidcIssuerProfile?.issuerURL
-              _dxr.status.issuerUrl = issuerUrl
+              if issuerUrl:
+                _dxr.status = (_dxr?.status or {}) | {issuerUrl = issuerUrl}
 
             items = [
               cluster, _dxr
@@ -116,6 +117,8 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: status.issuerUrl
                 toFieldPath: spec.forProvider.issuer
+                policy:
+                  fromFieldPath: Required
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.clusterID
                 toFieldPath: spec.forProvider.parentIdRef.name
