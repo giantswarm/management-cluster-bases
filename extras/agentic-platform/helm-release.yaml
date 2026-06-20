@@ -29,6 +29,21 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: false
+  # GitOps topology for the meta-package (chart >=1.5.1). The chart renders each
+  # component as its own OCIRepository + HelmRelease. Create those Flux objects in
+  # flux-giantswarm (exempt from the flux-multi-tenancy Kyverno policy, which would
+  # otherwise reject child HelmReleases for missing serviceAccountName) and route
+  # the workloads to the agentic-platform namespace. crds is delegated to the
+  # sibling agentic-platform-crds HelmRelease below (helm-release-crds.yaml), so
+  # the meta-package must not render its own crds release (avoids dual ownership);
+  # the other child releases still dependsOn it by name in flux-giantswarm.
+  values:
+    gitops:
+      namespace: flux-giantswarm
+      targetNamespace: agentic-platform
+    components:
+      agentic-platform-crds:
+        enabled: false
   valuesFrom:
     # ConfigMap rendered by Konfiguration from shared-configs template.
     # NOTE: requires a matching `agentic-platform` template in giantswarm-config

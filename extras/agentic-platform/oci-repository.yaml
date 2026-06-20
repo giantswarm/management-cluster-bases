@@ -7,7 +7,10 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform
   ref:
-    # Floor at 0.2.0 — the first release that bundles the agentgateway CRDs.
-    # 0.1.0 expects them as a cluster prerequisite and would fail to reconcile.
-    semver: ">=0.2.0"
+    # Floor at 1.5.1 — the meta-package (app-of-apps) era. From 1.5.0 the chart
+    # renders each component as its own Flux OCIRepository + HelmRelease instead
+    # of bundling subcharts; 1.5.1 adds the gitops.namespace/targetNamespace knobs
+    # this base relies on to satisfy the flux-multi-tenancy admission policy.
+    # Earlier (umbrella) releases ignore those knobs and would be rejected.
+    semver: ">=1.5.1"
   provider: generic

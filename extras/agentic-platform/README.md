@@ -1,37 +1,51 @@
 # Agentic Platform Extras
 
 This directory contains the Flux resources required to deploy the
-`agentic-platform` umbrella chart on a Giant Swarm management cluster.
+`agentic-platform` meta-package on a Giant Swarm management cluster.
 
 ## Overview
 
-`agentic-platform` is a Helm umbrella that bundles three sub-charts behind a
-single release:
+As of chart **v1.5.x** `agentic-platform` is a **meta-package (app-of-apps)**:
+it no longer bundles sub-charts, but renders each component as its own Flux
+`OCIRepository` + `HelmRelease` (version ranges resolved at reconcile time, so
+component releases roll forward with no PR). Components include muster (MCP
+aggregator / OAuth resource server), valkey (OAuth session storage),
+agentgateway (MCP data plane), kagent, klaus-gateway, agent-sandbox, and the
+`agentic-platform-connectivity` chart that owns the wiring (public `HTTPRoute`,
+`Gateway`, `AgentgatewayParameters`, CiliumNetworkPolicies).
 
-- **muster** — MCP aggregator / OAuth resource server
-- **agentgateway** — MCP data plane (controller + dynamically-rendered
-  data-plane pod via `AgentgatewayParameters`)
-- **valkey** — `giantswarm/valkey-app` for muster's OAuth session storage
+On Giant Swarm clusters the meta-package's `HelmRelease` sets:
 
-It replaces the standalone `extras/muster` base. The umbrella owns the
-`Gateway` (data-plane spawn trigger), `AgentgatewayParameters`, and the
-CiliumNetworkPolicies wiring the controller and data plane.
+```yaml
+spec:
+  values:
+    gitops:
+      namespace: flux-giantswarm      # render the child Flux CRs here — exempt
+      targetNamespace: agentic-platform  #   from flux-multi-tenancy; workloads here
+    components:
+      agentic-platform-crds:
+        enabled: false                # delegated to the sibling crds HelmRelease
+```
+
+The child `HelmRelease`s are created in `flux-giantswarm` (the
+flux-multi-tenancy Kyverno policy rejects HelmReleases lacking
+`serviceAccountName` outside `flux-giantswarm`/`giantswarm`/`monitoring`) and
+install their workloads into `agentic-platform`. Each child `dependsOn` the
+`agentic-platform-crds` release.
 
 ## Prerequisites
 
-As of chart **v0.3.0** the agentic-platform umbrella no longer ships any CRDs.
-They have been extracted into a dedicated sibling chart,
-`agentic-platform-crds`, that bundles the agentgateway CRDs
-(`AgentgatewayParameters` / `AgentgatewayPolicy` / `AgentgatewayBackend`) and
-the muster CRDs (`MCPServer`, `Workflow`) as sub-chart dependencies
-(`agentgateway-crds` + `muster-crds`).
-
-This kustomization deploys both releases — `agentic-platform-crds` and
-`agentic-platform` — and the platform's `HelmRelease` declares `dependsOn` the
-crds `HelmRelease`, so Flux will not reconcile the platform release until the
-CRDs release reports Ready. No manual `helm install` for CRDs is required, and
-any standalone references to `giantswarm/muster/v*/helm/muster/crds/*.yaml`
-should be removed from the cluster's `crds/kustomization.yaml`.
+CRDs (agentgateway `AgentgatewayParameters` / `AgentgatewayPolicy` /
+`AgentgatewayBackend`, muster `MCPServer` / `Workflow`) ship via the dedicated
+`agentic-platform-crds` chart. This kustomization deploys it as its own
+`HelmRelease` (`helm-release-crds.yaml`), kept separate from the meta-package so
+a single release object owns those cluster-scoped CRDs. The meta-package
+therefore sets `components.agentic-platform-crds.enabled: false` and its child
+releases `dependsOn` the crds `HelmRelease` — Flux will not reconcile a
+component until the CRDs release reports Ready. No manual `helm install` for
+CRDs is required, and any standalone references to
+`giantswarm/muster/v*/helm/muster/crds/*.yaml` should be removed from the
+cluster's `crds/kustomization.yaml`.
 
 The Gateway API v1 CRDs and a Gateway to attach muster's public `HTTPRoute` to
 (e.g. `envoy-gateway-system/giantswarm-default`) remain cluster prerequisites.
