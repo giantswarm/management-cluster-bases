@@ -8,6 +8,7 @@ metadata:
 data:
   agent-sandbox-crds: bumblebee
   agent-sandbox: bumblebee
+  agentic-platform-connectivity: bumblebee
   agentic-platform-crds: bumblebee
   agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
