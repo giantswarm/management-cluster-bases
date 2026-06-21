@@ -12,6 +12,11 @@ spec:
     name: muster
     namespace: flux-giantswarm
   install:
+    # App-owned CRDs: the muster app chart ships its MCPServer / Workflow CRDs in
+    # its own crds/ dir. CreateReplace makes Flux apply and upgrade them atomically
+    # with the app on every release (Helm never upgrades crds/-dir CRDs on its own),
+    # so the CRDs always match the running muster version on this standalone path.
+    crds: CreateReplace
     remediation:
       retries: 10
       remediateLastFailure: false
@@ -19,6 +24,7 @@ spec:
   targetNamespace: muster
   timeout: 10m
   upgrade:
+    crds: CreateReplace
     remediation:
       retries: 10
       remediateLastFailure: false
