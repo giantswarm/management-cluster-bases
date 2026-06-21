@@ -7,6 +7,8 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/muster
   ref:
-    # Auto-update: deploy latest version automatically
-    semver: ">=0.0.0"
+    # Auto-update within the current 0.x line. An unbounded ">=0.0.0" would jump
+    # to a future 1.0 major automatically; cap at 0.x to match the agentic-platform
+    # meta-package's muster component range and avoid surprise major upgrades.
+    semver: "0.x"
   provider: generic

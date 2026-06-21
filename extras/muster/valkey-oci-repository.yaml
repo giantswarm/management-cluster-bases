@@ -7,5 +7,7 @@ spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/valkey
   ref:
-    semver: ">=0.0.0"
+    # Cap at 0.x rather than an unbounded ">=0.0.0" to avoid a surprise jump to a
+    # future valkey 1.0 major. Matches the agentic-platform meta-package range.
+    semver: "0.x"
   provider: generic
