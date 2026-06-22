@@ -3,6 +3,11 @@ kind: HelmRelease
 metadata:
   name: agentic-platform
   namespace: flux-giantswarm
+  labels:
+    # Owning team for Flux-failure alert routing and Backstage catalog ownership.
+    # The umbrella HelmRelease is created by this base (not rendered by the chart),
+    # so the chart's labels.common helper never stamps it — set it explicitly here.
+    application.giantswarm.io/team: bumblebee
 spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
