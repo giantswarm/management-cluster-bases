@@ -3,6 +3,9 @@ kind: OCIRepository
 metadata:
   name: agentic-platform-crds
   namespace: flux-giantswarm
+  labels:
+    # Owning team for Flux-failure alert routing and Backstage catalog ownership.
+    application.giantswarm.io/team: bumblebee
 spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/agentic-platform-crds
