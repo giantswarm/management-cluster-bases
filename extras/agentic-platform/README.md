@@ -22,28 +22,26 @@ spec:
     gitops:
       namespace: flux-giantswarm      # render the child Flux CRs here — exempt
       targetNamespace: agentic-platform  #   from flux-multi-tenancy; workloads here
-    components:
-      agentic-platform-crds:
-        enabled: false                # delegated to the sibling crds HelmRelease
 ```
 
 The child `HelmRelease`s are created in `flux-giantswarm` (the
 flux-multi-tenancy Kyverno policy rejects HelmReleases lacking
 `serviceAccountName` outside `flux-giantswarm`/`giantswarm`/`monitoring`) and
-install their workloads into `agentic-platform`. Each child `dependsOn` the
-`agentic-platform-crds` release.
+install their workloads into `agentic-platform`.
 
 ## Prerequisites
 
-CRDs (agentgateway `AgentgatewayParameters` / `AgentgatewayPolicy` /
-`AgentgatewayBackend`, muster `MCPServer` / `Workflow`) ship via the dedicated
-`agentic-platform-crds` chart. This kustomization deploys it as its own
-`HelmRelease` (`helm-release-crds.yaml`), kept separate from the meta-package so
-a single release object owns those cluster-scoped CRDs. The meta-package
-therefore sets `components.agentic-platform-crds.enabled: false` and its child
-releases `dependsOn` the crds `HelmRelease` — Flux will not reconcile a
-component until the CRDs release reports Ready. No manual `helm install` for
-CRDs is required, and any standalone references to
+CRDs are **app-owned** (chart >= v1.10.0): each component ships its own CRDs in
+the chart's `crds/` directory and the meta-package sets `crds: CreateReplace`
+on the component, so the CRDs are installed and upgraded with the component
+itself. There is no separate CRD bundle — the previous
+`agentic-platform-crds` `HelmRelease` was retired on 2026-06-22 (its CRDs carry
+`helm.sh/resource-policy: keep`, so removing the bundle leaves the live CRDs and
+their CRs untouched). CR-before-CRD ordering is handled inside the child
+releases: `agentic-platform-connectivity` and `agentic-platform-mcps`
+`dependsOn` the CRD-owning components (`agentgateway`, `kagent`), so a CR is
+never applied before its CRD exists. No manual `helm install` for CRDs is
+required, and any standalone references to
 `giantswarm/muster/v*/helm/muster/crds/*.yaml` should be removed from the
 cluster's `crds/kustomization.yaml`.
 
