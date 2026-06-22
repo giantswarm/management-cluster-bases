@@ -113,15 +113,14 @@ spec:
                 forProvider:
                   audience:
                     - api://AzureADTokenExchange
+                  parentIdSelector:
+                    matchControllerRef: true
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: status.issuerUrl
                 toFieldPath: spec.forProvider.issuer
                 policy:
                   fromFieldPath: Required
-              - type: FromCompositeFieldPath
-                fromFieldPath: spec.clusterID
-                toFieldPath: spec.forProvider.parentIdRef.name
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.resourceGroupName
                 toFieldPath: spec.forProvider.resourceGroupName
