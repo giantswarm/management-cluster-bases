@@ -6,7 +6,6 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
-  agent-sandbox-crds: bumblebee
   agent-sandbox: bumblebee
   agentgateway: bumblebee
   agentic-platform-connectivity: bumblebee
@@ -142,6 +141,7 @@ data:
   k6-operator: cabbage
   k8s-audit-metrics: tenet
   k8s-dns-node-cache-app: cabbage
+  kagent: bumblebee
   kamaji-etcd: rocket
   kamaji: rocket
   karpenter-bundle: phoenix
