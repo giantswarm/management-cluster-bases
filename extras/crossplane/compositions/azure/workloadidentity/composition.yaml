@@ -117,6 +117,9 @@ spec:
                     matchControllerRef: true
             patches:
               - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterID
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
                 fromFieldPath: status.issuerUrl
                 toFieldPath: spec.forProvider.issuer
                 policy:
@@ -176,14 +179,13 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: metadata.labels['crossplane.io/claim-namespace']
                 toFieldPath: spec.forProvider.manifest.metadata.namespace
-              - type: CombineFromComposite
-                combine:
-                  variables:
-                    - fromFieldPath: spec.clusterID
-                    - fromFieldPath: metadata.labels['crossplane.io/claim-name']
-                  strategy: string
-                  string:
-                    fmt: "%s-%s-identity"
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.labels['crossplane.io/claim-name']
+                transforms:
+                  - type: string
+                    string:
+                      type: Format
+                      fmt: "%s-identity"
                 toFieldPath: spec.forProvider.manifest.metadata.name
               - type: CombineFromComposite
                 combine:
