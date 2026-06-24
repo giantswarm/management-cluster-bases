@@ -1,6 +1,8 @@
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:
+  annotations:
+    bootstrap.giantswarm.io/render: "disabled"
   name: konfigure-operator-podmonitor-relabeling
 spec:
   evaluation:

@@ -125,6 +125,8 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml)
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
+	# filter out resources opting out of rendering via the `bootstrap.giantswarm.io/render: disabled` annotation
+	$(YQ) eval 'select(.metadata.annotations."bootstrap.giantswarm.io/render" != "disabled")' -i output/$(subst build-,,$@).yaml
 	rm -f output/$(subst build-,,$@).prep.yaml output/$(subst build-,,$@).env output/$(subst build-,,$@).envsubst
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
