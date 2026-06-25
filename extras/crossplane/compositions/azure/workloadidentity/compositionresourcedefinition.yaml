@@ -1,0 +1,56 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xworkloadidentities.crossplane.giantswarm.io
+spec:
+  group: crossplane.giantswarm.io
+  names:
+    kind: XWorkloadIdentity
+    plural: xworkloadidentities
+  claimNames:
+    kind: WorkloadIdentity
+    plural: workloadidentities
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                clusterID:
+                  type: string
+                clusterType:
+                  type: string
+                  enum:
+                    - aks
+                    - azure
+                location:
+                  type: string
+                subscriptionId:
+                  type: string
+                resourceGroupName:
+                  type: string
+                subject:
+                  type: string
+              required:
+                - clusterID
+                - clusterType
+                - location
+                - subscriptionId
+                - resourceGroupName
+                - subject
+            status:
+              type: object
+              properties:
+                issuerUrl:
+                  type: string
+                principalId:
+                  type: string
+                clientId:
+                  type: string
+                tenantId:
+                  type: string

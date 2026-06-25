@@ -1,0 +1,3 @@
+resources:
+  - workloadidentity/composition.yaml
+  - workloadidentity/compositionresourcedefinition.yaml

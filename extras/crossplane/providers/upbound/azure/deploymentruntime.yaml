@@ -50,3 +50,20 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+---
+# DeploymentRuntimeConfig for Azure resources
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: upbound-contrib-provider-kubernetes
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          serviceAccountName: upbound-contrib-provider-kubernetes
+          containers:
+            - name: package-runtime
+              args:
+                - --debug
