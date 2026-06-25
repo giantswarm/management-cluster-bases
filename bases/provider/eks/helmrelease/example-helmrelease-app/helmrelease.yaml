@@ -10,12 +10,10 @@ spec:
   kubeConfig:
     secretRef:
       name: sample-customer-kubeconfig
-  chart:
-    spec:
-      chart: podinfo
-      sourceRef:
-        kind: HelmRepository
-        name: podinfo
+  chartRef:
+    kind: OCIRepository
+    name: podinfo
+    namespace: org-sample
   interval: 50m
   install:
     remediation:
