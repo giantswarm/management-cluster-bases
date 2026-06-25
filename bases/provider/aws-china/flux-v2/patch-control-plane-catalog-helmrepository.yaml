@@ -1,7 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: giantswarm-control-plane-catalog
-  namespace: flux-giantswarm
-spec:
-  timeout: 3m0s
