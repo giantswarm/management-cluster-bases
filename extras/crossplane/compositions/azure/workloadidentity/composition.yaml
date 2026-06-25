@@ -172,7 +172,8 @@ spec:
                       name: ""
                       namespace: default
                     data:
-                      values: ""
+                      clientID: ""
+                      tenantID: ""
                 providerConfigRef:
                   name: in-cluster
             patches:
@@ -187,18 +188,13 @@ spec:
                       type: Format
                       fmt: "%s-identity"
                 toFieldPath: spec.forProvider.manifest.metadata.name
-              - type: CombineFromComposite
-                combine:
-                  variables:
-                    - fromFieldPath: status.clientId
-                    - fromFieldPath: status.tenantId
-                  strategy: string
-                  string:
-                    # Construct the values fed into a HelmRelease that uses this WorkloadIdentity.
-                    fmt: |
-                      workloadIdentity:
-                        clientID: %s
-                        tenantID: %s
-                toFieldPath: spec.forProvider.manifest.data.values
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.clientId
+                toFieldPath: spec.forProvider.manifest.data.clientID
+                policy:
+                  fromFieldPath: Required
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.tenantId
+                toFieldPath: spec.forProvider.manifest.data.tenantID
                 policy:
                   fromFieldPath: Required
