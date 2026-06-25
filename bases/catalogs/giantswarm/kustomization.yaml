@@ -1,4 +1,5 @@
 resources:
+  - ocirepository-appcatalog.yaml
   - appcatalog-cluster.yaml
   - appcatalog-cluster-test.yaml
   - appcatalog-control-plane-catalog.yaml

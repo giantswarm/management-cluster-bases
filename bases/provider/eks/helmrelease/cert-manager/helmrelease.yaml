@@ -1,3 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: cert-manager-app
+  namespace: org-sample
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: "4.0.1"
+  url: oci://gsoci.azurecr.io/charts/giantswarm/cert-manager-app
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,14 +22,10 @@ spec:
   kubeConfig:
     secretRef:
       name: sample-customer-kubeconfig
-  chart:
-    spec:
-      chart: cert-manager-app
-      version: 3.5.3
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-catalog
-        namespace: default
+  chartRef:
+    kind: OCIRepository
+    name: cert-manager-app
+    namespace: org-sample
   interval: 50m
   install:
     remediation:
