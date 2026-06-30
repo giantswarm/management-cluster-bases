@@ -44,7 +44,6 @@ data:
   azuredisk-csi-driver-app: phoenix
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
-  caicloud-event-exporter-app: honeybadger
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
