@@ -9,6 +9,5 @@ resources:
 - vertical-pod-autoscaler
 - grafana
 - loki
-- promtail
 - external-dns
 - hello-world
