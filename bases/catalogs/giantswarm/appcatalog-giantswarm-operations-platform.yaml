@@ -4,14 +4,10 @@ metadata:
   name: appcatalog-giantswarm-operations-platform
   namespace: flux-giantswarm
 spec:
-  chart:
-    spec:
-      chart: appcatalog
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-control-plane-catalog
-        namespace: flux-giantswarm
-      version: 1.0.0
+  chartRef:
+    kind: OCIRepository
+    name: appcatalog
+    namespace: flux-giantswarm
   install:
     remediation:
       retries: 20

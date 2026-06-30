@@ -1,18 +1,25 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: zot
+  namespace: flux-giantswarm
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: "2.8.0"
+  url: oci://gsoci.azurecr.io/charts/giantswarm/zot
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: zot
   namespace: flux-giantswarm
 spec:
-  chart:
-    spec:
-      chart: zot
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-catalog
-        namespace: flux-giantswarm
-      version: 2.8.0
+  chartRef:
+    kind: OCIRepository
+    name: zot
+    namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
