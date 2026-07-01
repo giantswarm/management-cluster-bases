@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+helmCharts:
+  - name: flux-app
+    includeCRDs: false
+    namespace: flux-giantswarm
+    repo: oci://gsoci.azurecr.io/charts/giantswarm
+    releaseName: flux-giantswarm
+    version: 1.10.3-dev.upgrade-to-v2-7-5.2026-06-30.13-47-42.h7985317
+    apiVersions:
+    - autoscaling.k8s.io/v1
+    valuesInline:
+      images:
+        registry: gsoci.azurecr.io
+      cilium:
+        enforce: true
+      podMonitors:
+        enabled: true
+      policyException:
+        enforce: true
+        namespace: flux-giantswarm
+      clusterRoles:
+        install: false
+      crds:
+        install: false
+      verticalPodAutoscaler:
+        enabled: true
+        force: true
+components:
+  - ../../common

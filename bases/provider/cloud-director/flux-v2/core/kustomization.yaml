@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# "core" is the flux-less part of the capa flux-v2 base: everything the provider
+# needs except the flux-app instance itself. A management cluster that wants to
+# pin a specific flux-app version references this directory together with a
+# bases/flux-app-v2/versions/* directory instead of the full flux-v2 base.
+resources:
+  - ../../../../flux-giantswarm-resources
+  - ../../../../flux-operator
+  - ../../releases
+  - configmap-provider-data.yaml
