@@ -131,4 +131,4 @@ resources:
   - resource-kyverno-clusterrole.yaml
 images:
 - name: gsoci.azurecr.io/giantswarm/fluxcd-kustomize-controller
-  newImage: gsoci.azurecr.io/giantswarm/kustomize-controller
+  newName: gsoci.azurecr.io/giantswarm/kustomize-controller
