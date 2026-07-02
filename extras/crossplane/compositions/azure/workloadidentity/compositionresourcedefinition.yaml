@@ -30,7 +30,7 @@ spec:
                     - azure
                 location:
                   type: string
-                subscriptionId:
+                subscriptionID:
                   type: string
                 resourceGroupName:
                   type: string
@@ -47,7 +47,7 @@ spec:
                 - clusterName
                 - provider
                 - location
-                - subscriptionId
+                - subscriptionID
                 - resourceGroupName
                 - subject
             status:

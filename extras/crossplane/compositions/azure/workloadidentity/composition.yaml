@@ -146,7 +146,7 @@ spec:
               - type: CombineFromComposite
                 combine:
                   variables:
-                    - fromFieldPath: spec.subscriptionId
+                    - fromFieldPath: spec.subscriptionID
                     - fromFieldPath: spec.resourceGroupName
                   strategy: string
                   string:
