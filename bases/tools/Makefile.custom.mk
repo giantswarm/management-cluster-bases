@@ -66,28 +66,28 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION} $(TMP_BASE)
 ifeq ($(DISABLE_FLUX_KSM),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.kubeStateMetrics.enabled) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.kubeStateMetrics.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(DISABLE_KYVERNO),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
 	$(YQ) e -i '.resources -= ["resource-kyverno-policies.yaml"]' $(TMP_BASE)/common/kustomization.yaml
 endif
 ifeq ($(DISABLE_VPA),1)
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.verticalPodAutoscaler.enabled) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.verticalPodAutoscaler.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(ENFORCE_PSS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 endif
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
