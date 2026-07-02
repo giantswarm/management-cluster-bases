@@ -5,7 +5,7 @@ metadata:
   namespace: flux-giantswarm
   labels:
     # Owning team for Flux-failure alert routing and Backstage catalog ownership.
-    application.giantswarm.io/team: bumblebee
+    application.giantswarm.io/team: planeteers
 spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
