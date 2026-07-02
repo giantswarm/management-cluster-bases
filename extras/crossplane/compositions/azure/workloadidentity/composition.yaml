@@ -22,7 +22,7 @@ spec:
             _dxr = option("params").dxr
 
             clusterName = oxr.spec.clusterName
-            clusterType = oxr.spec.clusterType
+            provider = oxr.spec.provider
             namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
 
             # Select which cluster object holds the OIDC issuer for this cluster type.
@@ -42,7 +42,7 @@ spec:
                     }
                 }
             }
-            _selected = _kinds[clusterType]
+            _selected = _kinds[provider]
 
             # Dynamically request that object by name. function-kcl feeds it back
             # via option("params").extraResources on the next reconcile pass.

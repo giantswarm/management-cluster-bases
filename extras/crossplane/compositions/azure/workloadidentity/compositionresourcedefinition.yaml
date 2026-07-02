@@ -23,7 +23,7 @@ spec:
               properties:
                 clusterName:
                   type: string
-                clusterType:
+                provider:
                   type: string
                   enum:
                     - aks
@@ -45,7 +45,7 @@ spec:
                     ${principalID}, ${issuerUrl}.
               required:
                 - clusterName
-                - clusterType
+                - provider
                 - location
                 - subscriptionId
                 - resourceGroupName
