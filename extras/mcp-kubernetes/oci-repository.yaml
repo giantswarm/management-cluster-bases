@@ -3,6 +3,8 @@ kind: OCIRepository
 metadata:
   name: mcp-kubernetes
   namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
 spec:
   interval: 10m
   url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-kubernetes
