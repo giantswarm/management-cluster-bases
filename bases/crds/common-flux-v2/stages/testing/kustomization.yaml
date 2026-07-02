@@ -1,4 +1,3 @@
 resources:
+  - ./core
   - ../../../flux-app-v2
-  - ../../../flux-operator
-  - ../../../giantswarm/stages/testing
