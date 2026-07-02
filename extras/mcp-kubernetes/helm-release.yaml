@@ -3,6 +3,8 @@ kind: HelmRelease
 metadata:
   name: mcp-kubernetes
   namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
 spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
