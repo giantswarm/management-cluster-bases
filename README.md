@@ -15,8 +15,8 @@ To learn more about how GitOps works with Giant Swarm, check our [GitOps documen
 - `bases`: definitions for Flux deployments
   - `catalogs`: app catalogs
   - `flux-app-v2`: definitions for two separate instances of [flux-app](https://github.com/giantswarm/flux-app).
-    - `customer`: the flux-app instance deployed to `flux-system`, plus all the additional RBAC, Kyverno policies etc.
-    - `giantswarm`: the `flux-app` instance deployed to `flux-giantswarm`, split into layers (`common`, `versions/*`, and a `giantswarm` pointer) so its version can be pinned globally and rolled out per management cluster. See [bases/flux-app-v2/README.md](bases/flux-app-v2/README.md).
+    - `customer`: the Flux app instance deployed to `flux-system`, plus all the additional RBAC, Kyverno policies etc.
+    - `giantswarm`: the Flux app instance deployed to `flux-giantswarm`, split into layers (`common`, `versions/*`, and a `giantswarm` pointer) so its version can be pinned globally and rolled out per management cluster. See [bases/flux-app-v2/README.md](bases/flux-app-v2/README.md).
   - `flux-giantswarm-resources`: resources created in the `flux-giantswarm` namespace during the management cluster bootstrapping process
   - `provider`: definitions for all the infrastructure providers we serve.
 - `extras`: collection of patches, additional resources, and mix-ins used by several management clusters.

@@ -13,14 +13,14 @@ bases/flux-app-v2/
 │   └── resource-kyverno-clusterrole.yaml
 ├── versions/
 │   └── vX.Y.Z/
-│       └── kustomization.yaml       # inflates flux-app, pinning a specific chart version
+│       └── kustomization.yaml       # inflates Flux app, pinning a specific chart version
 └── giantswarm/
     └── kustomization.yaml           # points at the global/stable version, later consumed by providers
 ```
 
 The `common` is a version-independent layer, defined as a [Kustomize Component](https://kubectl.docs.kubernetes.io/guides/config_management/components/) holding everything that does not change between Flux app versions, like the `flux-giantswarm` namespace, RBAC, Kyverno policies, and the controller patches. It is never built on its own — a version layer mixes it in via its `components:` field. This is the single source of truth for the shared configuration.
 
-The `versions/vX.Y.Z` is a specific version layer. Each directory inflates the Flux app Helm chart pinning one specific chart version (`helmCharts[].version`) and pulls in `common` as a component. To support another version, add a new directory here. The directory name (e.g. `v2.7`) is the upstream Flux minor version, not the flux-app Helm chart version: the chart is released on its own cadence and its version, while tracking Flux internally, does not map one-to-one to the Flux version. Note, this is the only place the version is decided, because Kustomize cannot override a Helm chart version from a higher layer, so the inflation must happen here.
+The `versions/vX.Y.Z` is a specific version layer. Each directory inflates the Flux app Helm chart pinning one specific chart version (`helmCharts[].version`) and pulls in `common` as a component. To support another version, add a new directory here. The directory name (e.g. `v2.7`) is the upstream Flux minor version, not the Flux app Helm chart version: the chart is released on its own cadence and its version, while tracking Flux internally, does not map one-to-one to the Flux version. Note, this is the only place the version is decided, because Kustomize cannot override a Helm chart version from a higher layer, so the inflation must happen here.
 
 The `giantswarm` is a pointer to the global, considered stable, Flux version. A thin base whose only content is a single resource referencing a version base from the `versions/*` directory. It is consumed by all providers and hence is the version that is by default reconciled to all management clusters.
 
