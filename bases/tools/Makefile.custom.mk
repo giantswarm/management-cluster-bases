@@ -77,7 +77,7 @@ ifeq ($(DISABLE_VPA),1)
 endif
 ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(ENFORCE_PSS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
@@ -85,9 +85,9 @@ ifeq ($(ENFORCE_PSS),1)
 endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/versions/$$(yq '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 endif
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
