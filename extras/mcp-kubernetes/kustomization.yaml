@@ -8,3 +8,15 @@ resources:
   - ./helm-release.yaml
   - ./valkey-helm-release.yaml
   - ./konfiguration.yaml
+
+# Attribute the app(s) to the owning team so Flux HelmReleaseFailed alerts route correctly.
+patches:
+  - target:
+      kind: HelmRelease
+    patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: any
+        labels:
+          application.giantswarm.io/team: bumblebee

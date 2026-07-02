@@ -3,8 +3,6 @@ kind: HelmRelease
 metadata:
   name: mcp-prometheus
   namespace: flux-giantswarm
-  labels:
-    application.giantswarm.io/team: atlas
 spec:
   releaseName: mcp-prometheus
   chartRef:
