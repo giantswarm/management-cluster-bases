@@ -16,7 +16,8 @@ jobs:
           fetch-depth: 0
       - name: Validate Flux app version label
         run: |
-          CHART_VERSION=$(yq '.helmCharts[0].version' bases/flux-app-v2/giantswarm/kustomization.yaml)
+          GIANTSWARM_VERSION=$(yq '.resources[0] | split("/") | .[-1]' bases/flux-app-v2/giantswarm/kustomization.yaml)
+          CHART_VERSION=$(yq '.helmCharts[0].version' bases/flux-app-v2/versions/${GIANTSWARM_VERSION}/kustomization.yaml)
           echo "Chart version: $CHART_VERSION"
 
           APP_VERSION=$(curl -sSf "https://raw.githubusercontent.com/giantswarm/flux-app/v${CHART_VERSION}/helm/flux-app/Chart.yaml" | yq '.appVersion')
