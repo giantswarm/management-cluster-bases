@@ -21,7 +21,7 @@ spec:
             spec:
               type: object
               properties:
-                clusterID:
+                clusterName:
                   type: string
                 clusterType:
                   type: string
@@ -36,8 +36,15 @@ spec:
                   type: string
                 subject:
                   type: string
+                template:
+                  type: string
+                  description: |
+                    Values template, shaped like a Helm chart values document.
+                    Rendered into the `values` key of the generated ConfigMap.
+                    Supported placeholders: ${clientID}, ${tenantID},
+                    ${principalID}, ${issuerUrl}.
               required:
-                - clusterID
+                - clusterName
                 - clusterType
                 - location
                 - subscriptionId

@@ -21,7 +21,7 @@ spec:
             # Prefixing with an underscore makes it mutable.
             _dxr = option("params").dxr
 
-            clusterID = oxr.spec.clusterID
+            clusterName = oxr.spec.clusterName
             clusterType = oxr.spec.clusterType
             namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
 
@@ -31,14 +31,14 @@ spec:
                     apiVersion = "containerservice.azure.com/v1api20240901"
                     kind = "ManagedCluster"
                     matchLabels = {
-                      "serviceoperator.azure.com/owner-name" = clusterID
+                      "serviceoperator.azure.com/owner-name" = clusterName
                     }
                 }
                 azure = {
                     apiVersion = "infrastructure.cluster.x-k8s.io/v1beta1"
                     kind = "AzureCluster"
                     matchLabels = {
-                      "cluster.x-k8s.io/cluster-name" = clusterID
+                      "cluster.x-k8s.io/cluster-name" = clusterName
                     }
                 }
             }
@@ -84,7 +84,7 @@ spec:
               kind: UserAssignedIdentity
             patches:
               - type: FromCompositeFieldPath
-                fromFieldPath: spec.clusterID
+                fromFieldPath: spec.clusterName
                 toFieldPath: spec.providerConfigRef.name
               - type: FromCompositeFieldPath
                 fromFieldPath: metadata.name
@@ -117,7 +117,7 @@ spec:
                     matchControllerRef: true
             patches:
               - type: FromCompositeFieldPath
-                fromFieldPath: spec.clusterID
+                fromFieldPath: spec.clusterName
                 toFieldPath: spec.providerConfigRef.name
               - type: FromCompositeFieldPath
                 fromFieldPath: status.issuerUrl
@@ -141,7 +141,7 @@ spec:
                   principalType: ServicePrincipal
             patches:
               - type: FromCompositeFieldPath
-                fromFieldPath: spec.clusterID
+                fromFieldPath: spec.clusterName
                 toFieldPath: spec.providerConfigRef.name
               - type: CombineFromComposite
                 combine:
@@ -159,42 +159,60 @@ spec:
                 policy:
                   fromFieldPath: Required
 
-          - name: config-map
-            base:
-              apiVersion: kubernetes.crossplane.io/v1alpha2
-              kind: Object
-              spec:
-                forProvider:
-                  manifest:
-                    apiVersion: v1
-                    kind: ConfigMap
-                    metadata:
-                      name: ""
-                      namespace: default
-                    data:
-                      clientID: ""
-                      tenantID: ""
-                providerConfigRef:
-                  name: in-cluster
-            patches:
-              - type: FromCompositeFieldPath
-                fromFieldPath: metadata.labels['crossplane.io/claim-namespace']
-                toFieldPath: spec.forProvider.manifest.metadata.namespace
-              - type: FromCompositeFieldPath
-                fromFieldPath: metadata.labels['crossplane.io/claim-name']
-                transforms:
-                  - type: string
-                    string:
-                      type: Format
-                      fmt: "%s-identity"
-                toFieldPath: spec.forProvider.manifest.metadata.name
-              - type: FromCompositeFieldPath
-                fromFieldPath: status.clientId
-                toFieldPath: spec.forProvider.manifest.data.clientID
-                policy:
-                  fromFieldPath: Required
-              - type: FromCompositeFieldPath
-                fromFieldPath: status.tenantId
-                toFieldPath: spec.forProvider.manifest.data.tenantID
-                policy:
-                  fromFieldPath: Required
+    # TODO: Once we have switched all apps to HelmReleases, replace with patch-and-transform
+    # that generates a ConfigMap with each value as a separate key.
+    # HelmReleases support reading ConfigMap values and using them like `--set` on Helm CLI.
+    # That is more flexible and easier to read than this KCL step.
+    - step: generate-config-map
+      functionRef:
+        name: function-kcl
+      input:
+        apiVersion: krm.kcl.dev/v1alpha1
+        kind: KCLInput
+        spec:
+          source: |
+            oxr = option("params").oxr
+            dxr = option("params").dxr
+
+            namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
+            name = oxr.metadata.labels["crossplane.io/claim-name"] + "-identity"
+
+            clientID = dxr?.status?.clientId or oxr?.status?.clientId
+            tenantID = dxr?.status?.tenantId or oxr?.status?.tenantId
+            principalID = dxr?.status?.principalId or oxr?.status?.principalId
+            issuerURL = dxr?.status?.issuerUrl or oxr?.status?.issuerUrl
+
+            template = oxr.spec?.template or ""
+            values = template \
+                .replace("${clientID}", clientID or "") \
+                .replace("${tenantID}", tenantID or "") \
+                .replace("${principalID}", principalID or "") \
+                .replace("${issuerUrl}", issuerURL or "")
+
+            configMap = {
+                apiVersion = "kubernetes.crossplane.io/v1alpha2"
+                kind = "Object"
+                metadata.annotations = {
+                    "krm.kcl.dev/composition-resource-name" = "config-map"
+                }
+                spec = {
+                    forProvider.manifest = {
+                        apiVersion = "v1"
+                        kind = "ConfigMap"
+                        metadata = {
+                            name = name
+                            namespace = namespace
+                        }
+                        data = {
+                          clientID = clientID
+                          tenantID = tenantID
+                          principalID = principalID
+                          issuerUrl = issuerUrl
+                          values = values
+                        }
+                    }
+                    providerConfigRef.name = "in-cluster"
+                }
+            }
+
+            items = [configMap] if clientID and tenantID else []
