@@ -175,7 +175,7 @@ data:
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
-  mcp-prometheus: bumblebee
+  mcp-prometheus: atlas
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
@@ -196,7 +196,7 @@ data:
   openssf-scorecard-exporter: shield
   operational-load-exporter: planeteers
   organization-operator: shield
-  pagerduty-mcp-server: planeteers
+  pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
   policy-api-crds: shield
