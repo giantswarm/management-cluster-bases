@@ -55,9 +55,9 @@ spec:
               properties:
                 issuerURL:
                   type: string
-                principalId:
+                principalID:
                   type: string
-                clientId:
+                clientID:
                   type: string
-                tenantId:
+                tenantID:
                   type: string

@@ -97,13 +97,13 @@ spec:
                 toFieldPath: spec.forProvider.resourceGroupName
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider.principalId
-                toFieldPath: status.principalId
+                toFieldPath: status.principalID
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider.clientId
-                toFieldPath: status.clientId
+                toFieldPath: status.clientID
               - type: ToCompositeFieldPath
                 fromFieldPath: status.atProvider.tenantId
-                toFieldPath: status.tenantId
+                toFieldPath: status.tenantID
 
           - name: federated-identity-credential
             base:
@@ -154,7 +154,7 @@ spec:
                 toFieldPath: spec.forProvider.scope
 
               - type: FromCompositeFieldPath
-                fromFieldPath: status.principalId
+                fromFieldPath: status.principalID
                 toFieldPath: spec.forProvider.principalId
                 policy:
                   fromFieldPath: Required
@@ -177,9 +177,9 @@ spec:
             namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
             name = oxr.metadata.labels["crossplane.io/claim-name"] + "-identity"
 
-            clientID = dxr?.status?.clientId or oxr?.status?.clientId
-            tenantID = dxr?.status?.tenantId or oxr?.status?.tenantId
-            principalID = dxr?.status?.principalId or oxr?.status?.principalId
+            clientID = dxr?.status?.clientID or oxr?.status?.clientID
+            tenantID = dxr?.status?.tenantID or oxr?.status?.tenantID
+            principalID = dxr?.status?.principalID or oxr?.status?.principalID
             issuerURL = dxr?.status?.issuerURL or oxr?.status?.issuerURL
 
             template = oxr.spec?.template or ""
