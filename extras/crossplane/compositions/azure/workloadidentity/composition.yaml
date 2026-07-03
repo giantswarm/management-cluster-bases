@@ -120,7 +120,7 @@ spec:
                 fromFieldPath: spec.clusterName
                 toFieldPath: spec.providerConfigRef.name
               - type: FromCompositeFieldPath
-                fromFieldPath: status.issuerUrl
+                fromFieldPath: status.issuerURL
                 toFieldPath: spec.forProvider.issuer
                 policy:
                   fromFieldPath: Required
