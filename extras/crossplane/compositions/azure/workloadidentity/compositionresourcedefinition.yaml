@@ -42,7 +42,7 @@ spec:
                     Values template, shaped like a Helm chart values document.
                     Rendered into the `values` key of the generated ConfigMap.
                     Supported placeholders: ${clientID}, ${tenantID},
-                    ${principalID}, ${issuerUrl}.
+                    ${principalID}, ${issuerURL}.
               required:
                 - clusterName
                 - provider
@@ -53,7 +53,7 @@ spec:
             status:
               type: object
               properties:
-                issuerUrl:
+                issuerURL:
                   type: string
                 principalId:
                   type: string

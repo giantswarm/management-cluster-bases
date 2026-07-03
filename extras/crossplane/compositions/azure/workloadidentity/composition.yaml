@@ -63,9 +63,9 @@ spec:
             er = option("params")?.extraResources
 
             if er?.cluster:
-              issuerUrl = er?.cluster[0]?.Resource?.status?.oidcIssuerProfile?.issuerURL
-              if issuerUrl:
-                _dxr.status = (_dxr?.status or {}) | {issuerUrl = issuerUrl}
+              issuerURL = er?.cluster[0]?.Resource?.status?.oidcIssuerProfile?.issuerURL
+              if issuerURL:
+                _dxr.status = (_dxr?.status or {}) | {issuerURL = issuerURL}
 
             items = [
               cluster, _dxr
@@ -180,14 +180,14 @@ spec:
             clientID = dxr?.status?.clientId or oxr?.status?.clientId
             tenantID = dxr?.status?.tenantId or oxr?.status?.tenantId
             principalID = dxr?.status?.principalId or oxr?.status?.principalId
-            issuerURL = dxr?.status?.issuerUrl or oxr?.status?.issuerUrl
+            issuerURL = dxr?.status?.issuerURL or oxr?.status?.issuerURL
 
             template = oxr.spec?.template or ""
             values = template \
                 .replace("${clientID}", clientID or "") \
                 .replace("${tenantID}", tenantID or "") \
                 .replace("${principalID}", principalID or "") \
-                .replace("${issuerUrl}", issuerURL or "")
+                .replace("${issuerURL}", issuerURL or "")
 
             configMap = {
                 apiVersion = "kubernetes.crossplane.io/v1alpha2"
@@ -207,7 +207,7 @@ spec:
                           clientID = clientID
                           tenantID = tenantID
                           principalID = principalID
-                          issuerUrl = issuerUrl
+                          issuerURL = issuerURL
                           values = values
                         }
                     }
