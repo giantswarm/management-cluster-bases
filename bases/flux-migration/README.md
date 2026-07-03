@@ -7,10 +7,32 @@ This base holds those migration steps, one directory per transition, plus a glob
 ```text
 bases/flux-migration/
 ├── kustomization.yaml              # global/stable toggle, empty by default (no-op)
+├── template/
+│   ├── kustomization.yaml
+│   └── job-migrate.yaml            # the shared migration Job (all the boilerplate)
 └── versions/
     └── vX.Y.Z/
-        ├── kustomization.yaml      # includes the migration Job
-        └── job-migrate.yaml        # runs `flux migrate` for that transition
+        └── kustomization.yaml      # thin overlay: sets name suffix, image tag, --version
+```
+
+The migration Job is almost identical between transitions, so the full manifest lives once in `template/`, and each `versions/<vX.Y>` overlay changes only the three values that actually differ: the run-once name suffix, the flux-cli image tag (target version), and the `--version` argument (the version to migrate FROM). Adding support for a new transition is a small overlay, e.g.:
+
+```yaml
+resources:
+  - ../../template
+nameSuffix: -2-8-0
+images:
+  - name: gsoci.azurecr.io/giantswarm/flux-cli
+    newTag: v2.8.0
+patches:
+  - target:
+      kind: Job
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - migrate
+          - --version=2.7
 ```
 
 ### How the ordering is enforced
@@ -25,9 +47,9 @@ If the Job fails, `flux-migration` never becomes `Ready`, `crds` stays blocked, 
 
 ### The Job
 
-The Job is extracted from the Flux app Helm Chart's pre-upgrade hook and delivered as a plain manifest. Two deliberate differences from the chart's hook version:
+The Job (`template/job-migrate.yaml`) is extracted from the Flux app Helm Chart's pre-upgrade hook and delivered as a plain manifest.
 
-The Job name is pinned to the target version (`flux-app-flux-migrate-2-7-5`), so it runs exactly once per transition. If a migration fails and you need to re-run it after a fix, delete the failed Job manually (Jobs are immutable) so GitOps recreates it.
+The Job name, when the Job gets instantiated, is pinned to the target version (`flux-app-flux-migrate-2-7-5`), so it runs exactly once per transition. If a migration fails and you need to re-run it after a fix, delete the failed Job manually (Jobs are immutable) so GitOps recreates it.
 
 ### Running a migration
 

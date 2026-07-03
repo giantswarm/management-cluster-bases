@@ -1,19 +1,19 @@
-# Flux 2.6 -> 2.7 storage-migration Job.
+# Shared Flux storage-migration Job template. Everything here is identical across
+# transitions; each versions/<vX.Y> overlay only sets three things:
+#   - the name suffix (so each transition is its own run-once Job),
+#   - the flux-cli image tag (the target version), via `images:`,
+#   - the --version argument (the version to migrate FROM), via a patch.
 #
-# Extracted from the flux-app chart's pre-upgrade hook (templates/migration/job.yaml)
-# and delivered as a plain, GitOps-managed manifest. The ordering that a pre-upgrade
-# hook would give is provided instead by the `flux-migration` Kustomization (wait: true),
-# which `crds` dependsOn.
-#
-# The name is pinned to the target version so the Job runs exactly once per
-# transition. There is deliberately no ttlSecondsAfterFinished: a completed Job
-# must persist so the owning Kustomization stays Ready and GitOps does not
-# recreate (and thus re-run) it. Cleanup happens when the migration is removed
-# from the cluster's flux-migration directory (the Kustomization prunes it).
+# Delivered as a plain, GitOps-managed manifest (not a Helm pre-upgrade hook,
+# which never fires under kustomize `helmCharts` inflation). Ordering is provided
+# by the `flux-migration` Kustomization (wait: true), which `crds` dependsOn.
+# There is deliberately no ttlSecondsAfterFinished: a completed Job must persist
+# so the owning Kustomization stays Ready and GitOps does not recreate (re-run)
+# it. Cleanup happens when the migration is pruned from the cluster.
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: flux-app-flux-migrate-2-7-5
+  name: flux-app-flux-migrate
   namespace: flux-giantswarm
   labels:
     app.kubernetes.io/component: flux-migration
@@ -42,10 +42,11 @@ spec:
           effect: NoSchedule
       containers:
         - name: flux-cli
-          image: gsoci.azurecr.io/giantswarm/flux-cli:v2.7.5
+          # Tag is set per transition by the version overlay's `images:` block.
+          image: gsoci.azurecr.io/giantswarm/flux-cli
+          # args are replaced per transition by the version overlay's patch.
           args:
             - migrate
-            - --version=2.6
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
