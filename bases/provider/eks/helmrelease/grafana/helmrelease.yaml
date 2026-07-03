@@ -1,3 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: grafana
+  namespace: org-sample
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: "2.38.0"
+  url: oci://gsoci.azurecr.io/charts/giantswarm/grafana
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,14 +22,10 @@ spec:
   kubeConfig:
     secretRef:
       name: sample-customer-kubeconfig
-  chart:
-    spec:
-      chart: grafana
-      version: 2.5.0
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-catalog
-        namespace: default
+  chartRef:
+    kind: OCIRepository
+    name: grafana
+    namespace: org-sample
   interval: 50m
   install:
     remediation:

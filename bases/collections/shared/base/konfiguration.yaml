@@ -135,12 +135,24 @@ spec:
             value: grafana
           - name: team
             value: atlas
+      grafana-organization-giantswarm:
+        variables:
+          - name: app
+            value: grafana-organization-giantswarm
+          - name: team
+            value: atlas
       grafana-organization-giantswarm-security-default:
         variables:
           - name: app
             value: grafana-organization-giantswarm-security-default
           - name: team
             value: shield
+      grafana-organization-shared-org:
+        variables:
+          - name: app
+            value: grafana-organization-shared-org
+          - name: team
+            value: atlas
       happa:
         variables:
           - name: app

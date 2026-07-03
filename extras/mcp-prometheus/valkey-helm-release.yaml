@@ -3,6 +3,8 @@ kind: HelmRelease
 metadata:
   name: mcp-prometheus-valkey
   namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
 spec:
   releaseName: mcp-prometheus-valkey
   chartRef:

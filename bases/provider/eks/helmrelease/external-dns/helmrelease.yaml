@@ -1,3 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: external-dns-app
+  namespace: org-sample
+spec:
+  interval: 5m
+  provider: generic
+  ref:
+    tag: "3.5.0"
+  url: oci://gsoci.azurecr.io/charts/giantswarm/external-dns-app
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,14 +22,10 @@ spec:
   kubeConfig:
     secretRef:
       name: sample-customer-kubeconfig
-  chart:
-    spec:
-      chart: external-dns-app
-      version: 2.42.0
-      sourceRef:
-        kind: HelmRepository
-        name: giantswarm-catalog
-        namespace: default
+  chartRef:
+    kind: OCIRepository
+    name: external-dns-app
+    namespace: org-sample
   interval: 50m
   install:
     remediation:

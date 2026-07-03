@@ -11,12 +11,13 @@ jobs:
   flux-crds-version-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
       - name: Validate Flux app version label
         run: |
-          CHART_VERSION=$(yq '.helmCharts[0].version' bases/flux-app-v2/giantswarm/kustomization.yaml)
+          GIANTSWARM_VERSION=$(yq '.resources[0] | split("/") | .[-1]' bases/flux-app-v2/giantswarm/kustomization.yaml)
+          CHART_VERSION=$(yq '.helmCharts[0].version' bases/flux-app-v2/versions/${GIANTSWARM_VERSION}/kustomization.yaml)
           echo "Chart version: $CHART_VERSION"
 
           APP_VERSION=$(curl -sSf "https://raw.githubusercontent.com/giantswarm/flux-app/v${CHART_VERSION}/helm/flux-app/Chart.yaml" | yq '.appVersion')

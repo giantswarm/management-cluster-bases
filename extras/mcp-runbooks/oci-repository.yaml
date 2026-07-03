@@ -3,6 +3,9 @@ kind: OCIRepository
 metadata:
   name: mcp-runbooks
   namespace: flux-giantswarm
+  labels:
+    # Owning team for Flux-failure alert routing and Backstage catalog ownership.
+    application.giantswarm.io/team: planeteers
 spec:
   interval: 10m
   url: oci://gsociprivate.azurecr.io/charts/giantswarm/mcp-runbooks

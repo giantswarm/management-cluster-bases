@@ -6,7 +6,9 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
-  agentic-platform-crds: bumblebee
+  agent-sandbox: bumblebee
+  agentgateway: bumblebee
+  agentic-platform-connectivity: bumblebee
   agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
   alertmanager-to-github: atlas
@@ -42,7 +44,6 @@ data:
   azuredisk-csi-driver-app: phoenix
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
-  caicloud-event-exporter-app: honeybadger
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
@@ -138,6 +139,7 @@ data:
   k6-operator: cabbage
   k8s-audit-metrics: tenet
   k8s-dns-node-cache-app: cabbage
+  kagent: bumblebee
   kamaji-etcd: rocket
   kamaji: rocket
   karpenter-bundle: phoenix
@@ -173,7 +175,7 @@ data:
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
-  mcp-prometheus: bumblebee
+  mcp-prometheus: atlas
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
@@ -194,7 +196,7 @@ data:
   openssf-scorecard-exporter: shield
   operational-load-exporter: planeteers
   organization-operator: shield
-  pagerduty-mcp-server: planeteers
+  pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
   policy-api-crds: shield
@@ -234,7 +236,7 @@ data:
   trivy-operator: shield
   trivy: shield
   tunnelport: bumblebee
-  valkey: planeteers
+  valkey: bumblebee
   velero: tenet
   vertical-pod-autoscaler-app: tenet
   vertical-pod-autoscaler-crd: tenet

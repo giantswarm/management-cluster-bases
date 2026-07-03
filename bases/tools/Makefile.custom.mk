@@ -51,10 +51,8 @@ $(BUILD_CRD_TARGETS): $(KUSTOMIZE) ## Build CRDs
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone /tmp/mcb.${MCB_BRANCH}/bases/crds/$(subst build-,,$(subst -crds,,$@)) -o output/$(subst build-,,$(subst -crds,,$@))-crds.yaml
 
 .PHONY: $(BUILD_FLUX_APP_TARGETS)
-build-flux-app-customer: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_FLUX_KSM=1 DISABLE_KYVERNO=1 DISABLE_VPA=1 and FORCE_CRDS=1.
 build-flux-app-giantswarm: ## Can take FLUX_MAJOR_VERSION=1|2|... DISABLE_FLUX_KSM=1 DISABLE_VPA=1.
-$(BUILD_FLUX_APP_TARGETS): SUFFIX = $(lastword $(subst -, ,$@))
-$(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-$(SUFFIX)
+$(BUILD_FLUX_APP_TARGETS): TMP_BASE = bases/flux-app-tmp-giantswarm
 $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	@echo "====> $@"
 
@@ -65,38 +63,38 @@ $(BUILD_FLUX_APP_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 
 	rm -rf $(TMP_BASE)
 
-	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION}/${SUFFIX} $(TMP_BASE)
+	cp -a /tmp/mcb.${MCB_BRANCH}/bases/flux-app-v${FLUX_MAJOR_VERSION} $(TMP_BASE)
 ifeq ($(DISABLE_FLUX_KSM),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.kubeStateMetrics.enabled) = false' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.kubeStateMetrics.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(DISABLE_KYVERNO),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no harm to other targets
-	$(YQ) e -i '.resources -= ["resource-kyverno-policies.yaml"]' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '.resources -= ["resource-kyverno-policies.yaml"]' $(TMP_BASE)/common/kustomization.yaml
 endif
 ifeq ($(DISABLE_VPA),1)
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.verticalPodAutoscaler.enabled) = false' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.verticalPodAutoscaler.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(FORCE_CRDS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.crds.install) = true' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifeq ($(ENFORCE_PSS),1)
 	@# This makes sense only for build-flux-app-cluster, but makes no charm to other targets
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.global.podSecurityStandards.enforced) = true' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 ifdef BOOTSTRAP_CLUSTER
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/kustomization.yaml
-	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.cilium.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.podMonitors.enabled) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
+	$(YQ) e -i '(.helmCharts[] | select(.name == "flux-app") | .valuesInline.policyException.enforce) = false' $(TMP_BASE)/versions/$$($(YQ) '.resources[0] | split("/") | .[-1]' $(TMP_BASE)/giantswarm/kustomization.yaml)/kustomization.yaml
 endif
 endif
 ifneq ($(filter build-flux-app-giantswarm,$(MAKECMDGOALS)),)
 	$(if $(filter 1,$(ENFORCE_PSS)), \
-		$(YQ) eval 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | (.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller")).patch = "- op: replace\n  path: /metadata/name\n  value: crd-controller-giantswarm"' -i  $(TMP_BASE)/kustomization.yaml)
+		$(YQ) eval 'del(.patches[] | select(.target.kind == "PodSecurityPolicy")) | del(.patchesStrategicMerge[] | select(. == "patch-pvc-psp.yaml")) | del(.patches[] | select(.target.kind == "PrivilegedPodSecurityPolicy")) | (.patches[] | select(.target.kind == "ClusterRole" and .target.name == "crd-controller")).patch = "- op: replace\n  path: /metadata/name\n  value: crd-controller-giantswarm"' -i  $(TMP_BASE)/common/kustomization.yaml)
 endif
-	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE) -o output/flux-app-v${FLUX_MAJOR_VERSION}-$(SUFFIX).yaml
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone --enable-helm --helm-command="$(HELM)" $(TMP_BASE)/giantswarm -o output/flux-app-v${FLUX_MAJOR_VERSION}-giantswarm.yaml
 	rm -rf $(TMP_BASE)
 
 .PHONY: $(BUILD_MC_TARGETS)
@@ -125,6 +123,8 @@ $(BUILD_MC_TARGETS): $(KUSTOMIZE) $(HELM) $(YQ)
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp"))' -i output/$(subst build-,,$@).yaml; \
 	    $(YQ) eval 'del(.rules[] | select(.resources[] == "podsecuritypolicies" and .resourceNames[] == "flux-app-pvc-psp-giantswarm"))' -i output/$(subst build-,,$@).yaml)
 	[ $(GNU_SED) -eq 0 ] && sed -i 's/$$$${/$${/g' output/$(subst build-,,$@).yaml || sed -i "" 's/$$$${/$${/g' output/$(subst build-,,$@).yaml
+	# filter out resources opting out of rendering via the `bootstrap.giantswarm.io/render: disabled` annotation
+	$(YQ) eval 'select(.metadata.annotations."bootstrap.giantswarm.io/render" != "disabled")' -i output/$(subst build-,,$@).yaml
 	rm -f output/$(subst build-,,$@).prep.yaml output/$(subst build-,,$@).env output/$(subst build-,,$@).envsubst
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.

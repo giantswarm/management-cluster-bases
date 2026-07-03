@@ -3,17 +3,19 @@ kind: HelmRelease
 metadata:
   name: agentic-platform
   namespace: flux-giantswarm
+  labels:
+    # Owning team for Flux-failure alert routing and Backstage catalog ownership.
+    # The umbrella HelmRelease is created by this base (not rendered by the chart),
+    # so the chart's labels.common helper never stamps it — set it explicitly here.
+    application.giantswarm.io/team: bumblebee
 spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
   releaseName: agentic-platform
-  # Cross-resource ordering: the platform chart applies CRs (Gateway,
-  # AgentgatewayParameters, MCPServer, ...) whose CRDs are now shipped by the
-  # sibling agentic-platform-crds release. Block reconciliation until that
-  # HelmRelease is Ready.
-  dependsOn:
-    - name: agentic-platform-crds
-      namespace: flux-giantswarm
+  # CRDs are app-owned: each component ships its own crds/ and the meta-package
+  # sets crds: CreateReplace per component (chart >=1.10.0). CR-before-CRD
+  # ordering is handled inside each child release (connectivity/mcps dependsOn
+  # the CRD-owning component), so the meta-package needs no CRD-bundle dependsOn.
   chartRef:
     kind: OCIRepository
     name: agentic-platform
@@ -29,6 +31,16 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: false
+  # GitOps topology for the meta-package (chart >=1.5.1). The chart renders each
+  # component as its own OCIRepository + HelmRelease. Create those Flux objects in
+  # flux-giantswarm (exempt from the flux-multi-tenancy Kyverno policy, which would
+  # otherwise reject child HelmReleases for missing serviceAccountName) and route
+  # the workloads to the agentic-platform namespace. Each component owns its CRDs
+  # (crds: CreateReplace); there is no separate CRD bundle to delegate to.
+  values:
+    gitops:
+      namespace: flux-giantswarm
+      targetNamespace: agentic-platform
   valuesFrom:
     # ConfigMap rendered by Konfiguration from shared-configs template.
     # NOTE: requires a matching `agentic-platform` template in giantswarm-config

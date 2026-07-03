@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
-  name: giantswarm-catalog
+  name: appcatalog
   namespace: flux-giantswarm
 spec:
   timeout: 3m0s
