@@ -23,7 +23,8 @@ jobs:
           APP_VERSION=$(curl -sSf "https://raw.githubusercontent.com/giantswarm/flux-app/v${CHART_VERSION}/helm/flux-app/Chart.yaml" | yq '.appVersion')
           echo "App version from Chart.yaml: $APP_VERSION"
 
-          LABEL_VERSION=$(yq '.labels[0].pairs["app.kubernetes.io/version"]' bases/crds/flux-app-v2/kustomization.yaml)
+          GIANTSWARM_VERSION=$(yq '.resources[0] | split("/") | .[-1]' bases/crds/flux-app-v2/kustomization.yaml)
+          LABEL_VERSION=$(yq '.labels[0].pairs["app.kubernetes.io/version"]' bases/crds/flux-app-v2/versions/${GIANTSWARM_VERSION}/kustomization.yaml)
           echo "Label version: $LABEL_VERSION"
 
           if [ "$APP_VERSION" != "$LABEL_VERSION" ]; then

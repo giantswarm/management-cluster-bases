@@ -1,5 +1,2 @@
-labels:
-  - pairs:
-      app.kubernetes.io/version: "2.6.4"
 resources:
-  - crds.yaml
+  - ./versions/v2.6
