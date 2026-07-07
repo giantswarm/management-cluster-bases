@@ -4,8 +4,7 @@ patches:
       name: collection-konfiguration
       namespace: giantswarm
     patch:
-      '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
-      "staging"}}]'
+      '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "staging"}}]'
   - target:
       kind: OCIRepository
       namespace: giantswarm
