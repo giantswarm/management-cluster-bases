@@ -8,13 +8,7 @@ patches:
       "testing"}}]'
   - target:
       kind: OCIRepository
-      name: kyverno-policies-ux
       namespace: giantswarm
-    path: semver-kyverno-policies-ux.yaml
-  - target:
-      kind: OCIRepository
-      name: konfigure-operator
-      namespace: giantswarm
-    path: semver-konfigure-operator.yaml
+    path: ../../patches/semver-stable-or-rc.yaml
 resources:
   - ../../base
