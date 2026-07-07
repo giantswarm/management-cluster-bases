@@ -182,12 +182,15 @@ spec:
             principalID = dxr?.status?.principalID or oxr?.status?.principalID
             issuerURL = dxr?.status?.issuerURL or oxr?.status?.issuerURL
 
-            template = oxr.spec?.template or ""
-            values = template \
-                .replace("${clientID}", clientID or "") \
-                .replace("${tenantID}", tenantID or "") \
-                .replace("${principalID}", principalID or "") \
-                .replace("${issuerURL}", issuerURL or "")
+            # Needles are concatenated so the "${" interpolation trigger never
+            # appears in a single string literal, which would make KCL evaluate
+            # it instead of matching the literal placeholder in the template.
+            # Underscore prefix makes _values reassignable.
+            _values = oxr.spec?.template or ""
+            _values = _values.replace("$" + "{clientID}", clientID or "")
+            _values = _values.replace("$" + "{tenantID}", tenantID or "")
+            _values = _values.replace("$" + "{principalID}", principalID or "")
+            _values = _values.replace("$" + "{issuerURL}", issuerURL or "")
 
             configMap = {
                 apiVersion = "kubernetes.crossplane.io/v1alpha2"
@@ -204,11 +207,13 @@ spec:
                             namespace = namespace
                         }
                         data = {
-                          clientID = clientID
-                          tenantID = tenantID
-                          principalID = principalID
-                          issuerURL = issuerURL
-                          values = values
+                          # Cannot publish individual fields, because the app-operator will attempt
+                          # to parse them as JSON and fail to proceed.
+                          # clientID = clientID
+                          # tenantID = tenantID
+                          # principalID = principalID
+                          # issuerURL = issuerURL
+                          values = _values
                         }
                     }
                     providerConfigRef.name = "in-cluster"
