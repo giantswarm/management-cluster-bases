@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Global/stable migration toggle, the counterpart of the flux-app-v2 `giantswarm`
+# and crds/flux-app-v2 root pointers. Clusters that follow the global migration
+# state reference this base; changing it here switches all of them at once.
+#
+# It is empty by default because most of the time there is no migration pending
+# (empty renders nothing, so the flux-migration Kustomization is Ready at once
+# and does not block `crds`). To migrate the whole fleet, add the relevant
+# version, e.g.:
+#
+#   resources:
+#     - ./versions/v2.7
+#
+# Once every cluster has migrated, empty it again so the completed Jobs are
+# pruned and freshly-created clusters do not run a stale migration.
+resources: []
