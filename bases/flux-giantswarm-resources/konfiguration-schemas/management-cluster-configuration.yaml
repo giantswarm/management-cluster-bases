@@ -6,5 +6,141 @@ metadata:
   namespace: giantswarm
 spec:
   raw:
-    remote:
-      url: https://raw.githubusercontent.com/giantswarm/konfiguration-schemas/refs/tags/management-cluster-configuration/v1.1.0/schemas/management-cluster-configuration/schema.yaml
+#    remote:
+#      url: https://raw.githubusercontent.com/giantswarm/konfiguration-schemas/refs/tags/management-cluster-configuration/v1.1.0/schemas/management-cluster-configuration/schema.yaml
+    # This is the content of the v1.1.0 (above) version of the MCC konfiguration schema, from giantswarm/konfiguration-schemas.
+    # Using raw content to avoid GitHub / Fastly issues on some clusters. This changes very rarely and would need to come here to bump the version number anyway.
+    content: |
+      variables:
+        - name: installation
+          required: true
+        - name: stage
+          required: false
+          default: none
+        - name: app
+          required: true
+      layers:
+        - id: defaults
+          path:
+            directory: default
+            required: true
+          values:
+            path:
+              directory: ""
+            configMap:
+              name: config.yaml
+              required: true
+          templates:
+            path:
+              directory: apps/<< app >>
+              required: true
+            configMap:
+              name: configmap-values.yaml.template
+              required: true
+              values:
+                merge:
+                  strategy: ConfigMapsInLayerOrder
+            secret:
+              name: secret-values.yaml.template
+              required: false
+              values:
+                merge:
+                  strategy: ConfigMapsAndSecretsInLayerOrder
+        - id: default-stages
+          path:
+            directory: default/stages
+            required: false
+          values:
+            path:
+              directory: << stage >>
+              required: false
+            configMap:
+              name: config.yaml
+              required: false
+          templates:
+            path:
+              directory: << stage >>/apps/<< app >>
+              required: false
+            configMap:
+              name: configmap-values.yaml.template
+              required: false
+              values:
+                merge:
+                  strategy: ConfigMapsInLayerOrder
+            secret:
+              name: secret-values.yaml.template
+              required: false
+              values:
+                merge:
+                  strategy: SecretsInLayerOrder
+        - id: stages
+          path:
+            directory: stages
+            required: false
+          values:
+            path:
+              directory: << stage >>
+              required: false
+            configMap:
+              name: config.yaml
+              required: false
+          templates:
+            path:
+              directory: << stage >>/apps/<< app >>
+              required: false
+            configMap:
+              name: configmap-values.yaml.template
+              required: false
+              values:
+                merge:
+                  strategy: ConfigMapsInLayerOrder
+            secret:
+              name: secret-values.yaml.template
+              required: false
+              values:
+                merge:
+                  strategy: SecretsInLayerOrder
+        - id: management-cluster
+          path:
+            directory: installations/<< installation >>
+            required: true
+          values:
+            path:
+              directory: ""
+            configMap:
+              name: config.yaml.patch
+              required: true
+            secret:
+              name: secret.yaml
+              required: true
+          templates:
+            path:
+              directory: apps/<< app >>
+              required: false
+            configMap:
+              name: configmap-values.yaml.patch
+              required: false
+              values:
+                merge:
+                  strategy: ConfigMapsInLayerOrder
+            secret:
+              name: secret-values.yaml.patch
+              required: false
+              values:
+                merge:
+                  strategy: SameTypeFromCurrentLayer
+      includes:
+        - id: include
+          function:
+            name: include
+          path:
+            directory: include
+            required: true
+          extension: .yaml.template
+        - id: include-self
+          function:
+            name: includeSelf
+          path:
+            directory: include-self
+            required: false
+          extension: .yaml.template
