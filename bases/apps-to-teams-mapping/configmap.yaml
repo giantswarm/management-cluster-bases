@@ -57,6 +57,7 @@ data:
   cloud-provider-cloud-director: rocket
   cloud-provider-vsphere: rocket
   cloudnative-pg: shield
+  cloudwatch-exporter: cabbage
   cluster-aks: phoenix
   cluster-api-cleaner-cloud-director: rocket
   cluster-api-cleaner-vsphere: rocket
