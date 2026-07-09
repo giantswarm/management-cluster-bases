@@ -5,7 +5,7 @@ set -euo pipefail
 YQ="bin/yq"
 KUSTOMIZATION_FILENAME="kustomization.yaml"
 
-COMMIT_MESSAGE_PREFIX="remove expired silence - "
+COMMIT_MESSAGE_PREFIX="chore(silences): remove expired silence - "
 PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename "$0") script.
 
 If you are assigned for review, this means you created a silence which is **now expired** based on the \`valid-until\` annotation, and has **been removed from AlertManager**.

@@ -1,0 +1,58 @@
+# Shared Flux storage-migration Job template. Everything here is identical across
+# transitions; each versions/<vX.Y> overlay only sets three things:
+#   - the name suffix (so each transition is its own run-once Job),
+#   - the flux-cli image tag (the target version), via `images:`,
+#   - the --version argument (the version to migrate FROM), via a patch.
+#
+# Delivered as a plain, GitOps-managed manifest (not a Helm pre-upgrade hook,
+# which never fires under kustomize `helmCharts` inflation). Ordering is provided
+# by the `flux-migration` Kustomization (wait: true), which `crds` dependsOn.
+# There is deliberately no ttlSecondsAfterFinished: a completed Job must persist
+# so the owning Kustomization stays Ready and GitOps does not recreate (re-run)
+# it. Cleanup happens when the migration is pruned from the cluster.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flux-app-flux-migrate
+  namespace: flux-giantswarm
+  labels:
+    app.kubernetes.io/component: flux-migration
+    app.kubernetes.io/name: flux-app
+    app.kubernetes.io/part-of: flux
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: flux-migration
+        app.kubernetes.io/name: flux-app
+        app.kubernetes.io/part-of: flux
+    spec:
+      serviceAccountName: kustomize-controller
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+      containers:
+        - name: flux-cli
+          # Tag is set per transition by the version overlay's `images:` block.
+          image: gsoci.azurecr.io/giantswarm/flux-cli
+          # args are replaced per transition by the version overlay's patch.
+          args:
+            - migrate
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault

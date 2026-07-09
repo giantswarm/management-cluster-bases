@@ -28,7 +28,7 @@ spec:
       useSeparator: true
   reconciliation:
     interval: 1m
-    retryInterval: 10s
+    retryInterval: 30s
     suspend: false
   sources:
     flux:
