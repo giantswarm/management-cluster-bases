@@ -5,6 +5,5 @@ resources:
 - network.yaml
 - polex.yaml
 - provider.yaml
-- providerconfig.yaml
 - service-account.yaml
 - storage.yaml
