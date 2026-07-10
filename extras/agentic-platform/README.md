@@ -128,6 +128,38 @@ patches:
 - shared-configs with an `agentic-platform` app template (renders values
   under the `muster:` umbrella prefix)
 
+## Deploying additional charts into `kagent`
+
+This base also provisions a `kagent-flux` ServiceAccount in the `kagent`
+namespace (`service-account.yaml`), bound to the built-in `cluster-admin`
+`ClusterRole` via a namespace-scoped `RoleBinding` — i.e. full control of all
+resources **within `kagent`** only.
+
+The `kagent` namespace itself is **not** created here — it is owned by the
+`agentic-platform-connectivity` component (Helm). Flux applies the SA/RoleBinding
+once that namespace exists, retrying on its interval until then.
+
+Use it to deploy additional agent-platform charts as `HelmRelease`s living in
+the `kagent` namespace. Unlike the umbrella (which lives in the
+policy-exempt `flux-giantswarm`), a `HelmRelease` in `kagent` is subject to the
+`flux-multi-tenancy` Kyverno policy, so it **must** set `serviceAccountName` and
+target its own namespace:
+
+```yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: <chart>
+  namespace: kagent
+spec:
+  serviceAccountName: kagent-flux   # required by flux-multi-tenancy Kyverno policy
+  targetNamespace: kagent           # must be local (targetNamespaceMustBeLocal rule)
+  ...
+```
+
+Because the binding is namespace-scoped, such charts can only create namespaced
+resources in `kagent`; cluster-scoped resources (CRDs, ClusterRoles) are denied.
+
 ## Related
 
 - [agentic-platform chart](https://github.com/giantswarm/agentic-platform)
