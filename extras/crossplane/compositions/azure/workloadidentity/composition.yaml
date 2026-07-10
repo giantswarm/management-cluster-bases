@@ -18,7 +18,6 @@ spec:
         spec:
           source: |
             oxr = option("params").oxr
-            # Prefixing with an underscore makes it mutable.
             _dxr = option("params").dxr
 
             clusterName = oxr.spec.clusterName
@@ -185,7 +184,6 @@ spec:
             # Needles are concatenated so the "${" interpolation trigger never
             # appears in a single string literal, which would make KCL evaluate
             # it instead of matching the literal placeholder in the template.
-            # Underscore prefix makes _values reassignable.
             _values = oxr.spec?.template or ""
             _values = _values.replace("$" + "{clientID}", clientID or "")
             _values = _values.replace("$" + "{tenantID}", tenantID or "")
