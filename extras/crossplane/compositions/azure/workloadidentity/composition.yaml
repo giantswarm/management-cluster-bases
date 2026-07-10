@@ -1,0 +1,225 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: workloadidentity
+spec:
+  compositeTypeRef:
+    apiVersion: crossplane.giantswarm.io/v1alpha1
+    kind: XWorkloadIdentity
+  mode: Pipeline
+  pipeline:
+    - step: resolve-issuer-url
+      functionRef:
+        name: function-kcl
+      input:
+        apiVersion: krm.kcl.dev/v1alpha1
+        kind: KCLInput
+        spec:
+          source: |
+            oxr = option("params").oxr
+            _dxr = option("params").dxr
+
+            clusterName = oxr.spec.clusterName
+            provider = oxr.spec.provider
+            namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
+
+            # Select which cluster object holds the OIDC issuer for this cluster type.
+            _kinds = {
+                aks = {
+                    apiVersion = "containerservice.azure.com/v1api20240901"
+                    kind = "ManagedCluster"
+                    matchLabels = {
+                      "serviceoperator.azure.com/owner-name" = clusterName
+                    }
+                }
+                azure = {
+                    apiVersion = "infrastructure.cluster.x-k8s.io/v1beta1"
+                    kind = "AzureCluster"
+                    matchLabels = {
+                      "cluster.x-k8s.io/cluster-name" = clusterName
+                    }
+                }
+            }
+            _selected = _kinds[provider]
+
+            # Dynamically request that object by name. function-kcl feeds it back
+            # via option("params").extraResources on the next reconcile pass.
+            cluster = {
+                apiVersion = "meta.krm.kcl.dev/v1alpha1"
+                kind = "ExtraResources"
+                requirements = {
+                    cluster = {
+                        apiVersion = _selected.apiVersion
+                        kind = _selected.kind
+                        matchLabels = _selected.matchLabels
+                    }
+                }
+            }
+
+
+            # Read the issuer once the object is available.
+            er = option("params")?.extraResources
+
+            if er?.cluster:
+              issuerURL = er?.cluster[0]?.Resource?.status?.oidcIssuerProfile?.issuerURL
+              if issuerURL:
+                _dxr.status = (_dxr?.status or {}) | {issuerURL = issuerURL}
+
+            items = [
+              cluster, _dxr
+            ]
+
+    - step: patch-and-transform
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: user-assigned-identity
+            base:
+              apiVersion: managedidentity.azure.upbound.io/v1beta1
+              kind: UserAssignedIdentity
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.forProvider.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.location
+                toFieldPath: spec.forProvider.location
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.resourceGroupName
+                toFieldPath: spec.forProvider.resourceGroupName
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.principalId
+                toFieldPath: status.principalID
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.clientId
+                toFieldPath: status.clientID
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.tenantId
+                toFieldPath: status.tenantID
+
+          - name: federated-identity-credential
+            base:
+              apiVersion: managedidentity.azure.upbound.io/v1beta1
+              kind: FederatedIdentityCredential
+              spec:
+                forProvider:
+                  audience:
+                    - api://AzureADTokenExchange
+                  parentIdSelector:
+                    matchControllerRef: true
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.issuerURL
+                toFieldPath: spec.forProvider.issuer
+                policy:
+                  fromFieldPath: Required
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.resourceGroupName
+                toFieldPath: spec.forProvider.resourceGroupName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.subject
+                toFieldPath: spec.forProvider.subject
+
+          - name: role-assignment
+            base:
+              apiVersion: authorization.azure.upbound.io/v1beta1
+              kind: RoleAssignment
+              spec:
+                forProvider:
+                  roleDefinitionName: Contributor
+                  principalType: ServicePrincipal
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.clusterName
+                toFieldPath: spec.providerConfigRef.name
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.subscriptionID
+                    - fromFieldPath: spec.resourceGroupName
+                  strategy: string
+                  string:
+                    fmt: "/subscriptions/%s/resourceGroups/%s"
+                toFieldPath: spec.forProvider.scope
+
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.principalID
+                toFieldPath: spec.forProvider.principalId
+                policy:
+                  fromFieldPath: Required
+
+    # TODO: Once we have switched all apps to HelmReleases, replace with patch-and-transform
+    # that generates a ConfigMap with each value as a separate key.
+    # HelmReleases support reading ConfigMap values and using them like `--set` on Helm CLI.
+    # That is more flexible and easier to read than this KCL step.
+    - step: generate-config-map
+      functionRef:
+        name: function-kcl
+      input:
+        apiVersion: krm.kcl.dev/v1alpha1
+        kind: KCLInput
+        spec:
+          source: |
+            oxr = option("params").oxr
+            dxr = option("params").dxr
+
+            namespace = oxr.metadata.labels["crossplane.io/claim-namespace"]
+            name = oxr.metadata.labels["crossplane.io/claim-name"] + "-identity"
+
+            clientID = dxr?.status?.clientID or oxr?.status?.clientID
+            tenantID = dxr?.status?.tenantID or oxr?.status?.tenantID
+            principalID = dxr?.status?.principalID or oxr?.status?.principalID
+            issuerURL = dxr?.status?.issuerURL or oxr?.status?.issuerURL
+
+            # Needles are concatenated so the "${" interpolation trigger never
+            # appears in a single string literal, which would make KCL evaluate
+            # it instead of matching the literal placeholder in the template.
+            _values = oxr.spec?.template or ""
+            _values = _values.replace("$" + "{clientID}", clientID or "")
+            _values = _values.replace("$" + "{tenantID}", tenantID or "")
+            _values = _values.replace("$" + "{principalID}", principalID or "")
+            _values = _values.replace("$" + "{issuerURL}", issuerURL or "")
+
+            configMap = {
+                apiVersion = "kubernetes.crossplane.io/v1alpha2"
+                kind = "Object"
+                metadata.annotations = {
+                    "krm.kcl.dev/composition-resource-name" = "config-map"
+                }
+                spec = {
+                    forProvider.manifest = {
+                        apiVersion = "v1"
+                        kind = "ConfigMap"
+                        metadata = {
+                            name = name
+                            namespace = namespace
+                        }
+                        data = {
+                          # Cannot publish individual fields, because the app-operator will attempt
+                          # to parse them as JSON and fail to proceed.
+                          # clientID = clientID
+                          # tenantID = tenantID
+                          # principalID = principalID
+                          # issuerURL = issuerURL
+                          values = _values
+                        }
+                    }
+                    providerConfigRef.name = "in-cluster"
+                }
+            }
+
+            items = [configMap] if clientID and tenantID else []
+
+    - step: auto-ready
+      functionRef:
+        name: function-auto-ready

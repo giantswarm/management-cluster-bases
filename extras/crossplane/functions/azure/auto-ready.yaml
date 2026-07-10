@@ -1,0 +1,8 @@
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-auto-ready
+spec:
+  package: gsoci.azurecr.io/giantswarm/crossplane-contrib-function-auto-ready:v0.2.1
+  skipDependencyResolution: true

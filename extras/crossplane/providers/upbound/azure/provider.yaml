@@ -16,3 +16,18 @@ spec:
   package: gsoci.azurecr.io/giantswarm/upbound-provider-family-azure:v1.13.1
   runtimeConfigRef:
     name: upbound-provider-family-azure
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-contrib-provider-kubernetes
+  namespace: crossplane
+spec:
+  ignoreCrossplaneConstraints: false
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: true
+  package: gsoci.azurecr.io/giantswarm/crossplane-contrib-provider-kubernetes:v1.2.1
+  runtimeConfigRef:
+    name: upbound-contrib-provider-kubernetes
