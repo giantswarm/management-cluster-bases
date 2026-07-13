@@ -179,8 +179,9 @@ GitOps**:
 - **Shared muster `RemoteMCPServer`**: the `agentic-platform-connectivity`
   component renders a `RemoteMCPServer` named `muster` in the
   `agentic-platform` namespace with `allowedNamespaces: {from: All}` — the
-  server the agent chart's `serverRef` defaults to. Controlled via the
-  `agents.muster.shared` values.
+  server the agent chart's `serverRef` defaults to. Rendered whenever the
+  kagent and muster components are enabled; the name/namespace pair is fixed
+  (it is the platform contract the agent chart depends on).
 
 ## Related
 
