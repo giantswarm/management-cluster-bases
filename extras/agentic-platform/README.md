@@ -160,6 +160,29 @@ spec:
 Because the binding is namespace-scoped, such charts can only create namespaced
 resources in `kagent`; cluster-scoped resources (CRDs, ClusterRoles) are denied.
 
+## Creating agents (tenant self-service)
+
+Tenants create agents with the generic
+[`agent` chart](https://github.com/giantswarm/agent) (one Helm release = one
+agent), typically as a `HelmRelease` in `kagent` using the `kagent-flux`
+ServiceAccount described above. The admin-owned resources the chart relies on
+(see the [creating-agents PRD](https://github.com/giantswarm/bumblebee-plans/blob/main/creating-agents/PRD.md))
+are all rendered by the umbrella — **no extra CRs need to be applied via
+GitOps**:
+
+- **`ModelConfig` + LLM credentials**: the kagent component renders
+  `default-model-config` and creates the `kagent-anthropic` Secret in the
+  `kagent` namespace from `kagent.providers.anthropic.apiKey`, which is
+  SOPS-encrypted per cluster in giantswarm-configs under
+  `installations/<mc>/apps/agentic-platform/`. Rotate the key there; additional
+  catalog entries go in the `agents.models` values.
+- **Shared muster `RemoteMCPServer`**: the `agentic-platform-connectivity`
+  component renders a `RemoteMCPServer` named `muster` in the
+  `agentic-platform` namespace with `allowedNamespaces: {from: All}` — the
+  server the agent chart's `serverRef` defaults to. Rendered whenever the
+  kagent and muster components are enabled; the name/namespace pair is fixed
+  (it is the platform contract the agent chart depends on).
+
 ## Related
 
 - [agentic-platform chart](https://github.com/giantswarm/agentic-platform)
