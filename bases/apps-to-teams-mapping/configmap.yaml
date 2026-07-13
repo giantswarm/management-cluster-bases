@@ -203,6 +203,7 @@ data:
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
+  pro: planeteers
   prometheus-blackbox-exporter: phoenix
   prometheus-operator-crd: atlas
   prometheus-remotewrite: atlas
