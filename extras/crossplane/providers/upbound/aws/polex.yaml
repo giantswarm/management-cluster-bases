@@ -23,6 +23,7 @@ spec:
         names:
         - upbound-provider*
         - crossplane-contrib-provider*
+        - crossplane-provider-aws
         - function*
         namespaces:
         - crossplane
