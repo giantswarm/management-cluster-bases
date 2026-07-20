@@ -96,6 +96,7 @@ data:
   deletion-blocker-operator: rocket
   dex-app: shield
   dex-operator: shield
+  dicebear: bumblebee
   dns-operator-azure: phoenix
   dns-operator-route53: rocket
   docs-indexer-app: bumblebee
