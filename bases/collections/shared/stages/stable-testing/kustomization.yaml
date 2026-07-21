@@ -6,8 +6,7 @@ patches:
     patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "stable-testing"}}]'
   - target:
       kind: OCIRepository
-      name: konfigure-operator
       namespace: giantswarm
-    path: semver-konfigure-operator.yaml
+    path: ../../patches/semver-stable-or-rc.yaml
 resources:
   - ../../base
