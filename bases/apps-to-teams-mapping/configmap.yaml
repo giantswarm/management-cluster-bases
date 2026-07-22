@@ -222,6 +222,7 @@ data:
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
+  security-profiles-operator: shield
   silence-operator: atlas
   sitesearch: bumblebee
   sloth-rules: atlas
