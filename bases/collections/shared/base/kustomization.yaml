@@ -23,6 +23,7 @@ resources:
   - grafana-organization-giantswarm-security-default.yaml
   - grafana-organization-shared-org.yaml
   - happa.yaml
+  - hr-recovery-controller.yaml
   - keda.yaml
   - konfiguration.yaml
   - konfigure-operator.yaml
