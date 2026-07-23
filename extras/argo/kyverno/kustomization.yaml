@@ -1,3 +1,0 @@
-resources:
-  # This is not standalone! Needs patching based on cluster type: CAPx, legacy
-  - sync-kubeconfigs-kyverno-cluster-policy.yaml
