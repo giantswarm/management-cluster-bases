@@ -7,6 +7,7 @@ metadata:
   namespace: giantswarm
 data:
   agent-sandbox: bumblebee
+  agent: bumblebee
   agentgateway: bumblebee
   agentic-platform-connectivity: bumblebee
   agentic-platform-mcps: bumblebee
@@ -57,6 +58,7 @@ data:
   cloud-provider-cloud-director: rocket
   cloud-provider-vsphere: rocket
   cloudnative-pg: shield
+  cloudwatch-exporter: cabbage
   cluster-aks: phoenix
   cluster-api-cleaner-cloud-director: rocket
   cluster-api-cleaner-vsphere: rocket
@@ -94,6 +96,7 @@ data:
   deletion-blocker-operator: rocket
   dex-app: shield
   dex-operator: shield
+  dicebear: bumblebee
   dns-operator-azure: phoenix
   dns-operator-route53: rocket
   docs-indexer-app: bumblebee
@@ -202,6 +205,7 @@ data:
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
+  pro: planeteers
   prometheus-blackbox-exporter: phoenix
   prometheus-operator-crd: atlas
   prometheus-remotewrite: atlas
@@ -218,6 +222,7 @@ data:
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
+  security-profiles-operator: shield
   silence-operator: atlas
   sitesearch: bumblebee
   sloth-rules: atlas
