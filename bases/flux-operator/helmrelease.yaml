@@ -7,7 +7,7 @@ spec:
   interval: 5m
   provider: generic
   ref:
-    tag: "0.3.0"
+    tag: "0.4.0"
   url: oci://gsoci.azurecr.io/charts/giantswarm/flux-operator
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
