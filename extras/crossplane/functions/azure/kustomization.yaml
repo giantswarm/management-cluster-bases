@@ -4,6 +4,3 @@ resources:
   - auto-ready.yaml
   - kcl.yaml
   - patch-and-transform.yaml
-  # Does not really belong here, but must be deployed after Crossplane providers.
-  # As of writing, there is no clean place to deploy these resources.
-  - providerconfig.yaml
