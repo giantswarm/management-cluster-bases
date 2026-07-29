@@ -6,3 +6,4 @@ resources:
   - ./oci-repository.yaml
   - ./helm-release.yaml
   - ./konfiguration.yaml
+  - ./service-account.yaml

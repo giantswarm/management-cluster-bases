@@ -4,5 +4,10 @@ patches:
       name: collection-konfiguration
       namespace: giantswarm
     patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "staging"}}]'
+  - target:
+      kind: OCIRepository
+      name: kyverno-policies-ux
+      namespace: giantswarm
+    path: semver-kyverno-policies-ux.yaml
 resources:
   - ../../base

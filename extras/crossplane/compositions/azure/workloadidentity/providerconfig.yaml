@@ -1,0 +1,9 @@
+---
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: in-cluster
+spec:
+  credentials:
+    # Uses the credentials of the Pod's service account.
+    source: InjectedIdentity

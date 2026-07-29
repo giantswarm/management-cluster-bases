@@ -2,9 +2,40 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: flux-migration
+  namespace: flux-giantswarm
+spec:
+  interval: 1h
+  # DO NOT use slashes in the comment to indicate the path, just "->".
+  path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/flux-migration"
+  # Prune is safe here: this Kustomization owns only the transient migration
+  # Job. Removing the migration from the cluster's flux-migration directory
+  # deletes the completed Job. It does NOT manage CRDs or workload clusters.
+  prune: true
+  retryInterval: 1m
+  timeout: 10m
+  # wait: true makes this Kustomization Ready only once the migration Job has
+  # completed successfully. Because `crds` dependsOn it, new CRDs are not
+  # applied until the migration has run. When there is no migration pending the
+  # cluster's flux-migration directory is empty, so this becomes Ready at once
+  # and does not block `crds`.
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: management-clusters-fleet
+    namespace: flux-giantswarm
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: crds
   namespace: flux-giantswarm
 spec:
+  # crds waits for the migration to complete before applying new CRD versions
+  # (the Flux storage migration must run before the old CRD versions are
+  # dropped). flux-migration is a no-op when nothing is pending.
+  dependsOn:
+    - name: flux-migration
   interval: 1h
   # DO NOT use slashes in the comment to indicate the path, just "->".
   path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/crds"
