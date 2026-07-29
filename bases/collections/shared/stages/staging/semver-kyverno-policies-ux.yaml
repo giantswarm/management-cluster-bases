@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/ref/semver
+  value: ">=0.0.0-0"
+- op: add
+  path: /spec/ref/semverFilter
+  value: '^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$'
