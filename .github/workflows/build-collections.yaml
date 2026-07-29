@@ -1,0 +1,46 @@
+name: Build collections
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  # Keep in sync with the kustomize version shipped by kustomize-controller.
+  kustomize_ver: "5.6.0"
+
+jobs:
+  build-collections:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install kustomize
+        uses: giantswarm/install-binary-action@5bef88f65012037dd836117c8d344b21bb559854 # v4.1.0
+        with:
+          binary: kustomize
+          download_url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${version}/kustomize_v${version}_linux_amd64.tar.gz"
+          smoke_test: "${binary} version"
+          tarball_binary_path: "${binary}"
+          version: ${{ env.kustomize_ver }}
+
+      # Deliberately no --load-restrictor: management clusters consume these
+      # collections as remote bases, and kustomize enforces
+      # LoadRestrictionsRootOnly inside the git clone it creates for them, no
+      # matter what --load-restrictor says. Building with the default here is
+      # what makes this job catch what kustomize-controller would reject.
+      - name: Build every collection stage
+        run: |
+          rc=0
+          for dir in bases/collections/*/stages/*/; do
+            if kustomize build "${dir}" > /dev/null; then
+              echo "ok    ${dir}"
+            else
+              echo "FAIL  ${dir}"
+              rc=1
+            fi
+          done
+          exit "${rc}"
