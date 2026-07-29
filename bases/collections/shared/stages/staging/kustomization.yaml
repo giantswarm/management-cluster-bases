@@ -8,6 +8,6 @@ patches:
       kind: OCIRepository
       name: kyverno-policies-ux
       namespace: giantswarm
-    path: ../../patches/semver-stable-or-rc.yaml
+    path: semver-kyverno-policies-ux.yaml
 resources:
   - ../../base
