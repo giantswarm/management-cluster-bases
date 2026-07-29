@@ -3,18 +3,10 @@ patches:
       kind: Konfiguration
       name: collection-konfiguration
       namespace: giantswarm
-    patch:
-      '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
-      "testing"}}]'
+    patch: '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value": "testing"}}]'
   - target:
       kind: OCIRepository
-      name: kyverno-policies-ux
       namespace: giantswarm
-    path: semver-kyverno-policies-ux.yaml
-  - target:
-      kind: OCIRepository
-      name: konfigure-operator
-      namespace: giantswarm
-    path: semver-konfigure-operator.yaml
+    path: ../../patches/semver-stable-or-rc.yaml
 resources:
   - ../../base
