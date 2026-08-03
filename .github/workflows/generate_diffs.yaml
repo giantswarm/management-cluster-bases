@@ -113,6 +113,8 @@ jobs:
           body-includes: Rendered manifest diff
       - name: Delete old comment
         uses: winterjung/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1.1.0
+        # nothing to delete if no previous comment was found
+        if: steps.fc.outputs.comment-id != ''
         continue-on-error: true
         with:
           type: delete
