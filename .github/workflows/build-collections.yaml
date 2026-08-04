@@ -1,0 +1,20 @@
+name: Build collections
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  build-collections:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # The target downloads its own pinned kustomize, so this runs exactly like
+      # `make build-collections` on a laptop.
+      - name: Build every collection stage
+        run: make build-collections
