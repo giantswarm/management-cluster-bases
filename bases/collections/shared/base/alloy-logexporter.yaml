@@ -1,0 +1,81 @@
+---
+# alloy-logexporter — the audit/Teleport log export pipeline (giantswarm/giantswarm#37251).
+#
+# Deployed to every management cluster but disabled by default: the defaults
+# ConfigMap below turns the release into a no-op that renders zero objects until the
+# feature is switched on.
+#
+# observability-operator turns it on by creating the `alloy-logexporter-config`
+# ConfigMap, which carries `alloy.enabled: true`, the deployment shape and the Alloy
+# config. That ConfigMap is optional here so this stays valid before it exists.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: alloy-logexporter
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/alloy
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-logexporter-defaults
+  namespace: giantswarm
+data:
+  values: |
+    # Off unless observability-operator says otherwise. Gates the whole chart via
+    # `condition: alloy.enabled` on the dependency in alloy-app's Chart.yaml.
+    alloy:
+      enabled: false
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy-logexporter
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: alloy-logexporter
+    namespace: giantswarm
+  install:
+    createNamespace: true
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: alloy-logexporter
+  storageNamespace: alloy-logexporter
+  targetNamespace: alloy-logexporter
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  # DO NOT add `spec.values` here. Flux merges valuesFrom entries in order and then
+  # lets inline values override all of them, so anything set inline — including
+  # `alloy.enabled` — would permanently override observability-operator and the
+  # feature could never be enabled. Order below matters for the same reason: the
+  # operator's ConfigMap is last so that it wins.
+  valuesFrom:
+  - kind: ConfigMap
+    name: alloy-logexporter-defaults
+    valuesKey: values
+  - kind: ConfigMap
+    name: alloy-logexporter-config
+    valuesKey: values
+    # Absent until observability-operator enables the feature on this installation.
+    optional: true
+  # The object store credentials are a separate Secret rather than part of the
+  # ConfigMap above: alloy-app takes `extraSecretEnv` as {name, value} pairs and
+  # base64-encodes them into a Secret it creates itself, so keeping them in the
+  # ConfigMap would mean plaintext credentials in a ConfigMap.
+  - kind: Secret
+    name: alloy-logexporter-secret
+    valuesKey: values
+    optional: true
