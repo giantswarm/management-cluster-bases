@@ -49,8 +49,8 @@ spec:
       retries: 10
   interval: 5m
   releaseName: alloy-logexporter
-  storageNamespace: alloy-logexporter
-  targetNamespace: alloy-logexporter
+  storageNamespace: monitoring
+  targetNamespace: monitoring
   timeout: 10m
   upgrade:
     remediation:
