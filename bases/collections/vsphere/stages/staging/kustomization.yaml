@@ -3,5 +3,6 @@
 components:
   - ../../base
   - ../../../shared/stages/staging
+patches: []
 resources:
   - ../../../shared/base

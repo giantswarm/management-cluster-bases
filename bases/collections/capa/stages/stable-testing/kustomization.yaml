@@ -3,5 +3,6 @@
 components:
   - ../../base
   - ../../../shared/stages/stable-testing
+patches: []
 resources:
   - ../../../shared/base
