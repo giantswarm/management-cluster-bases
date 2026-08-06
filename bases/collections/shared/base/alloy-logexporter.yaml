@@ -1,18 +1,13 @@
 ---
 # alloy-logexporter — the audit/Teleport log export pipeline (giantswarm/giantswarm#37251).
 #
-# Deployed to every management cluster but INERT: the defaults ConfigMap below turns
-# the release into a no-op that renders zero objects until the feature is switched
-# on. `alloy.enabled: false` gates the whole upstream chart via `condition:
-# alloy.enabled` in alloy-app's Chart.yaml.
+# Deployed to every management cluster but disabled by default: the defaults
+# ConfigMap below turns the release into a no-op that renders zero objects until the
+# feature is switched on.
 #
 # observability-operator turns it on by creating the `alloy-logexporter-config`
 # ConfigMap, which carries `alloy.enabled: true`, the deployment shape and the Alloy
 # config. That ConfigMap is optional here so this stays valid before it exists.
-#
-# Note the chart is `alloy` while the release is `alloy-logexporter` — the same
-# one-chart-many-names arrangement observability-bundle uses for
-# alloy-logs/alloy-metrics/alloy-events.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -32,21 +27,9 @@ metadata:
   namespace: giantswarm
 data:
   values: |
-    # Off unless observability-operator says otherwise.
-    #
-    # All three keys are required to render nothing. Disabling the dependency alone
-    # is NOT enough: Helm drops a subchart entirely when its condition is false,
-    # including its _helpers.tpl, and alloy-app's own templates call `alloy.labels`
-    # / `alloy.chart` from the subchart. With only `alloy.enabled: false` the
-    # release fails to template with:
-    #   no template "alloy.chart" associated with template "gotpl"
-    # so alloy-app's own templates have to be switched off as well. `flavor: none`
-    # matches neither the cilium nor the kubernetes branch, so no policy renders.
+    # Off unless observability-operator says otherwise. Gates the whole chart via
+    # `condition: alloy.enabled` on the dependency in alloy-app's Chart.yaml.
     alloy:
-      enabled: false
-    networkPolicy:
-      flavor: none
-    kyvernoPolicyExceptions:
       enabled: false
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -87,4 +70,12 @@ spec:
     name: alloy-logexporter-config
     valuesKey: values
     # Absent until observability-operator enables the feature on this installation.
+    optional: true
+  # The object store credentials are a separate Secret rather than part of the
+  # ConfigMap above: alloy-app takes `extraSecretEnv` as {name, value} pairs and
+  # base64-encodes them into a Secret it creates itself, so keeping them in the
+  # ConfigMap would mean plaintext credentials in a ConfigMap.
+  - kind: Secret
+    name: alloy-logexporter-secret
+    valuesKey: values
     optional: true
