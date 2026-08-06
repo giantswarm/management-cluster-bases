@@ -1,3 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+# See shared/stages/testing/kustomization.yaml for why this is a Component.
+# Note: this stage deliberately keeps per-app semver patches only. The wildcard
+# "any RC or newer" patch lives in shared/stages/testing and must not apply here.
 patches:
   - target:
       kind: Konfiguration
@@ -14,5 +19,3 @@ patches:
       name: kyverno-policies-ux
       namespace: giantswarm
     path: semver-kyverno-policies-ux.yaml
-resources:
-  - ../../base

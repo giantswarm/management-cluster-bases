@@ -1,5 +1,7 @@
+# Order matters: ../../base contributes the provider-specific apps, so the shared
+# stage Component has to be listed *after* it for its patches to reach them too.
 components:
   - ../../base
-patches: []
-resources:
   - ../../../shared/stages/stable
+resources:
+  - ../../../shared/base

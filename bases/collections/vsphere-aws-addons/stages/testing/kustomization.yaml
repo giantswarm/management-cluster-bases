@@ -1,3 +1,7 @@
+# Applied after ../../base below, so the shared testing-stage patches reach
+# every OCIRepository in this collection.
+components:
+  - ../../../shared/stages/testing
 patches:
   - target:
       kind: Konfiguration

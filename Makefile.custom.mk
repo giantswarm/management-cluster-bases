@@ -28,6 +28,10 @@ build-collections: $(KUSTOMIZE) ## Build every collection stage the way kustomiz
 	@echo "====> $@"
 	@rc=0; \
 	for dir in bases/collections/*/stages/*/; do \
+		if grep -qx 'kind: Component' "$$dir/kustomization.yaml"; then \
+			echo "skip  $$dir (Component, exercised via the provider stages)"; \
+			continue; \
+		fi; \
 		if $(KUSTOMIZE) build "$$dir" >/dev/null; then \
 			echo "ok    $$dir"; \
 		else \
