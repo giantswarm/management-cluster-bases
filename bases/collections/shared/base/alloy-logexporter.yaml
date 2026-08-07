@@ -90,7 +90,12 @@ spec:
 # failure mode. The mirror is fire-and-forget, so Envoy discards the response and a
 # missing grant would otherwise show up only as logs that never arrive.
 #
-# v1beta1 rather than v1: both are served, but v1beta1 is the storage version.
+# v1beta1 rather than v1: ReferenceGrant only gained a v1 in Gateway API v1.5.0, so
+# v1beta1 is the one version valid on every bundle an MC might have converged to —
+# and gateway-api-bundle floats on its own semver range, independently of this repo.
+# A resource the API server rejects fails the whole Kustomization, not just this
+# entry. Neither version is marked deprecated yet; move to v1 once the fleet's floor
+# is comfortably past v1.5.0.
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
