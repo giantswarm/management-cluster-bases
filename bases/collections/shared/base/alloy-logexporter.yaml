@@ -79,3 +79,29 @@ spec:
     name: alloy-logexporter-secret
     valuesKey: values
     optional: true
+---
+# Logs reach alloy-logexporter through an Envoy RequestMirror filter on Loki's
+# write route. That route is an HTTPRoute in `loki` and the backend is a Service in
+# `monitoring`, so Gateway API requires an explicit grant in the TARGET namespace —
+# without it the route reports ResolvedRefs=False and no traffic is mirrored.
+#
+# Not gated on the feature being enabled: a grant that permits a reference nobody
+# has made yet does nothing, and shipping it unconditionally removes a silent
+# failure mode. The mirror is fire-and-forget, so Envoy discards the response and a
+# missing grant would otherwise show up only as logs that never arrive.
+#
+# v1beta1 rather than v1: both are served, but v1beta1 is the storage version.
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: loki-httproute-to-alloy-logexporter
+  namespace: monitoring
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: loki
+  to:
+  - group: ""
+    kind: Service
+    name: alloy-logexporter
