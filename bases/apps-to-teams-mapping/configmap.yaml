@@ -193,6 +193,7 @@ data:
   observability-bundle: atlas
   observability-operator: atlas
   observability-platform-api: atlas
+  observability-platform: atlas
   observability-policies: atlas
   oncall-shift-reporter: planeteers
   onepassword-scim-bridge: shield
