@@ -6,9 +6,5 @@ patches:
     patch:
       '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
       "testing"}}]'
-  - target:
-      kind: OCIRepository
-      namespace: giantswarm
-    path: semver-rc-or-stable-patch.yaml
 resources:
   - ../../base
