@@ -79,22 +79,3 @@ spec:
     name: alloy-logexporter-secret
     valuesKey: values
     optional: true
----
-# Lets Loki's write HTTPRoute mirror requests to alloy-logexporter in `monitoring`.
-# Ungated: the grant does nothing until the mirror filter is enabled.
-#
-# v1beta1: v1 needs Gateway API >= v1.5.0.
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: ReferenceGrant
-metadata:
-  name: loki-httproute-to-alloy-logexporter
-  namespace: monitoring
-spec:
-  from:
-  - group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    namespace: loki
-  to:
-  - group: ""
-    kind: Service
-    name: alloy-logexporter
