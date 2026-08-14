@@ -236,6 +236,7 @@ data:
   teleport-exporter: shield
   teleport-kube-agent: shield
   teleport-operator: shield
+  teleport-plugin-event-handler: shield
   teleport-tbot: shield
   tempo: atlas
   test-app: honeybadger
