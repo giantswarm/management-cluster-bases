@@ -12,6 +12,7 @@ data:
   agentic-platform-connectivity: bumblebee
   agentic-platform-mcps: bumblebee
   agentic-platform: bumblebee
+  ailefroide-app: chapter-se
   alertmanager-to-github: atlas
   alloy-podlogs-crds: atlas
   alloy: atlas
