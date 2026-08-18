@@ -57,7 +57,7 @@ patches:
           - --log-level=info
           - --log-encoding=json
           - --enable-leader-election
-          - --concurrent=12
+          - --concurrent=32
   - target:
       kind: Deployment
       name: image-automation-controller
