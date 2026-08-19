@@ -20,7 +20,7 @@ spec:
           - name: app
             value: mcp-pagerduty
           - name: team
-            value: bumblebee
+            value: planeteers
   destination:
     namespace: flux-giantswarm
     naming:
