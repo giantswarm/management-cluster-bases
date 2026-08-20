@@ -43,7 +43,7 @@ runs:
           silences-validate.sh "$directory"
         done
     - name: Setup kind cluster
-      uses: helm/kind-action@v1
+      uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
     # Run CR validation for each directory
     - name: Validate silences CRs
       shell: bash
