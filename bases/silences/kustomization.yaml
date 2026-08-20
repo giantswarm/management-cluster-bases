@@ -3,4 +3,3 @@ resources:
   - crossplane-functions-kustomization-failed.yaml
   - mimir-ruler-evaluation-failures.yaml
   - grafanapostgresqlarchivingfailures.yaml
-  - konfigureoperatorschemafetchfailed.yaml
