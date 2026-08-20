@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alerting-config
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
+spec:
+  releaseName: alerting-config
+  chartRef:
+    kind: OCIRepository
+    name: alerting-config
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  storageNamespace: monitoring
+  targetNamespace: monitoring
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # Rendered by the Konfiguration from the shared-configs template
+    - kind: ConfigMap
+      name: alerting-config-konfiguration
+      valuesKey: configmap-values.yaml
+    # Per-installation Slack, PagerDuty and Cronitor credentials
+    - kind: Secret
+      name: alerting-config-konfiguration
+      valuesKey: secret-values.yaml

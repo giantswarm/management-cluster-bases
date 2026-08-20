@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: alerting-config
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/alerting-config
+  ref:
+    semver: ">=0.0.0"
+  provider: generic
