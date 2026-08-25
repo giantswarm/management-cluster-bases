@@ -11,10 +11,6 @@ data:
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
   agent-platform: bumblebee
-  # Deprecated chart names, kept until no installation runs an old-name release.
-  agentic-platform-connectivity: bumblebee
-  agentic-platform-mcps: bumblebee
-  agentic-platform: bumblebee
   alertmanager-to-github: atlas
   alloy-podlogs-crds: atlas
   alloy: atlas

@@ -5,7 +5,7 @@ This directory contains the Flux resources required to deploy the
 
 ## Overview
 
-`agent-platform` (chart >=2.5.5; formerly `agentic-platform`) is a **meta-package (app-of-apps)**:
+`agent-platform` (chart >=2.5.5) is a **meta-package (app-of-apps)**:
 it no longer bundles sub-charts, but renders each component as its own Flux
 `OCIRepository` + `HelmRelease` (version ranges resolved at reconcile time, so
 component releases roll forward with no PR). Components include muster (MCP
