@@ -187,3 +187,49 @@ GitOps**:
 
 - [agent-platform chart](https://github.com/giantswarm/agent-platform)
 - [Muster MC Deployment Concept](https://github.com/giantswarm/muster/blob/main/docs/concepts/mc-deployment.md)
+
+## Fleet topology: one aggregator per customer
+
+Each customer runs the Agent Platform on one management cluster, the
+aggregator. The other management clusters of that customer run only
+`mcp-kubernetes` and `mcp-prometheus`, which the aggregator reaches through
+`services.muster.fleet` in the configs repository. The reusable `lint.yaml`
+workflow checks this layout in every fleet repository with
+[`check-agent-platform-topology.sh`](../../.github/actions/agent-platform-topology/check-agent-platform-topology.sh):
+
+- exactly one `management-clusters/<mc>/extras/kustomization.yaml` lists
+  `./agent-platform/`, or
+- the repository root file `.agent-platform.yaml` records the exception:
+
+  ```yaml
+  # several aggregators, listed exactly
+  aggregators: [gazelle, glean, graveler]
+  ```
+
+  ```yaml
+  # no aggregator at all
+  decision: none
+  reason: proof-of-concept cluster, the customer did not request the Agent Platform
+  issue: https://github.com/giantswarm/giantswarm/issues/37446
+  ```
+
+Run it locally in a fleet repository with `make check-agent-platform-topology`.
+The check reports only (`strict: "false"` in `lint.yaml`) until every fleet
+repository carries its `.agent-platform.yaml` where needed.
+
+### Values for a new installation
+
+A new installation needs no `installations/<mc>/apps/agent-platform/`
+directory. The shared template derives the values from the installation
+variables; set only what differs:
+
+| Variable | File | Purpose |
+|---|---|---|
+| `services.muster.connectorId` | `config.yaml.patch` | Dex connector; default `giantswarm-github` for Giant Swarm, `customer` otherwise |
+| `services.muster.clientId` | `config.yaml.patch` | Dex static client for muster; default is the global ID |
+| `services.muster.extraTrustedAudiences` | `config.yaml.patch` | more Dex client IDs muster accepts as bearer tokens |
+| `services.muster.fleet.<codename>` | `config.yaml.patch` | remote management clusters: `base`, optional `connectorId`, `groups`, `tunnel`, `broker` |
+| `services.muster.clientSecret`, `registrationToken`, `encryptionKeyValue`, `valkeyPassword` | `secret.yaml` | muster credentials |
+
+Every `fleet` entry needs the Secret `<codename>-token-exchange-credentials`
+in `management-clusters/<aggregator>/extras/agent-platform/secrets/`.

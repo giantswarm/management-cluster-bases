@@ -143,6 +143,14 @@ $(YQ): ## Download yq locally if necessary.
 	curl -sfL https://github.com/mikefarah/yq/releases/download/v$(YQ_VERSION)/yq_$(OS)_$(ARCH) > $@
 	chmod +x $@
 
+.PHONY: check-agent-platform-topology
+check-agent-platform-topology: $(YQ) ## Check that exactly one management cluster runs the Agent Platform (or .agent-platform.yaml says otherwise)
+	@echo "====> $@"
+	mkdir -p bin
+	curl -sfL https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/.github/actions/agent-platform-topology/check-agent-platform-topology.sh > bin/check-agent-platform-topology.sh
+	chmod +x bin/check-agent-platform-topology.sh
+	YQ=$(YQ) bin/check-agent-platform-topology.sh .
+
 silences-validate: $(YQ) ## Validate silences
 	@echo "====> $@"
 

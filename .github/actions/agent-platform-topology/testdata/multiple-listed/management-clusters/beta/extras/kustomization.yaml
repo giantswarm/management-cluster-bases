@@ -1,0 +1,4 @@
+resources:
+  - ./agent-platform/
+  - ./mcp-kubernetes/
+  - ./mcp-prometheus/

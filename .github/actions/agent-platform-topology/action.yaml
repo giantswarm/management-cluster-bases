@@ -1,0 +1,27 @@
+# Checks that a fleet repository runs the Agent Platform on exactly one
+# management cluster, or records a different decision in .agent-platform.yaml.
+# See check-agent-platform-topology.sh for the rules.
+name: "Agent Platform topology"
+description: "Check how many management clusters of a fleet repository run the Agent Platform"
+inputs:
+  strict:
+    description: "Fail the job on a violation (\"true\") or only report it (\"false\")"
+    required: false
+    default: "false"
+  root:
+    description: "Fleet repository root containing management-clusters/"
+    required: false
+    default: "."
+runs:
+  using: "composite"
+  steps:
+    - name: Install yq
+      shell: bash
+      run: make bin/yq
+    - name: Check topology
+      shell: bash
+      env:
+        AGENT_PLATFORM_TOPOLOGY_STRICT: ${{ inputs.strict }}
+        YQ: bin/yq
+      run: |
+        "${GITHUB_ACTION_PATH}/check-agent-platform-topology.sh" "${{ inputs.root }}"

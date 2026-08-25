@@ -1,0 +1,5 @@
+resources:
+  - ./zot/
+  - ./mcp-kubernetes/
+  - ./mcp-prometheus/
+  - ./agent-platform/

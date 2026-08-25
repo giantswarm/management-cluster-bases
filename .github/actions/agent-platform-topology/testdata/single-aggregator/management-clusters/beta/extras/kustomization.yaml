@@ -1,0 +1,4 @@
+resources:
+  - ./zot/
+  - ./mcp-kubernetes/
+  - ./mcp-prometheus/
