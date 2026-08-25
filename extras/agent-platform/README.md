@@ -219,9 +219,10 @@ repository carries its `.agent-platform.yaml` where needed.
 
 ### Values for a new installation
 
-A new installation needs no `installations/<mc>/apps/agent-platform/`
-directory. The shared template derives the values from the installation
-variables; set only what differs:
+The shared ConfigMap template derives the values from the installation
+variables; set only what differs. Credentials stay in the per-installation
+`apps/agent-platform/secret-values.yaml.patch` and
+`apps/dex-app/secret-values.yaml.patch`.
 
 | Variable | File | Purpose |
 |---|---|---|
@@ -229,7 +230,6 @@ variables; set only what differs:
 | `services.muster.clientId` | `config.yaml.patch` | Dex static client for muster; default is the global ID |
 | `services.muster.extraTrustedAudiences` | `config.yaml.patch` | more Dex client IDs muster accepts as bearer tokens |
 | `services.muster.fleet.<codename>` | `config.yaml.patch` | remote management clusters: `base`, optional `connectorId`, `groups`, `tunnel`, `broker` |
-| `services.muster.clientSecret`, `registrationToken`, `encryptionKeyValue`, `valkeyPassword` | `secret.yaml` | muster credentials |
 
 Every `fleet` entry needs the Secret `<codename>-token-exchange-credentials`
 in `management-clusters/<aggregator>/extras/agent-platform/secrets/`.
