@@ -23,12 +23,8 @@ jobs:
         run: |
           ls management-clusters/ | xargs -n1 -I '{}' make build-{}
 
-      # Reports until every fleet repository records its layout in
-      # .agent-platform.yaml; then flip strict to "true".
-      - name: Check Agent Platform topology
+      - name: Report Agent Platform topology
         uses: giantswarm/management-cluster-bases/.github/actions/agent-platform-topology@main
-        with:
-          strict: "false"
 
       - name: Check if output directory has files
         id: check_output

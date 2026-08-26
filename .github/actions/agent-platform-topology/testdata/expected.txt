@@ -1,6 +1,3 @@
 single-aggregator 0
-multiple-listed 0
-multiple-unlisted 1
-none-recorded 0
-none-unrecorded 1
-contradiction 1
+multiple-aggregators 0
+no-aggregator 0

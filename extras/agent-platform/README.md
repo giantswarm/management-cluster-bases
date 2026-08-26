@@ -193,29 +193,13 @@ GitOps**:
 Each customer runs the Agent Platform on one management cluster, the
 aggregator. The other management clusters of that customer run only
 `mcp-kubernetes` and `mcp-prometheus`, which the aggregator reaches through
-`services.muster.fleet` in the configs repository. The reusable `lint.yaml`
-workflow checks this layout in every fleet repository with
+`services.muster.fleet` in the configs repository (Giant Swarm itself runs
+three aggregators: gazelle, glean, graveler). The reusable `lint.yaml`
+workflow reports the layout of every fleet repository with
 [`check-agent-platform-topology.sh`](../../.github/actions/agent-platform-topology/check-agent-platform-topology.sh):
-
-- exactly one `management-clusters/<mc>/extras/kustomization.yaml` lists
-  `./agent-platform/`, or
-- the repository root file `.agent-platform.yaml` records the exception:
-
-  ```yaml
-  # several aggregators, listed exactly
-  aggregators: [gazelle, glean, graveler]
-  ```
-
-  ```yaml
-  # no aggregator at all
-  decision: none
-  reason: proof-of-concept cluster, the customer did not request the Agent Platform
-  issue: https://github.com/giantswarm/giantswarm/issues/37446
-  ```
-
-Run it locally in a fleet repository with `make check-agent-platform-topology`.
-The check reports only (`strict: "false"` in `lint.yaml`) until every fleet
-repository carries its `.agent-platform.yaml` where needed.
+which clusters list `./agent-platform/` in `extras/kustomization.yaml`, and
+whether every cluster lists both MCP backends. It never fails the build. Run
+it locally in a fleet repository with `make check-agent-platform-topology`.
 
 ### Values for a new installation
 

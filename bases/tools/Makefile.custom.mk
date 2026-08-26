@@ -144,7 +144,7 @@ $(YQ): ## Download yq locally if necessary.
 	chmod +x $@
 
 .PHONY: check-agent-platform-topology
-check-agent-platform-topology: $(YQ) ## Check that exactly one management cluster runs the Agent Platform (or .agent-platform.yaml says otherwise)
+check-agent-platform-topology: $(YQ) ## Report which management clusters run the Agent Platform (convention: one per customer)
 	@echo "====> $@"
 	mkdir -p bin
 	curl -sfL https://raw.githubusercontent.com/${BASE_REPOSITORY}/${MCB_BRANCH}/.github/actions/agent-platform-topology/check-agent-platform-topology.sh > bin/check-agent-platform-topology.sh
