@@ -27,6 +27,21 @@ data:
         - giantswarm-ad:giantswarm-admins
         - giantswarm-github:giantswarm:giantswarm-admins
 
+      auth:
+        # Scopes every Backstage login provider requests on top of the fixed
+        # `openid profile email groups offline_access` set. The portal compiles
+        # in no default, so an instance that omits these silently loses both:
+        # without `federated:id` the sign-in resolver stops resolving users
+        # through the giantswarm-ad and giantswarm-github connectors and falls
+        # back to the email of the token, and without the cross-client audience
+        # scope every service that trusts the `dex-k8s-authenticator` audience
+        # (muster, and so the AI chat and the Muster UI) rejects the token the
+        # portal forwards to it. Both are Dex-specific: an instance on another
+        # issuer must not include this fragment.
+        extraScopes:
+          - federated:id
+          - audience:server:client_id:dex-k8s-authenticator
+
       catalog:
         orphanStrategy: delete
         orphanProviderStrategy: delete
