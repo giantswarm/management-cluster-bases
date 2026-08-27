@@ -8,6 +8,7 @@ metadata:
 data:
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
+  agent-platform-standalone: bumblebee
   agent-platform: bumblebee
   agent-sandbox: bumblebee
   agent: bumblebee
