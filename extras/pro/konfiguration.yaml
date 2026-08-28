@@ -19,6 +19,8 @@ spec:
         variables:
           - name: app
             value: pro
+          - name: team
+            value: planeteers
   destination:
     namespace: flux-giantswarm
     naming:

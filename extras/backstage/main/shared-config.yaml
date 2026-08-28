@@ -12,10 +12,35 @@ data:
       parentRefs:
         - name: giantswarm-default
           namespace: envoy-gateway-system
+    backstage:
+      # Default agent-avatar CSP source (see sharedConfig.csp.imgSrc). Overridden
+      # per instance to the installation's own `https://avatars.<baseDomain>`
+      # (space-separated for the fleet-wide Dev Portal). Defaulting to `'self'`
+      # keeps img-src valid for instances that don't set it. NOTE: extraEnvVars is
+      # a list, so an instance that sets its own extraEnvVars must re-list this
+      # entry (or set BACKSTAGE_AVATARS_IMG_SRC to its avatars host).
+      extraEnvVars:
+        - name: BACKSTAGE_AVATARS_IMG_SRC
+          value: "'self'"
     sharedConfig: |
       adminGroups:
         - giantswarm-ad:giantswarm-admins
         - giantswarm-github:giantswarm:giantswarm-admins
+
+      auth:
+        # Scopes every Backstage login provider requests on top of the fixed
+        # `openid profile email groups offline_access` set. The portal compiles
+        # in no default, so an instance that omits these silently loses both:
+        # without `federated:id` the sign-in resolver stops resolving users
+        # through the giantswarm-ad and giantswarm-github connectors and falls
+        # back to the email of the token, and without the cross-client audience
+        # scope every service that trusts the `dex-k8s-authenticator` audience
+        # (muster, and so the AI chat and the Muster UI) rejects the token the
+        # portal forwards to it. Both are Dex-specific: an instance on another
+        # issuer must not include this fragment.
+        extraScopes:
+          - federated:id
+          - audience:server:client_id:dex-k8s-authenticator
 
       catalog:
         orphanStrategy: delete
@@ -86,6 +111,15 @@ data:
           - 'https://pkg.go.dev'
           - 'https://s.giantswarm.io'
           - 'https://user-images.githubusercontent.com'
+          # Agent avatar icons (agent-platform plugin) are loaded in the browser
+          # from the self-hosted DiceBear endpoint(s) at `avatars.<baseDomain>`.
+          # Each instance sets the BACKSTAGE_AVATARS_IMG_SRC env var to the
+          # host(s) it needs (space-separated for multiple): a per-installation
+          # Backstage sets its own `https://avatars.<baseDomain>`; the fleet-wide
+          # Dev Portal sets the set of installations whose agents it lists. It
+          # defaults to `'self'` (a harmless duplicate) so instances that don't
+          # set it keep a valid img-src -- see backstage.extraEnvVars below.
+          - '$${BACKSTAGE_AVATARS_IMG_SRC}'
         scriptSrc:
           - "'self'"
           - "'unsafe-eval'"

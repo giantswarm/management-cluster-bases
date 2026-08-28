@@ -14,6 +14,8 @@ spec:
   # to and include providers from `extras/crossplane/providers`
   #
   # DO NOT use slashes in the comment to indicate the path, just "->".
+  #
+  # This deploys the whole directory including `kustomization.yaml` in subdirectories such as `.../crossplane/providers/functions/kustomization.yaml`!
   path: "./management-clusters/{replaced in management-clusters -> <MC_NAME> -> kustomization.yaml}/crossplane/providers"
   prune: false
   retryInterval: 1m

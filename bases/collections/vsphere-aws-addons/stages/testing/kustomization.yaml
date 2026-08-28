@@ -1,3 +1,5 @@
+components:
+  - ../../../shared/extras/patches/ocirepo-semver-rc-or-stable/
 patches:
   - target:
       kind: Konfiguration

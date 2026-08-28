@@ -9,5 +9,10 @@ patches:
       name: konfigure-operator
       namespace: giantswarm
     path: semver-konfigure-operator.yaml
+  - target:
+      kind: OCIRepository
+      name: kyverno-policies-ux
+      namespace: giantswarm
+    path: semver-kyverno-policies-ux.yaml
 resources:
   - ../../base

@@ -2,7 +2,7 @@
 apiVersion: konfigure.giantswarm.io/v1alpha1
 kind: Konfiguration
 metadata:
-  name: muster-konfiguration
+  name: agent-platform-konfiguration
   namespace: flux-giantswarm
 spec:
   targets:
@@ -15,10 +15,10 @@ spec:
         - name: installation
           value: "${cluster_name}"
     iterations:
-      muster:
+      agent-platform:
         variables:
           - name: app
-            value: muster
+            value: agent-platform
           - name: team
             value: bumblebee
   destination:
@@ -34,4 +34,3 @@ spec:
       gitRepository:
         name: "giantswarm-config"
         namespace: "flux-giantswarm"
-

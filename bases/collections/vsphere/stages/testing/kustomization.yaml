@@ -1,5 +1,6 @@
 components:
   - ../../base
+  - ../../../shared/extras/patches/ocirepo-semver-rc-or-stable/
 patches: []
 resources:
   - ../../../shared/stages/testing

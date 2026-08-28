@@ -1,0 +1,16 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: agent-platform
+  namespace: flux-giantswarm
+  labels:
+    # Owning team for Flux-failure alert routing and Backstage catalog ownership.
+    application.giantswarm.io/team: bumblebee
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/agent-platform
+  ref:
+    # Floor at 2.5.5, the first release published under the agent-platform chart
+    # name. Earlier releases only exist at the old OCI path.
+    semver: ">=2.5.5"
+  provider: generic

@@ -1,7 +1,8 @@
 # Check https://github.com/fluxcd/flux2/blob/main/.github/runners/prereq.sh if
-# you're updating kustomize versions.
+# you're updating kustomize versions. Keep this matching the kustomize version
+# shipped by kustomize-controller, so a local build behaves like a cluster one.
 KUSTOMIZE := ./bin/kustomize
-KUSTOMIZE_VERSION ?= v4.5.7
+KUSTOMIZE_VERSION ?= v5.6.0
 
 YQ := ./bin/yq
 YQ_VERSION := 4.31.2
@@ -16,6 +17,25 @@ build-catalogs-with-defaults: $(KUSTOMIZE) ## Build Giant Swarm catalogs with de
 	mkdir -p output
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone bases/catalogs -o output/catalogs-with-defaults.yaml
 
+
+# Deliberately no --load-restrictor: management clusters consume these
+# collections as remote bases, and kustomize enforces LoadRestrictionsRootOnly
+# inside the git clone it creates for them, no matter what --load-restrictor
+# says. Building with the default here is what catches what kustomize-controller
+# would reject.
+.PHONY: build-collections
+build-collections: $(KUSTOMIZE) ## Build every collection stage the way kustomize-controller would
+	@echo "====> $@"
+	@rc=0; \
+	for dir in bases/collections/*/stages/*/; do \
+		if $(KUSTOMIZE) build "$$dir" >/dev/null; then \
+			echo "ok    $$dir"; \
+		else \
+			echo "FAIL  $$dir"; \
+			rc=1; \
+		fi; \
+	done; \
+	exit $$rc
 
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"

@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: agentic-platform
+  name: agent-platform
   namespace: flux-giantswarm
   labels:
     # Owning team for Flux-failure alert routing and Backstage catalog ownership.
@@ -11,49 +11,49 @@ metadata:
 spec:
   # Explicitly set release name to avoid Flux generating a prefixed name
   # when targetNamespace differs from HelmRelease namespace
-  releaseName: agentic-platform
+  releaseName: agent-platform
   # CRDs are app-owned: each component ships its own crds/ and the meta-package
   # sets crds: CreateReplace per component (chart >=1.10.0). CR-before-CRD
   # ordering is handled inside each child release (connectivity/mcps dependsOn
   # the CRD-owning component), so the meta-package needs no CRD-bundle dependsOn.
   chartRef:
     kind: OCIRepository
-    name: agentic-platform
+    name: agent-platform
     namespace: flux-giantswarm
   install:
     remediation:
       retries: 10
       remediateLastFailure: false
   interval: 10m
-  targetNamespace: agentic-platform
+  targetNamespace: agent-platform
   timeout: 20m
   upgrade:
     remediation:
       retries: 10
       remediateLastFailure: false
-  # GitOps topology for the meta-package (chart >=1.5.1). The chart renders each
+  # GitOps topology for the meta-package. The chart renders each
   # component as its own OCIRepository + HelmRelease. Create those Flux objects in
   # flux-giantswarm (exempt from the flux-multi-tenancy Kyverno policy, which would
   # otherwise reject child HelmReleases for missing serviceAccountName) and route
-  # the workloads to the agentic-platform namespace. Each component owns its CRDs
+  # the workloads to the agent-platform namespace. Each component owns its CRDs
   # (crds: CreateReplace); there is no separate CRD bundle to delegate to.
   values:
     gitops:
       namespace: flux-giantswarm
-      targetNamespace: agentic-platform
+      targetNamespace: agent-platform
   valuesFrom:
     # ConfigMap rendered by Konfiguration from shared-configs template.
-    # NOTE: requires a matching `agentic-platform` template in giantswarm-config
+    # NOTE: requires a matching `agent-platform` template in giantswarm-config
     # that renders values under the umbrella's `muster:` subchart prefix
     # (e.g. muster.muster.oauth.server.baseUrl, not oauth.server.baseUrl).
     - kind: ConfigMap
-      name: agentic-platform-konfiguration
+      name: agent-platform-konfiguration
       valuesKey: configmap-values.yaml
     # Secret rendered by Konfiguration from the shared-configs secret-values template.
     # Per-cluster overrides (e.g. kagent.providers.anthropic.apiKey) are
-    # SOPS-encrypted in giantswarm-configs under installations/<cluster>/apps/agentic-platform/.
+    # SOPS-encrypted in giantswarm-configs under installations/<cluster>/apps/agent-platform/.
     # optional: true so clusters without a secret override still reconcile.
     - kind: Secret
-      name: agentic-platform-konfiguration
+      name: agent-platform-konfiguration
       valuesKey: secret-values.yaml
       optional: true

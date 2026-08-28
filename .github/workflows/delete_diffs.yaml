@@ -16,11 +16,15 @@ jobs:
         continue-on-error: true
         id: fc
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          # this workflow is triggered by `issue_comment`, where
+          # `github.event.pull_request` is not set
+          issue-number: ${{ github.event.issue.number }}
           comment-author: 'github-actions[bot]'
           body-includes: Rendered manifest diff
       - name: Delete diff comments
         uses: jungwinter/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1.1.0
+        # nothing to delete if no diff comment was found
+        if: steps.fc.outputs.comment-id != ''
         continue-on-error: true
         with:
           type: delete

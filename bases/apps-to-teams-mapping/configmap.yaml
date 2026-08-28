@@ -14,6 +14,9 @@ data:
   agent: bumblebee
   agentgateway: bumblebee
   ailefroide-app: chapter-se
+  agent-platform-connectivity: bumblebee
+  agent-platform-mcps: bumblebee
+  agent-platform: bumblebee
   alertmanager-to-github: atlas
   alloy-podlogs-crds: atlas
   alloy: atlas

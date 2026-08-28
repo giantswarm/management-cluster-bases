@@ -1,0 +1,63 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xworkloadidentities.crossplane.giantswarm.io
+spec:
+  group: crossplane.giantswarm.io
+  names:
+    kind: XWorkloadIdentity
+    plural: xworkloadidentities
+  claimNames:
+    kind: WorkloadIdentity
+    plural: workloadidentities
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                clusterName:
+                  type: string
+                provider:
+                  type: string
+                  enum:
+                    - aks
+                    - azure
+                location:
+                  type: string
+                subscriptionID:
+                  type: string
+                resourceGroupName:
+                  type: string
+                subject:
+                  type: string
+                template:
+                  type: string
+                  description: |
+                    Values template, shaped like a Helm chart values document.
+                    Rendered into the `values` key of the generated ConfigMap.
+                    Supported placeholders: ${clientID}, ${tenantID},
+                    ${principalID}, ${issuerURL}.
+              required:
+                - clusterName
+                - provider
+                - location
+                - subscriptionID
+                - resourceGroupName
+                - subject
+            status:
+              type: object
+              properties:
+                issuerURL:
+                  type: string
+                principalID:
+                  type: string
+                clientID:
+                  type: string
+                tenantID:
+                  type: string
