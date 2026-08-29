@@ -2,4 +2,3 @@ namePrefix: common-
 resources:
   - mimir-ruler-evaluation-failures.yaml
   - grafanapostgresqlarchivingfailures.yaml
-  - konfigureoperatorschemafetchfailed.yaml
