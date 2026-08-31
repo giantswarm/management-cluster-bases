@@ -174,7 +174,6 @@ data:
   kyverno-policies: shield
   kyverno-policy-operator: shield
   kyverno: shield
-  loadtest-app: cabbage
   local-path-provisioner: rocket
   loki: atlas
   mcp-capi: bumblebee
