@@ -6,5 +6,10 @@ patches:
     patch:
       '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
       "testing"}}]'
+  - target:
+      kind: OCIRepository
+      name: app-admission-controller
+      namespace: giantswarm
+    path: digest-app-admission-controller.yaml
 resources:
   - ../../base
