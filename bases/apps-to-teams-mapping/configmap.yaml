@@ -12,6 +12,7 @@ data:
   agent-platform: bumblebee
   agent-sandbox: bumblebee
   agent: bumblebee
+  agentgateway-crds: bumblebee
   agentgateway: bumblebee
   ailefroide-app: chapter-se
   alertmanager-to-github: atlas
@@ -137,7 +138,6 @@ data:
   image-distribution-operator: rocket
   important-service: honeybadger
   ingress-nginx: cabbage
-  ingress-sla: cabbage
   inspektor-gadget: planeteers
   irsa-servicemonitors: phoenix
   jiralert: shield
@@ -174,7 +174,6 @@ data:
   kyverno-policies: shield
   kyverno-policy-operator: shield
   kyverno: shield
-  loadtest-app: cabbage
   local-path-provisioner: rocket
   loki: atlas
   mcp-capi: bumblebee
