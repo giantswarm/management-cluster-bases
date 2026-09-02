@@ -183,6 +183,7 @@ data:
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
+  model-manager: bumblebee
   multus-cni: rocket
   muster-crds: bumblebee
   muster: bumblebee
