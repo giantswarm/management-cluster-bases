@@ -157,6 +157,8 @@ data:
   konfigure-operator: honeybadger
   kong-app: cabbage
   kserve-crd: bumblebee
+  kserve-llmisvc-crd: bumblebee
+  kserve-llmisvc-resources: bumblebee
   kserve-resources: bumblebee
   kserve-runtime-configs: bumblebee
   kube-downscaler: planeteers
