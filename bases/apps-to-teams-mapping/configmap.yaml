@@ -169,6 +169,7 @@ data:
   kubeedge-cloudcore: rocket
   kubescape: shield
   kyverno-crds: shield
+  kyverno-playground: shield
   kyverno-policies-connectivity: cabbage
   kyverno-policies-dx: honeybadger
   kyverno-policies-observability: atlas
