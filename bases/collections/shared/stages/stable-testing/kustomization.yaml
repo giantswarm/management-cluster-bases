@@ -14,5 +14,10 @@ patches:
       name: kyverno-policies-ux
       namespace: giantswarm
     path: semver-kyverno-policies-ux.yaml
+  - target:
+      kind: OCIRepository
+      name: app-admission-controller
+      namespace: giantswarm
+    path: digest-app-admission-controller.yaml
 resources:
   - ../../base

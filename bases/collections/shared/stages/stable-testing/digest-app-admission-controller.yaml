@@ -1,0 +1,4 @@
+# app-admission-controller 2.0.2-dev.sunset-psp-removal.2026-08-27.16-46-08.hbc5efa4
+- op: add
+  path: /spec/ref/digest
+  value: sha256:9fa9f5748be939daa312efcfe271abd2428cb8aa62183ff68546b453fa621217
