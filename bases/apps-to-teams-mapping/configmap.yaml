@@ -6,6 +6,7 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
+  agent-manager: bumblebee
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
   agent-platform-standalone: bumblebee
