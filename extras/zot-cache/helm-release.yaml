@@ -7,7 +7,7 @@ spec:
   interval: 5m
   provider: generic
   ref:
-    tag: "2.9.0"
+    tag: "2.9.1"
   url: oci://gsoci.azurecr.io/charts/giantswarm/zot
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
