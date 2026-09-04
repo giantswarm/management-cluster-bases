@@ -8,7 +8,7 @@ spec:
   interval: 10m
   provider: generic
   ref:
-    semver: x.x.x
+    tag: 2.2.3
   url: oci://gsoci.azurecr.io/charts/giantswarm/dex-app
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
