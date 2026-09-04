@@ -4,8 +4,12 @@
 
 PRO is an MCP server that exposes Giant Swarm's GitHub Projects V2 boards
 (roadmap and customer boards) to AI assistants over the Model Context Protocol
-(streamable HTTP transport). End users authenticate against GitHub via OAuth
-2.1; PRO acts as the OAuth issuer for the MCP token.
+(streamable HTTP transport). It runs bearer-only: every request carries a GitHub
+token the caller obtained itself, PRO verifies it against the GitHub API and
+uses it for that request, so board changes are attributed to the person. PRO
+owns no GitHub OAuth App and runs no authorization server; muster holds the
+person's GitHub grant (obtained with the Dex GitHub App's client) and pins
+GitHub as the authorization server on the pro MCPServer.
 
 ## Usage
 
@@ -16,14 +20,20 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/pro?ref=main
-  - oauth-credentials.enc.yaml
 ```
 
 ## Configuration
 
-- **Templates**: `shared-configs/default/apps/pro/`
-- **Secrets**: SOPS-encrypted Kubernetes Secret `pro-oauth` (keys `client-id`,
-  `client-secret`) in `<customer>-management-clusters/management-clusters/<mc>/extras/pro/`
+- **Templates**: `shared-configs/default/apps/pro/` (`OAUTH_BEARER_ONLY=true`,
+  `OAUTH_ISSUER_URL` = the public URL, which is the RFC 9728 resource
+  identifier)
+- **Secrets**: none. PRO holds no credentials of its own.
+- **muster side**: an `MCPServer` for PRO with `spec.auth.authorizationServer`
+  pinned to `https://github.com/login/oauth` (authorize/token endpoints,
+  `clientCredentialsSecretRef` naming the Dex GitHub App's client Secret,
+  `grantScope: subject`). See
+  `<customer>-management-clusters/management-clusters/<mc>/extras/agent-platform/mcpservers/`
+  on gazelle for the reference manifest.
 
 ## Version Strategy
 
@@ -56,15 +66,15 @@ replacements:
           create: true
 ```
 
-### GitHub OAuth App
+### GitHub authorization
 
-A GitHub OAuth App must be registered with this Authorization callback URL:
-
-```
-https://pro.<codename>.<base>/github/callback
-```
-
-The resulting Client ID and Client Secret are stored in the `pro-oauth` Secret.
+PRO accepts GitHub user tokens; it registers nothing at GitHub itself. The
+GitHub App whose client muster uses (the Dex GitHub App of the installation)
+must list muster's callback URL
+`https://muster.<codename>.<base>/oauth/proxy/callback`, carry the
+Organization → Projects read & write permission (plus the repository
+permissions the other GitHub-backed servers need) and be installed on the
+organization that owns the boards.
 
 ## Deploying to a Cluster
 
@@ -83,34 +93,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://github.com/giantswarm/management-cluster-bases//extras/pro?ref=main
-  - oauth-credentials.enc.yaml
 ```
 
-### 3. Create the OAuth credentials secret
-
-Create `oauth-credentials.yaml` (plaintext, do **not** commit):
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pro-oauth
-  namespace: mcp-pro
-type: Opaque
-stringData:
-  client-id: "<github-oauth-app-client-id>"
-  client-secret: "<github-oauth-app-client-secret>"
-```
-
-Encrypt with SOPS:
-
-```bash
-export SOPS_AGE_KEY="op://Dev Common/<mc>.agekey/notesPlain"
-op run -- sops -e oauth-credentials.yaml > oauth-credentials.enc.yaml
-rm oauth-credentials.yaml
-```
-
-### 4. Add to the extras kustomization
+### 3. Add to the extras kustomization
 
 In `<customer>-management-clusters/management-clusters/<mc>/extras/kustomization.yaml`:
 
@@ -119,6 +104,12 @@ resources:
   # ... existing extras ...
   - ./pro/
 ```
+
+### 4. Register PRO with muster
+
+Add an `MCPServer` for `http://pro.mcp-pro.svc.cluster.local:8080/mcp`
+(`toolPrefix: pro`, `auth.type: oauth`) with the authorization server pinned to
+GitHub as described under Configuration.
 
 ## Troubleshooting
 
@@ -149,3 +140,7 @@ kubectl describe helmrelease pro -n flux-giantswarm
 kubectl get pods -n mcp-pro
 kubectl logs -n mcp-pro -l app.kubernetes.io/name=pro
 ```
+
+A healthy bearer-only start logs `Bearer-only auth enabled`. `OAuth 2.1
+enabled` means `GITHUB_OAUTH_CLIENT_ID`/`GITHUB_OAUTH_CLIENT_SECRET` are still
+set: they take precedence over `OAUTH_BEARER_ONLY`.
