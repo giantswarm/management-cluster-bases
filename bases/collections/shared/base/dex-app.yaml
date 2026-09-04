@@ -40,8 +40,5 @@ spec:
     name: dex-app-konfiguration
     valuesKey: configmap-values.yaml
   - kind: Secret
-    name: dex-app-default-dex-config
-    valuesKey: default
-  - kind: Secret
     name: dex-app-konfiguration
     valuesKey: secret-values.yaml
