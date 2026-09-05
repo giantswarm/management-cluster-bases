@@ -4,7 +4,15 @@
 
 [mcp-capi](https://github.com/giantswarm/mcp-capi) is the Model Context Protocol
 server for Cluster API: it lets agents list and inspect clusters, machines and
-machine deployments and drive lifecycle operations on the management cluster.
+machine deployments on the management cluster.
+
+Agents get **read-only** access: the chart runs with `readOnly: true`, so only
+the tools that read (list, get, status, health, kubeconfig, backup, provider
+lookups) are registered and every mutating Kubernetes call is refused. The
+clusters on a management cluster are rendered by the cluster charts from Apps
+and HelmReleases in Git; `gitopsGuard: true` refuses writes to such objects
+should writes ever be enabled, because the controller would revert them. Both
+are stated in the `shared-configs` template.
 
 It runs as an OAuth 2.1 resource server (`mcp-oauth`) and **acts as the
 person**: muster forwards the caller's Dex ID token, mcp-capi validates it and
