@@ -1,0 +1,31 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mcp-capi
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
+spec:
+  # Explicitly set release name to avoid Flux generating a prefixed name
+  # when targetNamespace differs from HelmRelease namespace
+  releaseName: mcp-capi
+  chartRef:
+    kind: OCIRepository
+    name: mcp-capi
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: mcp-capi
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
+    - kind: ConfigMap
+      name: mcp-capi-konfiguration
+      valuesKey: configmap-values.yaml
