@@ -7,12 +7,18 @@ server for Cluster API: it lets agents list and inspect clusters, machines and
 machine deployments on the management cluster.
 
 Agents get **read-only** access: the chart runs with `readOnly: true`, so only
-the tools that read (list, get, status, health, kubeconfig, backup, provider
-lookups) are registered and every mutating Kubernetes call is refused. The
-clusters on a management cluster are rendered by the cluster charts from Apps
-and HelmReleases in Git; `gitopsGuard: true` refuses writes to such objects
-should writes ever be enabled, because the controller would revert them. Both
-are stated in the `shared-configs` template.
+the tools that read (list, get, status, health, backup, provider lookups) are
+registered and every mutating Kubernetes call is refused. The clusters on a
+management cluster are rendered by the cluster charts from Apps and
+HelmReleases in Git; `gitopsGuard: true` refuses writes to such objects should
+writes ever be enabled, because the controller would revert them.
+
+Workload cluster **credentials never leave the management cluster** through an
+agent: `exposeKubeconfig: false` (the default since mcp-capi 0.4.0) keeps
+`capi_get_kubeconfig` unregistered and makes `capi_backup_cluster` refuse
+`include_secrets`, read-only or not. This is an absolute rule on Giant Swarm
+management clusters; do not set it to true in a cluster's `user-values`. All
+three switches are stated in the `shared-configs` template.
 
 It runs as an OAuth 2.1 resource server (`mcp-oauth`) and **acts as the
 person**: muster forwards the caller's Dex ID token, mcp-capi validates it and
