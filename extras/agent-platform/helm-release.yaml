@@ -21,6 +21,13 @@ spec:
     name: agent-platform
     namespace: flux-giantswarm
   install:
+    # The meta chart's own crds/ are the bundled Flux engine's (flux-engine subchart: the Flux and
+    # Flux Operator CRDs), which is off on management clusters (components.flux.enabled: false below).
+    # helm-controller applies a chart's crds/ BEFORE it renders the templates, so Skip guards the
+    # cluster's own Flux CRDs even if that value were ever flipped: nothing in the meta chart's crds/
+    # may touch this cluster. Component CRDs are unaffected — they live in the child HelmReleases
+    # the chart renders, each with its own crds: CreateReplace.
+    crds: Skip
     remediation:
       retries: 10
       remediateLastFailure: false
@@ -28,6 +35,8 @@ spec:
   targetNamespace: agent-platform
   timeout: 20m
   upgrade:
+    # Same as install.crds: the meta chart's crds/ are the engine's, never applied here.
+    crds: Skip
     remediation:
       retries: 10
       remediateLastFailure: false

@@ -42,6 +42,12 @@ be set here, in the fleet, before the chart release that ships the engine
 (roadmap#4348). Chart releases without the engine ignore the key: the only
 effect is the `flux: {enabled: false}` entry in the component roster the meta
 chart forwards to `agent-platform-connectivity`, which renders identically.
+The `HelmRelease` additionally sets `install.crds: Skip` and `upgrade.crds: Skip`:
+helm-controller applies a chart's `crds/` *before* it renders the templates, and
+the meta chart's `crds/` are exactly the engine's Flux CRDs, so with `Skip` even
+a flipped value cannot touch the cluster's own Flux CRDs (component CRDs are
+unaffected — they live in the child `HelmRelease`s, each with its own
+`crds: CreateReplace`).
 
 ## Tenant identity of the agents
 
