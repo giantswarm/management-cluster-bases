@@ -6,6 +6,7 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
+  agent-manager: bumblebee
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
   agent-platform-standalone: bumblebee
@@ -157,6 +158,8 @@ data:
   konfigure-operator: honeybadger
   kong-app: cabbage
   kserve-crd: bumblebee
+  kserve-llmisvc-crd: bumblebee
+  kserve-llmisvc-resources: bumblebee
   kserve-resources: bumblebee
   kserve-runtime-configs: bumblebee
   kube-downscaler: planeteers
@@ -167,6 +170,7 @@ data:
   kubeedge-cloudcore: rocket
   kubescape: shield
   kyverno-crds: shield
+  kyverno-playground: shield
   kyverno-policies-connectivity: cabbage
   kyverno-policies-dx: honeybadger
   kyverno-policies-observability: atlas
@@ -183,6 +187,7 @@ data:
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
+  model-manager: bumblebee
   multus-cni: rocket
   muster-crds: bumblebee
   muster: bumblebee
