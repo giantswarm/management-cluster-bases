@@ -54,6 +54,11 @@ agent-manager and the portal), so this extra no longer carries them. On a cluste
 where kagent is off the chart renders neither the identity nor the `kagent`
 namespace.
 
+The `kagent` namespace itself is this extra's (`namespace.yaml`), on every management
+cluster: the fleet stages kagent's Secrets there before turning kagent on, and the
+chart only renders the namespace while kagent is on. When kagent is on the chart
+adopts it (same spec).
+
 ## Prerequisites
 
 CRDs are **app-owned** (chart >= v1.10.0): each component ships its own CRDs in
