@@ -145,6 +145,7 @@ data:
   k6-operator: cabbage
   k8s-audit-metrics: tenet
   k8s-dns-node-cache-app: cabbage
+  kagent-crds: bumblebee
   kagent: bumblebee
   kamaji-etcd: rocket
   kamaji: rocket
@@ -184,6 +185,7 @@ data:
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
   mcp-prometheus: atlas
+  mcp-timescale: bumblebee
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
