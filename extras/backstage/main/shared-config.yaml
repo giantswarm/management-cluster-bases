@@ -174,6 +174,56 @@ data:
         - sub-page:scaffolder/editor: false
         - sub-page:scaffolder/templating-extensions: false
 
+      # Same list as `extensions` plus the Agent Platform section. Instances
+      # whose management cluster runs the agent-platform chart include this
+      # fragment instead of `extensions`; a change to one list belongs in both.
+      extensionsAgentPlatform:
+        - api:home/visits
+        - app-root-element:home/visit-listener
+        - page:gs/clusters
+        - nav-item:gs/clusters
+        - page:gs/deployments
+        - nav-item:gs/deployments
+        - page:flux
+        - nav-item:flux
+        - page:agent-platform
+        - nav-item:agent-platform
+
+        - entity-card:pagerduty/EntityPagerDutyCard: false
+        - entity-card:pagerduty/EntityPagerDutySmallCard: false
+        - nav-item:pagerduty/PagerDutyNavBarItem: false
+        - page:pagerduty: false
+
+        - entity-card:gs/app-deployment
+        - entity-card:catalog/who-is-on-call
+        - entity-card:catalog/about
+
+        - entity-card:catalog/depends-on-components: false
+        - entity-card:catalog/depends-on-resources: false
+        - entity-card:catalog/has-subcomponents: false
+        - entity-card:catalog/labels: false
+        - entity-card:catalog-graph/relations: false
+        - entity-card:api-docs/provided-apis: false
+        - entity-card:api-docs/consumed-apis: false
+        - entity-card:api-docs/consuming-components: false
+        - entity-card:api-docs/providing-components: false
+        - entity-card:github-actions/recent-workflow-runs: false
+
+        - entity-content:techdocs: false
+        - entity-content:kubernetes/kubernetes: false
+        - entity-content:api-docs/definition: false
+        - entity-content:api-docs/apis: false
+        - entity-content:catalog/dependencies: false
+
+        - entity-context-menu-item:catalog/unregister-entity: false
+
+        - page:scaffolder:
+            config:
+              title: Create things
+        - sub-page:scaffolder/actions: false
+        - sub-page:scaffolder/editor: false
+        - sub-page:scaffolder/templating-extensions: false
+
       routes:
         bindings:
           catalog.createComponent: scaffolder.root
