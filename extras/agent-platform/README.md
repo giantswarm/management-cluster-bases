@@ -43,6 +43,17 @@ be set here, in the fleet, before the chart release that ships the engine
 effect is the `flux: {enabled: false}` entry in the component roster the meta
 chart forwards to `agent-platform-connectivity`, which renders identically.
 
+## Tenant identity of the agents
+
+The agents' Flux `HelmRelease`s (written by the portal and by agent-manager into the
+`kagent` namespace) execute as the ServiceAccount `kagent-flux`, bound to
+`cluster-admin` by a namespace-scoped RoleBinding. Since agent-platform#282 the
+`agent-platform-connectivity` chart renders both objects itself whenever the kagent
+component is on (`kagent.fluxServiceAccountName`, one value that also drives
+agent-manager and the portal), so this extra no longer carries them. On a cluster
+where kagent is off the chart renders neither the identity nor the `kagent`
+namespace.
+
 ## Prerequisites
 
 CRDs are **app-owned** (chart >= v1.10.0): each component ships its own CRDs in
