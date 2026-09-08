@@ -22,12 +22,26 @@ spec:
     gitops:
       namespace: flux-giantswarm      # render the child Flux CRs here — exempt
       targetNamespace: agent-platform  #   from flux-multi-tenancy; workloads here
+    components:
+      flux:
+        enabled: false                 # the cluster runs its own Flux
 ```
 
 The child `HelmRelease`s are created in `flux-giantswarm` (the
 flux-multi-tenancy Kyverno policy rejects HelmReleases lacking
 `serviceAccountName` outside `flux-giantswarm`/`giantswarm`/`monitoring`) and
 install their workloads into `agent-platform`.
+
+`components.flux.enabled: false` switches off the chart's bundled Flux engine
+(a conditional `flux-engine` subchart carrying the Flux CRDs, the Flux Operator
+and a `FluxInstance`; **on by default** so the chart installs on a cluster that
+has no Flux). A management cluster runs its own Flux and installs this chart
+*through* it, and helm-controller's default `install.crds: Create` would
+force-apply the subchart's Flux CRDs over the cluster's own — so the value must
+be set here, in the fleet, before the chart release that ships the engine
+(roadmap#4348). Chart releases without the engine ignore the key: the only
+effect is the `flux: {enabled: false}` entry in the component roster the meta
+chart forwards to `agent-platform-connectivity`, which renders identically.
 
 ## Prerequisites
 

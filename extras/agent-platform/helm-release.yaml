@@ -41,6 +41,13 @@ spec:
     gitops:
       namespace: flux-giantswarm
       targetNamespace: agent-platform
+    components:
+      flux:
+        # The chart's bundled Flux engine (conditional flux-engine subchart, default on) must stay
+        # off on management clusters: they run their own Flux and install this chart through it, and
+        # helm-controller's default install.crds: Create would force-apply the chart's Flux CRDs over
+        # the cluster's own. Set before the chart release that carries the engine (roadmap#4348).
+        enabled: false
   valuesFrom:
     # ConfigMap rendered by Konfiguration from shared-configs template.
     # NOTE: requires a matching `agent-platform` template in giantswarm-config
