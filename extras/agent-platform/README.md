@@ -5,7 +5,10 @@ This directory contains the Flux resources required to deploy the
 
 ## Overview
 
-`agent-platform` (chart >=2.5.5) is a **meta-package (app-of-apps)**:
+`agent-platform` (chart `>=2.5.5 <4.0.0`; the 4.x line -- the kagent API v2
+migration, giantswarm/giantswarm#37705 -- is admitted per installation through an
+overlay patch of the `OCIRepository`, see giantswarm/management-cluster-bases#738)
+is a **meta-package (app-of-apps)**:
 it no longer bundles sub-charts, but renders each component as its own Flux
 `OCIRepository` + `HelmRelease` (version ranges resolved at reconcile time, so
 component releases roll forward with no PR). Components include muster (MCP
