@@ -12,5 +12,13 @@ spec:
   ref:
     # Floor at 2.5.5, the first release published under the agent-platform chart
     # name. Earlier releases only exist at the old OCI path.
-    semver: ">=2.5.5"
+    # Ceiling below 4.0.0: the 4.x line is the kagent API v2 migration (Substrate
+    # as the mandatory agent compute, new CRDs, a fresh kagent database, the
+    # Agent CRD removed -- giantswarm/giantswarm#37705). It needs per-installation
+    # prerequisites (Kubernetes 1.35, three feature gates) and a migration Job
+    # before it may roll, so no 4.x reaches an installation through this base.
+    # An installation is admitted to 4.x through its own overlay patch of this
+    # OCIRepository (giantswarm/management-cluster-bases#738); 3.x releases keep
+    # flowing to every installation.
+    semver: ">=2.5.5 <4.0.0"
   provider: generic
