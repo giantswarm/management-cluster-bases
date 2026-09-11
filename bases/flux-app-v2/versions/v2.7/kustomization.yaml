@@ -6,7 +6,7 @@ helmCharts:
     namespace: flux-giantswarm
     repo: oci://gsoci.azurecr.io/charts/giantswarm
     releaseName: flux-giantswarm
-    version: 1.12.0
+    version: 1.12.1-dev.pin-api-versions-2-7.2026-09-11.10-02-15.h92e2d1b
     apiVersions:
     - autoscaling.k8s.io/v1
     valuesInline:
