@@ -1,0 +1,76 @@
+# XRD + Composition that create an AKS control-plane user-assigned identity and
+# its three role assignments in one shot. The principal ID and the identity ARM
+# ID are carried from the UserAssignedIdentity status into the composite status
+# and back down into the RoleAssignments, so nothing has to be copy-pasted.
+#
+# Modelled on giantswarm/management-cluster-bases
+#   extras/crossplane/compositions/azure/workloadidentity/
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xakscontrolplaneidentities.crossplane.giantswarm.io
+spec:
+  group: crossplane.giantswarm.io
+  names:
+    kind: XAKSControlPlaneIdentity
+    plural: xakscontrolplaneidentities
+  claimNames:
+    kind: AKSControlPlaneIdentity
+    plural: akscontrolplaneidentities
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionRef:
+    name: aks-controlplane-identity
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                name:
+                  description: Name of the user-assigned identity in Azure.
+                  type: string
+                providerConfigName:
+                  description: Crossplane ProviderConfig to use.
+                  type: string
+                location:
+                  type: string
+                resourceGroupName:
+                  description: Resource group the identity is created in.
+                  type: string
+                privateDNSZoneID:
+                  description: ARM ID of the private DNS zone for the API server.
+                  type: string
+                virtualNetworkID:
+                  description: ARM ID of the VNet holding the cluster subnet.
+                  type: string
+                asoPrincipalID:
+                  description: |
+                    Object ID (not clientID) of the service principal behind the
+                    AzureClusterIdentity that CAPZ/ASO uses. Gets Managed Identity
+                    Operator on the identity so it can attach it to the ManagedCluster.
+                  type: string
+              required:
+                - name
+                - providerConfigName
+                - location
+                - resourceGroupName
+                - privateDNSZoneID
+                - virtualNetworkID
+                - asoPrincipalID
+            status:
+              type: object
+              properties:
+                identityID:
+                  description: ARM ID -- feed into controlPlaneIdentity.userAssignedIdentityResourceID.
+                  type: string
+                principalID:
+                  type: string
+                clientID:
+                  type: string
+                tenantID:
+                  type: string

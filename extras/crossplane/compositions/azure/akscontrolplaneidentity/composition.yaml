@@ -1,0 +1,135 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aks-controlplane-identity
+spec:
+  compositeTypeRef:
+    apiVersion: crossplane.giantswarm.io/v1alpha1
+    kind: XAKSControlPlaneIdentity
+  mode: Pipeline
+  pipeline:
+    - step: patch-and-transform
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: user-assigned-identity
+            base:
+              apiVersion: managedidentity.azure.upbound.io/v1beta1
+              kind: UserAssignedIdentity
+              spec:
+                deletionPolicy: Delete
+                forProvider:
+                  tags:
+                    managed_by: crossplane
+                    purpose: aks-control-plane-identity
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.name
+                toFieldPath: spec.forProvider.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.location
+                toFieldPath: spec.forProvider.location
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.resourceGroupName
+                toFieldPath: spec.forProvider.resourceGroupName
+              # These four are the whole point: they lift the generated values
+              # out of the managed resource and onto the composite.
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.id
+                toFieldPath: status.identityID
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.principalId
+                toFieldPath: status.principalID
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.clientId
+                toFieldPath: status.clientID
+              - type: ToCompositeFieldPath
+                fromFieldPath: status.atProvider.tenantId
+                toFieldPath: status.tenantID
+
+          # Lets the control plane create the API server A record and the
+          # virtual network link inside the BYO private DNS zone.
+          - name: role-private-dns-zone-contributor
+            base:
+              apiVersion: authorization.azure.upbound.io/v1beta1
+              kind: RoleAssignment
+              spec:
+                forProvider:
+                  roleDefinitionName: Private DNS Zone Contributor
+                  principalType: ServicePrincipal
+                  skipServicePrincipalAadCheck: true
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.privateDNSZoneID
+                toFieldPath: spec.forProvider.scope
+              # Required: the RoleAssignment is not rendered at all until the
+              # identity reports a principal ID, so there is no window where it
+              # would be created with an empty principal.
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.principalID
+                toFieldPath: spec.forProvider.principalId
+                policy:
+                  fromFieldPath: Required
+
+          # Needed to join the BYO subnet and to link that VNet to the zone above.
+          - name: role-network-contributor
+            base:
+              apiVersion: authorization.azure.upbound.io/v1beta1
+              kind: RoleAssignment
+              spec:
+                forProvider:
+                  roleDefinitionName: Network Contributor
+                  principalType: ServicePrincipal
+                  skipServicePrincipalAadCheck: true
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.virtualNetworkID
+                toFieldPath: spec.forProvider.scope
+              # Required: the RoleAssignment is not rendered at all until the
+              # identity reports a principal ID, so there is no window where it
+              # would be created with an empty principal.
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.principalID
+                toFieldPath: spec.forProvider.principalId
+                policy:
+                  fromFieldPath: Required
+
+          # Lets CAPZ/ASO attach the identity to the ManagedCluster. Here the
+          # principal is the ASO service principal and the SCOPE is the identity,
+          # so it is status.identityID that gets carried down instead.
+          - name: role-aso-managed-identity-operator
+            base:
+              apiVersion: authorization.azure.upbound.io/v1beta1
+              kind: RoleAssignment
+              spec:
+                forProvider:
+                  roleDefinitionName: Managed Identity Operator
+                  principalType: ServicePrincipal
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.providerConfigName
+                toFieldPath: spec.providerConfigRef.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.asoPrincipalID
+                toFieldPath: spec.forProvider.principalId
+              - type: FromCompositeFieldPath
+                fromFieldPath: status.identityID
+                toFieldPath: spec.forProvider.scope
+                policy:
+                  fromFieldPath: Required
+
+    - step: auto-ready
+      functionRef:
+        name: function-auto-ready
