@@ -210,6 +210,25 @@ Once merged, the rendered `agent-platform-konfiguration` ConfigMap carries the
 one render on the unknown keys. Nothing is applied (`remediateLastFailure:
 false` keeps the running release); step 2 resolves it.
 
+**The gap between step 1 and step 2 is a race** (giantswarm/agent-platform#416).
+The 3.x meta release forwards the 4.x values to its child `kagent` `HelmRelease`
+(the 0.x wrapper, `crds: CreateReplace`), whose chart refuses them on every
+retry (`additional properties 'harness' not allowed`) -- and helm-controller
+applies a chart's `crds/` *before* the render, so every retry re-applies the
+0.x `kagent.dev` CRDs. When step 2 lands, the 4.x meta chart's storage-version
+backup hook deletes the three CRDs still stored at `v1alpha2`; on graveler
+(2026-09-13) the looping 0.x release re-created them one second later and
+`kagent-crds` stalled on `status.storedVersions[0]: Invalid value: "v1alpha2"`
+until the CRDs were deleted by hand. With giantswarm/agent-platform#416 the hook
+sets that release's crds policy to `Skip` before it deletes and fails loudly,
+naming the release, if the CRDs come back. Landing steps 1 and 2 within one Flux
+interval (10 minutes) keeps the 0.x release out of the loop altogether;
+otherwise expect the retry loop between the two merges and read a stalled
+`kagent-crds` as this race (`kubectl get crd modelconfigs.kagent.dev -o
+jsonpath='{.metadata.creationTimestamp} {.metadata.labels}'` -- a
+`creationTimestamp` after the hook's `recorded-at` with
+`helm.toolkit.fluxcd.io/name: kagent`).
+
 ### Step 2 -- the bound lift and the agents, in the installation's management-clusters repository
 
 One pull request in `giantswarm-management-clusters` (or the customer's
