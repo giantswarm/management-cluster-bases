@@ -1,0 +1,32 @@
+name: Build changed collections
+
+# Called by the GitOps repos. Renders the `collections` overlay of every
+# management cluster the pull request touches, so that a broken change there
+# stops at review instead of at the cluster. Manual changes to that path used to
+# reach `main` unchecked and with an empty rendered diff.
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  build-changed-collections:
+    name: Build changed collections
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The target diffs against the pull request base, which needs history.
+          fetch-depth: 0
+
+      # The shared Makefile target downloads its own pinned kustomize, so this
+      # runs exactly like `make build-changed-collections` on a laptop.
+      - name: Build the collections of every touched management cluster
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: make build-changed-collections DIFF_BASE="$BASE_SHA"
