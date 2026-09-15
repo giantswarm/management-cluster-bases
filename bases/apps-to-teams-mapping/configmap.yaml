@@ -127,6 +127,7 @@ data:
   gateway-api-crds: cabbage
   gel: shield
   goldilocks: tenet
+  gpu-node-pool: bumblebee
   gpu-operator: tenet
   grafana-organization: shield
   grafana: atlas
@@ -180,6 +181,7 @@ data:
   kyverno: shield
   local-path-provisioner: rocket
   loki: atlas
+  marge: bumblebee
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
@@ -192,6 +194,7 @@ data:
   multus-cni: rocket
   muster-crds: bumblebee
   muster: bumblebee
+  n8n: planeteers
   net-exporter: cabbage
   network-policies: cabbage
   node-exporter-app: tenet
