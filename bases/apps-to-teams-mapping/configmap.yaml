@@ -127,6 +127,7 @@ data:
   gateway-api-crds: cabbage
   gel: shield
   goldilocks: tenet
+  gpu-node-pool: bumblebee
   gpu-operator: tenet
   grafana-organization: shield
   grafana: atlas
