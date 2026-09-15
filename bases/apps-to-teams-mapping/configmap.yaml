@@ -180,6 +180,7 @@ data:
   kyverno: shield
   local-path-provisioner: rocket
   loki: atlas
+  marge: bumblebee
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
