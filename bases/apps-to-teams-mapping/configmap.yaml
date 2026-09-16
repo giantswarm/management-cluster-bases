@@ -48,7 +48,7 @@ data:
   azuredisk-csi-driver-app: phoenix
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
-  bumblebee-reposetup-proof-app-20260916: bumblebee
+  bumblebee-accept-devctl-20260917: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
