@@ -83,6 +83,7 @@ data:
   cluster-cleaner: tenet
   cluster-cloud-director: rocket
   cluster-eks: phoenix
+  cluster-manager: bumblebee
   cluster-probes: phoenix
   cluster-proxmox: rocket
   cluster-vsphere: rocket
@@ -126,7 +127,9 @@ data:
   gateway-api-config: cabbage
   gateway-api-crds: cabbage
   gel: shield
+  giantswarm-repo-manager: bumblebee
   goldilocks: tenet
+  gpu-node-pool: bumblebee
   gpu-operator: tenet
   grafana-organization: shield
   grafana: atlas
@@ -180,6 +183,7 @@ data:
   kyverno: shield
   local-path-provisioner: rocket
   loki: atlas
+  marge: bumblebee
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
@@ -192,6 +196,7 @@ data:
   multus-cni: rocket
   muster-crds: bumblebee
   muster: bumblebee
+  n8n: planeteers
   net-exporter: cabbage
   network-policies: cabbage
   node-exporter-app: tenet
