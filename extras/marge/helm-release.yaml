@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: marge
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
+spec:
+  releaseName: marge
+  chartRef:
+    kind: OCIRepository
+    name: marge
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: marge
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  values:
+    # The scheduled sweep acts as the sweep GitHub App. Every installation
+    # that turns a schedule on supplies the credential in its own overlay.
+    schedule:
+      daily:
+        enabled: false
+      weekly:
+        enabled: false

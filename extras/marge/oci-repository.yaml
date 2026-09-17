@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: marge
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/marge
+  ref:
+    semver: ">=0.0.0"
+  provider: generic
