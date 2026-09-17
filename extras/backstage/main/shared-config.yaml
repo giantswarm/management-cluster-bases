@@ -137,6 +137,10 @@ data:
           - "'unsafe-eval'"
           - 'blob:'
 
+      # The baseline extension list. Two supersets follow it --
+      # `extensionsAgentPlatform` and `extensionsAgentPlatformAiChat` -- because
+      # `$include` replaces a key wholesale and cannot append to it. An instance
+      # includes exactly one of the three; a change here belongs in all three.
       extensions:
         - api:home/visits
         - app-root-element:home/visit-listener
@@ -184,7 +188,8 @@ data:
 
       # Same list as `extensions` plus the Agent Platform section. Instances
       # whose management cluster runs the agent-platform chart include this
-      # fragment instead of `extensions`; a change to one list belongs in both.
+      # fragment instead of `extensions`; a change to one list belongs in all
+      # three.
       extensionsAgentPlatform:
         - api:home/visits
         - app-root-element:home/visit-listener
