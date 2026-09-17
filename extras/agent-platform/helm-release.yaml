@@ -33,6 +33,14 @@ spec:
       remediateLastFailure: false
   interval: 10m
   targetNamespace: agent-platform
+  # Bound: 12m or more (helm-controller's default is 5m). The install is Helm's --wait, which
+  # returns when every component HelmRelease is Ready; with kagent on, the first 4.x reconcile
+  # (kagent API v2, giantswarm/giantswarm#37705) installs nine component HelmReleases plus Substrate
+  # and kagent in dependency order — about 5–6 minutes through the cluster's own Flux (≈220 s of
+  # --wait for the components, then Substrate and kagent readiness), measured by the ATS own-Flux
+  # scenario of giantswarm/agent-platform#380 (tests/ats/test_own_flux.py sets 12m). A HelmRelease
+  # on the default fails its first 4.x reconcile on the timeout. A per-installation cut-over
+  # patch never lowers this value.
   timeout: 20m
   upgrade:
     # Same as install.crds: the meta chart's crds/ are the engine's, never applied here.
