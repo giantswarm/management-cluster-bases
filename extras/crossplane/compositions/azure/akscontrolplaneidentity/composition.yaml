@@ -61,6 +61,7 @@ spec:
               kind: RoleAssignment
               spec:
                 forProvider:
+                  # https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/networking#private-dns-zone-contributor
                   roleDefinitionName: Private DNS Zone Contributor
                   principalType: ServicePrincipal
                   skipServicePrincipalAadCheck: true
@@ -87,6 +88,7 @@ spec:
               kind: RoleAssignment
               spec:
                 forProvider:
+                  # https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/networking#network-contributor
                   roleDefinitionName: Network Contributor
                   principalType: ServicePrincipal
                   skipServicePrincipalAadCheck: true
@@ -115,6 +117,7 @@ spec:
               kind: RoleAssignment
               spec:
                 forProvider:
+                  # https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/identity#managed-identity-operator
                   roleDefinitionName: Managed Identity Operator
                   principalType: ServicePrincipal
             patches:
