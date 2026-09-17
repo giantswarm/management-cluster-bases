@@ -228,6 +228,7 @@ data:
   proxmox-csi-plugin: rocket
   proxysocks: cabbage
   pyroscope: atlas
+  rancher-fleet: rocket
   rbac-bootstrap: shield
   rbac-operator: shield
   release-exporter: planeteers
