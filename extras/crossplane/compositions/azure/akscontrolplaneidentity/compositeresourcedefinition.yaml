@@ -17,7 +17,7 @@ spec:
   claimNames:
     kind: AKSControlPlaneIdentity
     plural: akscontrolplaneidentities
-  defaultCompositeDeletePolicy: Background
+  defaultCompositeDeletePolicy: Foreground
   defaultCompositionRef:
     name: aks-controlplane-identity
   versions:
