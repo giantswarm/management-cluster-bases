@@ -22,11 +22,3 @@ spec:
     remediation:
       retries: 10
       remediateLastFailure: false
-  values:
-    # The scheduled sweep acts as the sweep GitHub App. Every installation
-    # that turns a schedule on supplies the credential in its own overlay.
-    schedule:
-      daily:
-        enabled: false
-      weekly:
-        enabled: false
