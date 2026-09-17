@@ -2,3 +2,5 @@ resources:
   - workloadidentity/composition.yaml
   - workloadidentity/compositionresourcedefinition.yaml
   - workloadidentity/providerconfig.yaml
+  - akscontrolplaneidentity/composition.yaml
+  - akscontrolplaneidentity/compositeresourcedefinition.yaml
