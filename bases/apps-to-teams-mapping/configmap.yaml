@@ -49,7 +49,6 @@ data:
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
   bumblebee-accept-devctl-20260917: bumblebee
-  bumblebee-accept-page-app-20260917: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
