@@ -127,6 +127,7 @@ data:
   gateway-api-config: cabbage
   gateway-api-crds: cabbage
   gel: shield
+  giantswarm-platform-manager: bumblebee
   giantswarm-repo-manager: bumblebee
   goldilocks: tenet
   gpu-node-pool: bumblebee
