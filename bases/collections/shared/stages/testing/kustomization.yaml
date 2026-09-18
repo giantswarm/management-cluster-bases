@@ -1,0 +1,8 @@
+patches:
+  - target:
+      kind: Konfiguration
+    patch:
+      '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
+      "testing"}}]'
+resources:
+  - ../../base

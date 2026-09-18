@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - target:
+      kind: OCIRepository
+    patch: |-
+      apiVersion: source.toolkit.fluxcd.io/v1
+      kind: OCIRepository
+      metadata:
+        name: patched-by-target-selector
+      spec:
+        ref:
+          tag: null
+          semver: ">=0.0.0-0"
+          semverFilter: '^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$'
