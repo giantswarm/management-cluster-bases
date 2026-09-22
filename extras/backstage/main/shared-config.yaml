@@ -189,7 +189,7 @@ data:
       # Same list as `extensions` plus the Agent Platform section. Instances
       # whose management cluster runs the agent-platform chart include this
       # fragment instead of `extensions`; a change to one list belongs in all
-      # three.
+      # six.
       extensionsAgentPlatform:
         - api:home/visits
         - app-root-element:home/visit-listener
@@ -239,7 +239,7 @@ data:
 
       # Same list as `extensionsAgentPlatform` plus the AI Assistant. Instances
       # that also configure an `aiChat` provider include this fragment; a change
-      # to one list belongs in all three.
+      # to one list belongs in all six.
       extensionsAgentPlatformAiChat:
         - api:home/visits
         - app-root-element:home/visit-listener
@@ -267,6 +267,184 @@ data:
         - entity-card:gs/app-deployment
         - entity-card:catalog/who-is-on-call
         - entity-card:catalog/about
+
+        - entity-card:catalog/depends-on-components: false
+        - entity-card:catalog/depends-on-resources: false
+        - entity-card:catalog/has-subcomponents: false
+        - entity-card:catalog/labels: false
+        - entity-card:catalog-graph/relations: false
+        - entity-card:api-docs/provided-apis: false
+        - entity-card:api-docs/consumed-apis: false
+        - entity-card:api-docs/consuming-components: false
+        - entity-card:api-docs/providing-components: false
+        - entity-card:github-actions/recent-workflow-runs: false
+
+        - entity-content:techdocs: false
+        - entity-content:kubernetes/kubernetes: false
+        - entity-content:api-docs/definition: false
+        - entity-content:api-docs/apis: false
+        - entity-content:catalog/dependencies: false
+
+        - entity-context-menu-item:catalog/unregister-entity: false
+
+        - page:scaffolder:
+            config:
+              title: Create things
+        - sub-page:scaffolder/actions: false
+        - sub-page:scaffolder/editor: false
+        - sub-page:scaffolder/templating-extensions: false
+
+      # Same list as `extensions` plus the Grafana dashboards card. A portal
+      # that wires the Grafana plugin — its app-config carries the /grafana/api
+      # proxy entry against its installation's Grafana and the service-account
+      # token — includes this fragment instead of `extensions`: the card is
+      # disabled in the portal by default and switched on through
+      # `app.extensions`, which Backstage replaces wholesale per config file
+      # and `$include` cannot append to, so each combination is a full list of
+      # its own; a change to one list belongs in all six.
+      extensionsGrafanaDashboards:
+        - api:home/visits
+        - app-root-element:home/visit-listener
+        - page:gs/clusters
+        - nav-item:gs/clusters
+        - page:gs/deployments
+        - nav-item:gs/deployments
+        - page:flux
+        - nav-item:flux
+
+        - entity-card:pagerduty/EntityPagerDutyCard: false
+        - entity-card:pagerduty/EntityPagerDutySmallCard: false
+        - nav-item:pagerduty/PagerDutyNavBarItem: false
+        - page:pagerduty: false
+
+        - entity-card:gs/app-deployment
+        - entity-card:catalog/who-is-on-call
+        - entity-card:catalog/about
+        # The Grafana dashboards card, disabled in the portal by default: it
+        # reads Grafana's search API through the /grafana/api proxy entry of
+        # the portal's own app-config, so only a portal that wires the plugin
+        # (the proxy entry and its token) switches it on.
+        - entity-card:catalog/grafana-dashboards
+
+        - entity-card:catalog/depends-on-components: false
+        - entity-card:catalog/depends-on-resources: false
+        - entity-card:catalog/has-subcomponents: false
+        - entity-card:catalog/labels: false
+        - entity-card:catalog-graph/relations: false
+        - entity-card:api-docs/provided-apis: false
+        - entity-card:api-docs/consumed-apis: false
+        - entity-card:api-docs/consuming-components: false
+        - entity-card:api-docs/providing-components: false
+        - entity-card:github-actions/recent-workflow-runs: false
+
+        - entity-content:techdocs: false
+        - entity-content:kubernetes/kubernetes: false
+        - entity-content:api-docs/definition: false
+        - entity-content:api-docs/apis: false
+        - entity-content:catalog/dependencies: false
+
+        - entity-context-menu-item:catalog/unregister-entity: false
+
+        - page:scaffolder:
+            config:
+              title: Create things
+        - sub-page:scaffolder/actions: false
+        - sub-page:scaffolder/editor: false
+        - sub-page:scaffolder/templating-extensions: false
+
+      # Same list as `extensionsAgentPlatform` plus the Grafana dashboards card
+      # (see `extensionsGrafanaDashboards`): the fragment of a portal that wires
+      # the Grafana plugin on an installation with the agent platform; a change
+      # to one list belongs in all six.
+      extensionsAgentPlatformGrafanaDashboards:
+        - api:home/visits
+        - app-root-element:home/visit-listener
+        - page:gs/clusters
+        - nav-item:gs/clusters
+        - page:gs/deployments
+        - nav-item:gs/deployments
+        - page:flux
+        - nav-item:flux
+        - page:agent-platform
+        - nav-item:agent-platform
+
+        - entity-card:pagerduty/EntityPagerDutyCard: false
+        - entity-card:pagerduty/EntityPagerDutySmallCard: false
+        - nav-item:pagerduty/PagerDutyNavBarItem: false
+        - page:pagerduty: false
+
+        - entity-card:gs/app-deployment
+        - entity-card:catalog/who-is-on-call
+        - entity-card:catalog/about
+        # The Grafana dashboards card, disabled in the portal by default: it
+        # reads Grafana's search API through the /grafana/api proxy entry of
+        # the portal's own app-config, so only a portal that wires the plugin
+        # (the proxy entry and its token) switches it on.
+        - entity-card:catalog/grafana-dashboards
+
+        - entity-card:catalog/depends-on-components: false
+        - entity-card:catalog/depends-on-resources: false
+        - entity-card:catalog/has-subcomponents: false
+        - entity-card:catalog/labels: false
+        - entity-card:catalog-graph/relations: false
+        - entity-card:api-docs/provided-apis: false
+        - entity-card:api-docs/consumed-apis: false
+        - entity-card:api-docs/consuming-components: false
+        - entity-card:api-docs/providing-components: false
+        - entity-card:github-actions/recent-workflow-runs: false
+
+        - entity-content:techdocs: false
+        - entity-content:kubernetes/kubernetes: false
+        - entity-content:api-docs/definition: false
+        - entity-content:api-docs/apis: false
+        - entity-content:catalog/dependencies: false
+
+        - entity-context-menu-item:catalog/unregister-entity: false
+
+        - page:scaffolder:
+            config:
+              title: Create things
+        - sub-page:scaffolder/actions: false
+        - sub-page:scaffolder/editor: false
+        - sub-page:scaffolder/templating-extensions: false
+
+      # Same list as `extensionsAgentPlatformAiChat` plus the Grafana dashboards
+      # card (see `extensionsGrafanaDashboards`): the fragment of a portal that
+      # wires the Grafana plugin and configures an `aiChat` provider on an
+      # installation with the agent platform; a change to one list belongs in
+      # all six.
+      extensionsAgentPlatformAiChatGrafanaDashboards:
+        - api:home/visits
+        - app-root-element:home/visit-listener
+        - page:gs/clusters
+        - nav-item:gs/clusters
+        - page:gs/deployments
+        - nav-item:gs/deployments
+        - page:flux
+        - nav-item:flux
+        - page:agent-platform
+        - nav-item:agent-platform
+        # AI Assistant (drawer + page). Disabled by default in the plugin:
+        # it needs an LLM provider under `aiChat`, so an instance without one
+        # would show an assistant that cannot answer.
+        - page:ai-chat
+        - api:ai-chat/service
+        - api:ai-chat/drawer
+        - app-root-element:ai-chat/drawer
+
+        - entity-card:pagerduty/EntityPagerDutyCard: false
+        - entity-card:pagerduty/EntityPagerDutySmallCard: false
+        - nav-item:pagerduty/PagerDutyNavBarItem: false
+        - page:pagerduty: false
+
+        - entity-card:gs/app-deployment
+        - entity-card:catalog/who-is-on-call
+        - entity-card:catalog/about
+        # The Grafana dashboards card, disabled in the portal by default: it
+        # reads Grafana's search API through the /grafana/api proxy entry of
+        # the portal's own app-config, so only a portal that wires the plugin
+        # (the proxy entry and its token) switches it on.
+        - entity-card:catalog/grafana-dashboards
 
         - entity-card:catalog/depends-on-components: false
         - entity-card:catalog/depends-on-resources: false
