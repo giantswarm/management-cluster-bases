@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: search-mcp
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/search-mcp
+  ref:
+    semver: ">=0.0.0"
+  provider: generic
