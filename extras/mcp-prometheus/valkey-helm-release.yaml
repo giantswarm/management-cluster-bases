@@ -23,14 +23,15 @@ spec:
       retries: 10
       remediateLastFailure: false
   values:
-    auth:
-      enabled: true
-      usersExistingSecret: "mcp-prometheus-valkey-auth"
-      aclUsers:
-        default:
-          permissions: "~* &* +@all"
-          passwordKey: "default"
+    # Valkey standalone mode for mcp-prometheus session storage
     valkey:
+      auth:
+        enabled: true
+        usersExistingSecret: "mcp-prometheus-valkey-auth"
+        aclUsers:
+          default:
+            permissions: "~* &* +@all"
+            passwordKey: "default"
       architecture: standalone
       podSecurityContext:
         fsGroup: 1000
@@ -48,16 +49,18 @@ spec:
         allowPrivilegeEscalation: false
         seccompProfile:
           type: RuntimeDefault
-      master:
-        persistence:
-          enabled: false
-        resources:
-          limits:
-            cpu: 200m
-            memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 64Mi
+      deploymentStrategy: Recreate
+      dataStorage:
+        enabled: true
+        requestedSize: "1Gi"
+        keepPvc: true
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
       metrics:
         enabled: true
         exporter:
