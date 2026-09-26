@@ -1,23 +1,44 @@
-apiVersion: application.giantswarm.io/v1alpha1
-kind: App
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
 metadata:
-  annotations:
-    chart-operator.giantswarm.io/force-helm-upgrade: "true"
-  labels:
-    app-operator.giantswarm.io/version: 0.0.0
   name: dex-app
   namespace: giantswarm
 spec:
-  catalog: control-plane-catalog
-  config:
-    configMap:
-      name: dex-app-konfiguration
-      namespace: giantswarm
-    secret:
-      name: dex-app-konfiguration
-      namespace: giantswarm
-  kubeConfig:
-    inCluster: true
+  interval: 10m
+  provider: generic
+  ref:
+    tag: 2.2.3
+  url: oci://gsoci.azurecr.io/charts/giantswarm/dex-app
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
   name: dex-app
   namespace: giantswarm
-  version: 2.2.3
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: dex-app
+    namespace: giantswarm
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: dex-app
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: dex-app-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: dex-app-konfiguration
+    valuesKey: secret-values.yaml
