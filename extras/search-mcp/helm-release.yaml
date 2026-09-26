@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: search-mcp
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: bumblebee
+spec:
+  releaseName: search-mcp
+  chartRef:
+    kind: OCIRepository
+    name: search-mcp
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: search-mcp
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
