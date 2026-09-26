@@ -7,7 +7,7 @@ metadata:
     # Owning team for Flux-failure alert routing and Backstage catalog ownership.
     application.giantswarm.io/team: bumblebee
 spec:
-  interval: 10m
+  interval: 1m
   url: oci://gsoci.azurecr.io/charts/giantswarm/agent-platform
   ref:
     # Floor at 2.5.5, the first release published under the agent-platform chart

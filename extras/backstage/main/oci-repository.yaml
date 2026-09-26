@@ -4,7 +4,7 @@ metadata:
   name: backstage
   namespace: flux-giantswarm
 spec:
-  interval: 10m
+  interval: 1m
   provider: generic
   ref:
     tag: SHOULD-PATCH-THIS-IN-CMC-REPOSITORY
