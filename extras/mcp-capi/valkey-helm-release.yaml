@@ -25,18 +25,17 @@ spec:
       remediateLastFailure: false
   values:
     # Valkey standalone mode for mcp-capi OAuth session storage
-    # Auth configuration at root level for subchart
-    auth:
-      enabled: true
-      # Use existing secret created per-cluster (SOPS encrypted)
-      usersExistingSecret: "mcp-capi-valkey-auth"
-      # Default user with full access
-      aclUsers:
-        default:
-          permissions: "~* &* +@all"
-          # Password from secret key matching username
-          passwordKey: "default"
     valkey:
+      auth:
+        enabled: true
+        # Use existing secret created per-cluster (SOPS encrypted)
+        usersExistingSecret: "mcp-capi-valkey-auth"
+        # Default user with full access
+        aclUsers:
+          default:
+            permissions: "~* &* +@all"
+            # Password from secret key matching username
+            passwordKey: "default"
       architecture: standalone
       # Pod security context for Kyverno compliance
       podSecurityContext:
