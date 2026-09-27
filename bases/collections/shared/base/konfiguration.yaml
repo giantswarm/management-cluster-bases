@@ -15,6 +15,12 @@ spec:
         - name: installation
           value: "${cluster_name}"
     iterations:
+      alloy-logexporter:
+        variables:
+          - name: app
+            value: alloy-logexporter
+          - name: team
+            value: atlas
       app-admission-controller:
         variables:
           - name: app
