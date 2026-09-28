@@ -17,6 +17,13 @@ spec:
       remediateLastFailure: false
   interval: 10m
   targetNamespace: search-mcp
+  # Per-installation values (e.g. the forwarded-token settings); optional so an
+  # installation without them still reconciles.
+  valuesFrom:
+    - kind: ConfigMap
+      name: search-mcp-user-values
+      valuesKey: values
+      optional: true
   timeout: 10m
   upgrade:
     remediation:
