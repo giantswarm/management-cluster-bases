@@ -21,6 +21,13 @@ spec:
     kind: OCIRepository
     name: plugin-barman-cloud
     namespace: giantswarm
+  # The plugin's TLS pair comes from the chart's cert-manager Issuer and
+  # Certificates. If they are deleted out of band (a cert-manager CRD
+  # reinstall cascades to every Certificate), Helm never recreates them, the
+  # orphaned Secret stops renewing, and every CNPG cluster using the plugin
+  # stops reconciling once it expires. Drift detection re-applies them.
+  driftDetection:
+    mode: enabled
   install:
     remediation:
       remediateLastFailure: false
