@@ -49,6 +49,7 @@ data:
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
   beekeeper: bumblebee
+  buzz: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
