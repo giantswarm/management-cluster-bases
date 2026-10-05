@@ -157,7 +157,6 @@ data:
   karpenter: phoenix
   keda: atlas
   klaus-gateway: bumblebee
-  klaus-operator: bumblebee
   klaus: bumblebee
   konfigure-operator: honeybadger
   kong-app: cabbage
