@@ -119,7 +119,6 @@ data:
   external-dns-crossplane-resources: cabbage
   external-secrets: honeybadger
   falco: shield
-  fe-docs: bumblebee
   fluent-logshipping-app: atlas
   flux-app: honeybadger
   flux-operator: honeybadger
