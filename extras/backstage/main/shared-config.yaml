@@ -13,6 +13,10 @@ data:
         - name: giantswarm-default
           namespace: envoy-gateway-system
     backstage:
+      # The portal's whole configuration comes from these values and the
+      # instance's own appConfig: the image's bundled app-config.yaml, which the
+      # chart's default args load as a base layer for a bare install, stays out.
+      args: []
       # Default agent-avatar CSP source (see sharedConfig.csp.imgSrc). Overridden
       # per instance to the installation's own `https://avatars.<baseDomain>`
       # (space-separated for the fleet-wide Dev Portal). Defaulting to `'self'`
