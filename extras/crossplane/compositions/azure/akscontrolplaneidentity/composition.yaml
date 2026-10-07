@@ -133,6 +133,57 @@ spec:
                 policy:
                   fromFieldPath: Required
 
+    # Patch-and-transform cannot loop, so the user-supplied roles are rendered
+    # here. Resource names come from a hash of scope and role rather than the
+    # list index, so reordering the list does not recreate assignments in Azure.
+    - step: additional-role-assignments
+      functionRef:
+        name: function-kcl
+      input:
+        apiVersion: krm.kcl.dev/v1alpha1
+        kind: KCLInput
+        spec:
+          source: |
+            import crypto
+
+            oxr = option("params").oxr
+            dxr = option("params").dxr
+
+            principalID = dxr?.status?.principalID or oxr?.status?.principalID
+
+            # Azure compares scopes and role names case-insensitively, so the
+            # key does too. Must match the uniqueness rule in the XRD.
+            _key = lambda a {
+                a.scope.lower() + "|" + (a?.roleDefinitionName or a?.roleDefinitionId).lower()
+            }
+
+            _assignment = lambda a {
+                {
+                    apiVersion = "authorization.azure.upbound.io/v1beta1"
+                    kind = "RoleAssignment"
+                    metadata.annotations = {
+                        "krm.kcl.dev/composition-resource-name" = "extra-role-" + crypto.sha256(_key(a))[:10]
+                    }
+                    spec = {
+                        forProvider = {
+                            scope = a.scope
+                            principalId = principalID
+                            principalType = "ServicePrincipal"
+                            skipServicePrincipalAadCheck = True
+                            if a?.roleDefinitionName:
+                                roleDefinitionName = a.roleDefinitionName
+                            if a?.roleDefinitionId:
+                                roleDefinitionId = a.roleDefinitionId
+                        }
+                        providerConfigRef.name = oxr.spec.providerConfigName
+                    }
+                }
+            }
+
+            # Same as the Required policy on the fixed assignments: render
+            # nothing until the identity reports a principal ID.
+            items = [_assignment(a) for a in oxr.spec?.additionalRoleAssignments or []] if principalID else []
+
     - step: auto-ready
       functionRef:
         name: function-auto-ready
