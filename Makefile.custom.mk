@@ -7,6 +7,11 @@ KUSTOMIZE_VERSION ?= v5.6.0
 YQ := ./bin/yq
 YQ_VERSION := 4.31.2
 
+# Keep this matching the appVersion of the crossplane chart pinned in
+# extras/crossplane/helmrelease-crossplane.yaml, so render behaves like the MCs.
+CROSSPLANE := ./bin/crossplane
+CROSSPLANE_VERSION ?= v1.15.2
+
 GNU_SED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
 OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
 ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
@@ -37,10 +42,23 @@ build-collections: $(KUSTOMIZE) ## Build every collection stage the way kustomiz
 	done; \
 	exit $$rc
 
+# Needs a Docker-compatible daemon: render runs each composition function as a
+# container. With podman, export DOCKER_HOST=unix://$$XDG_RUNTIME_DIR/podman/podman.sock.
+.PHONY: test-compositions
+test-compositions: $(CROSSPLANE) ## Render every Crossplane composition example
+	@echo "====> $@"
+	./tools/test-compositions.sh $(CROSSPLANE)
+
 $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"
 	mkdir -p $(dir $@)
 	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
+	chmod +x $@
+
+$(CROSSPLANE): ## Download the crossplane CLI locally if necessary.
+	@echo "====> $@"
+	mkdir -p $(dir $@)
+	curl -sfL "https://releases.crossplane.io/stable/$(CROSSPLANE_VERSION)/bin/$(OS)_$(ARCH)/crank" > $@
 	chmod +x $@
 
 $(YQ): ## Download yq locally if necessary.
