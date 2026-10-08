@@ -3,12 +3,12 @@
 Creates the user-assigned identity a private AKS cluster with a BYO private DNS
 zone needs for its control plane, plus the role assignments that go with it:
 
-| Role                          | Principal                | Scope                        |
-|-------------------------------|--------------------------|------------------------------|
-| Private DNS Zone Contributor  | control-plane identity   | `spec.privateDNSZoneID`      |
-| Network Contributor           | control-plane identity   | `spec.virtualNetworkID`      |
-| Managed Identity Operator     | `spec.asoPrincipalID`    | the control-plane identity   |
-| anything in `spec.additionalRoleAssignments` | control-plane identity | per entry |
+| Role                             | Principal                | Scope                        |
+|----------------------------------|--------------------------|------------------------------|
+| Private DNS Zone Contributor     | control-plane identity   | `spec.privateDNSZoneID`      |
+| Network Contributor              | control-plane identity   | `spec.virtualNetworkID`      |
+| Managed Identity Operator        | `spec.asoPrincipalID`    | the control-plane identity   |
+| `spec.additionalRoleAssignments` | control-plane identity   | per entry                    |
 
 ## Usage
 
@@ -16,13 +16,13 @@ zone needs for its control plane, plus the role assignments that go with it:
 apiVersion: crossplane.giantswarm.io/v1alpha1
 kind: AKSControlPlaneIdentity
 metadata:
-  name: mycluster-cp-identity
+  name: mycluster-controlplane
   namespace: org-example
 spec:
-  name: mycluster-cp-identity
+  name: mycluster-controlplane
   providerConfigName: example
   location: westeurope
-  resourceGroupName: mycluster-rg
+  resourceGroupName: mycluster
   privateDNSZoneID: /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/privateDnsZones/privatelink.westeurope.azmk8s.io
   virtualNetworkID: /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/virtualNetworks/<vnet>
   asoPrincipalID: <object ID of the service principal behind the AzureClusterIdentity>
@@ -35,9 +35,22 @@ spec:
       roleDefinitionId: /subscriptions/<sub>/providers/Microsoft.Authorization/roleDefinitions/<guid>
 ```
 
-Once the claim is ready, copy `status.identityID` into the cluster's
-`global.providerSpecific.controlPlaneIdentity.userAssignedIdentityResourceID`
-(with `type: UserAssigned`). Nothing does this automatically yet.
+The identity's resource ID is known before it is provisioned, so the cluster
+can reference it in the same manifest as the claim:
+
+```
+/subscriptions/<sub>/resourceGroups/<spec.resourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<spec.name>
+```
+
+For the claim above, that gives these cluster values:
+
+```yaml
+global:
+  providerSpecific:
+    controlPlaneIdentity:
+      type: UserAssigned
+      userAssignedIdentityResourceID: /subscriptions/<sub>/resourceGroups/mycluster/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mycluster-controlplane
+```
 
 ## Additional role assignments
 
