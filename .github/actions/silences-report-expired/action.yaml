@@ -6,6 +6,15 @@ inputs:
   directory_pattern:
     description: "Bash pattern to match directories containing silence CR files"
     required: true
+  token:
+    description: >-
+      Token the expired-silence pull requests are pushed and opened with. The
+      default github.token opens them as github-actions[bot], whose pull request
+      runs wait for a member's approval; a member's token (the
+      TAYLORBOT_GITHUB_ACTION organisation secret) gets runs that start on
+      their own.
+    required: false
+    default: ${{ github.token }}
 runs:
   using: "composite"
   steps:
@@ -33,9 +42,18 @@ runs:
     - name: Report expired silences
       shell: bash
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ inputs.token }}
       run: |
         shopt -s globstar
+        # Push with the token as well: a branch pushed with another identity
+        # than the pull request's would again start runs that wait for approval.
+        # GIT_CONFIG_* is command-line scope, so the empty value drops the
+        # header actions/checkout configured before the token's is added.
+        export GIT_CONFIG_COUNT=2
+        export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader GIT_CONFIG_VALUE_0=
+        export GIT_CONFIG_KEY_1=http.https://github.com/.extraheader
+        GIT_CONFIG_VALUE_1="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+        export GIT_CONFIG_VALUE_1
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         for directory in ${{ inputs.directory_pattern }}; do
