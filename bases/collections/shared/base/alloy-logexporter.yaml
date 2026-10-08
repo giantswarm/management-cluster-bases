@@ -8,6 +8,10 @@
 # observability-operator turns it on by creating the `alloy-logexporter-config`
 # ConfigMap, which carries `alloy.enabled: true`, the deployment shape and the Alloy
 # config. That ConfigMap is optional here so this stays valid before it exists.
+#
+# `alloy-logexporter-konfiguration` holds the per-installation values from
+# shared-configs: on CAPA, the IRSA role and its ServiceAccount annotation. The chart
+# renders that role even while disabled.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -76,6 +80,9 @@ spec:
   - kind: ConfigMap
     name: alloy-logexporter-defaults
     valuesKey: values
+  - kind: ConfigMap
+    name: alloy-logexporter-konfiguration
+    valuesKey: configmap-values.yaml
   - kind: ConfigMap
     name: alloy-logexporter-config
     valuesKey: values
