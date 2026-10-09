@@ -70,15 +70,23 @@ data:
           - type: giantswarm
             target: https://github.com/giantswarm/backstage-catalogs-private/blob/main/catalogs/users.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.6.0/templates/app-deployment/template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.3/templates/app-deployment/template.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.6.0/templates/app-deployment/edit-template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.3/templates/app-deployment/edit-template.yaml
           # type: url, not type: giantswarm: the GS location processor stamps
           # `namespace: giantswarm` on entities that declare none, and the Agent
-          # Platform create flow deploys through the hardcoded ref
-          # `template:default/agent-deployment`. Registered as a GS location the
-          # template would land as `template:giantswarm/agent-deployment` and
-          # Deploy would fail with a 404 from POST /api/scaffolder/v2/tasks.
+          # Platform create flow of the portals on the release-v0.244.x line
+          # deploys through the hardcoded ref `template:default/agent-deployment`.
+          # Registered as a GS location the template would land as
+          # `template:giantswarm/agent-deployment` and Deploy would fail with a
+          # 404 from POST /api/scaffolder/v2/tasks.
+          # Pinned at v0.6.0 on purpose: backstage-catalogs v0.7.0 removed the
+          # template (giantswarm/backstage-catalogs#751) while the portals on the
+          # release-v0.244.x line still deploy through it; on main the create
+          # flow goes through agent-manager and reads no template. The
+          # app-deployment pins above move on without it. Remove the location
+          # once every portal that reads this configuration runs a line without
+          # the ref.
           - type: url
             target: https://github.com/giantswarm/backstage-catalogs/blob/v0.6.0/templates/agent-deployment/template.yaml
 

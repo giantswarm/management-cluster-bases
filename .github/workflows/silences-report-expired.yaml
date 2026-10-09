@@ -12,6 +12,11 @@ jobs:
     name: Report expired silences
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The report needs the bot branches' remote refs for its
+          # --force-with-lease push and the history for each silence's author.
+          fetch-depth: 0
       - uses: ./.github/actions/silences-report-expired
         with:
           directory_pattern: 'bases/silences'
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
