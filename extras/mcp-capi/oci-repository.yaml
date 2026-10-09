@@ -9,6 +9,9 @@ spec:
   interval: 1m
   url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-capi
   ref:
-    # Auto-update: deploy latest version automatically
-    semver: ">=0.0.0"
+    # Capped at the newest stable the fleet runs: a new stable reaches the test
+    # installations first, through the OCIRepository patch in their
+    # extras/kustomization.yaml that follows every newer stable, and the
+    # rest of the fleet once this cap is raised after it ran there.
+    semver: "<=0.5.41"
   provider: generic

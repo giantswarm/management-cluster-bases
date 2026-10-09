@@ -25,7 +25,29 @@ resources:
 
 ## Version Strategy
 
-Auto-updates enabled via SemVer range `>=0.0.0`. New versions deploy automatically when pushed to the OCI registry.
+The `OCIRepository` is capped at the newest stable the fleet runs
+(`semver: "<=X.Y.Z"`), so a new stable release never rolls onto every
+installation at once:
+
+1. **Test installations first.** Their `extras/kustomization.yaml` (in the
+   installation's management-clusters repository, next to the `./mcp-*/`
+   entries) lifts the cap and follows every newer stable release:
+
+   ```yaml
+   patches:
+     - patch: |-
+         - op: replace
+           path: /spec/ref/semver
+           value: ">=1.11.2"
+       target:
+         kind: OCIRepository
+         name: mcp-kubernetes
+   ```
+
+2. **Then the fleet.** Once a release ran on the test installations, a pull
+   request here raises the cap in `oci-repository.yaml` to it.
+
+The same strategy holds for `mcp-capi` and `mcp-prometheus`.
 
 ## Prerequisites
 
