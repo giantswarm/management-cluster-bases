@@ -70,9 +70,9 @@ data:
           - type: giantswarm
             target: https://github.com/giantswarm/backstage-catalogs-private/blob/main/catalogs/users.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.2/templates/app-deployment/template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.3/templates/app-deployment/template.yaml
           - type: giantswarm
-            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.2/templates/app-deployment/edit-template.yaml
+            target: https://github.com/giantswarm/backstage-catalogs/blob/v0.7.3/templates/app-deployment/edit-template.yaml
           # type: url, not type: giantswarm: the GS location processor stamps
           # `namespace: giantswarm` on entities that declare none, and the Agent
           # Platform create flow of the portals on the release-v0.244.x line
