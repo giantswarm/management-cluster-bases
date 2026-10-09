@@ -50,7 +50,8 @@ resources:
 
 ## Version Strategy
 
-Auto-updates enabled via SemVer range `>=0.0.0`. New versions deploy automatically when pushed to the OCI registry.
+Capped at the newest stable the fleet runs; test installations follow newer
+stable releases first. See [mcp-kubernetes](../mcp-kubernetes/README.md#version-strategy).
 
 ## Prerequisites
 
