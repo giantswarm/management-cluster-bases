@@ -1,0 +1,16 @@
+# kubescape on management clusters, as a component so a stage can opt in while
+# the others stay without it (towards giantswarm/giantswarm#38223). Installed
+# independently of security-bundle: the bundle's defaults also apply to
+# workload clusters, where kubescape stays disabled for now. Once it has proven
+# itself on the testing and staging stages, move kubescape.yaml into ../../base
+# and the iteration below into base/konfiguration.yaml, and drop this component.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - kubescape.yaml
+patches:
+  - target:
+      kind: Konfiguration
+      name: collection-konfiguration
+      namespace: giantswarm
+    patch: '[{"op": "add", "path": "/spec/targets/iterations/kubescape", "value": {"variables": [{"name": "app", "value": "kubescape"}, {"name": "team", "value": "shield"}]}}]'
