@@ -28,13 +28,9 @@ spec:
       retries: 10
   interval: 5m
   releaseName: kubescape
-  # The chart's namespaced resources are wired to the `kubescape` namespace
-  # (ksNamespace), so the release is installed and stored there. Storing it in
-  # `kubescape` also lets Flux take over the hand-installed releases that exist
-  # on some management clusters instead of installing a second copy next to them.
   storageNamespace: kubescape
   targetNamespace: kubescape
-  # The kubescape install takes longer than Flux's 5m default (see security-bundle).
+  # The kubescape install can take longer than Flux's 5m default (see security-bundle).
   timeout: 15m
   upgrade:
     remediation:
