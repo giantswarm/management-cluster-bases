@@ -1,0 +1,25 @@
+name: Test Crossplane compositions
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - extras/crossplane/**
+      - tools/test-compositions.sh
+      - Makefile.custom.mk
+      - .github/workflows/test-compositions.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  test-compositions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The target downloads its own pinned crossplane CLI, and the runner's
+      # Docker daemon pulls the composition functions anonymously from gsoci.
+      - name: Render every composition example
+        run: make test-compositions

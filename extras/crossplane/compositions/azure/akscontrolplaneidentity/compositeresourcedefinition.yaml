@@ -1,5 +1,5 @@
 # XRD + Composition that create an AKS control-plane user-assigned identity and
-# its three role assignments in one shot. The principal ID and the identity ARM
+# its three role assignments in one shot, plus any additionalRoleAssignments. The principal ID and the identity ARM
 # ID are carried from the UserAssignedIdentity status into the composite status
 # and back down into the RoleAssignments, so nothing has to be copy-pasted.
 #
@@ -54,6 +54,44 @@ spec:
                     AzureClusterIdentity that CAPZ/ASO uses. Gets Managed Identity
                     Operator on the identity so it can attach it to the ManagedCluster.
                   type: string
+                additionalRoleAssignments:
+                  description: |
+                    Extra roles to assign to the control-plane identity, on top
+                    of the three the composition always creates. Each entry
+                    names the role either by display name or by ARM ID.
+                  type: array
+                  maxItems: 20
+                  items:
+                    type: object
+                    properties:
+                      scope:
+                        description: ARM ID the role is assigned on.
+                        type: string
+                        maxLength: 1024
+                        pattern: '^/subscriptions/'
+                      roleDefinitionName:
+                        description: Display name of a built-in role, e.g. "Storage Blob Data Reader".
+                        type: string
+                        maxLength: 256
+                      roleDefinitionId:
+                        description: ARM ID of a (custom) role definition.
+                        type: string
+                        maxLength: 1024
+                        pattern: '^/(subscriptions/[^/]+/)?providers/Microsoft.Authorization/roleDefinitions/'
+                    required:
+                      - scope
+                    x-kubernetes-validations:
+                      - rule: has(self.roleDefinitionName) != has(self.roleDefinitionId)
+                        message: Set exactly one of roleDefinitionName or roleDefinitionId.
+                  # Same case-insensitive key the composition hashes into the
+                  # resource name, so a duplicate fails here instead of in the pipeline.
+                  x-kubernetes-validations:
+                    - rule: >-
+                        self.all(a, self.exists_one(b,
+                        b.scope.lowerAscii() == a.scope.lowerAscii() &&
+                        (has(b.roleDefinitionName) ? b.roleDefinitionName : b.roleDefinitionId).lowerAscii() ==
+                        (has(a.roleDefinitionName) ? a.roleDefinitionName : a.roleDefinitionId).lowerAscii()))
+                      message: Each scope and role combination may only be listed once.
               required:
                 - name
                 - providerConfigName
