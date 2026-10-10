@@ -1,4 +1,3 @@
 namePrefix: common-
 resources:
   - grafanapostgresqlarchivingfailures.yaml
-  - konfigureoperatorschemafetchfailed.yaml
