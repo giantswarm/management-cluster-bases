@@ -20,5 +20,11 @@ spec:
     # An installation is admitted to 4.x through its own overlay patch of this
     # OCIRepository (giantswarm/management-cluster-bases#738); 3.x releases keep
     # flowing to every installation.
+    # This base range is the 3.x line, kept for the installations that still run
+    # 3.x. Every 4.x installation carries the patch
+    # `/spec/ref/semver: ">=4.0.0 <5.0.0"` in its overlay; without it an
+    # installation lands on 3.x. The range moves to ">=4.0.0 <5.0.0", and the
+    # overlay patches that only repeat it go, once no installation runs 3.x
+    # (giantswarm/management-cluster-bases#831).
     semver: ">=2.5.5 <4.0.0"
   provider: generic
