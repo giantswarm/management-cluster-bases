@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "description": "Bump the app-deployment scaffolder template pins of giantswarm/backstage-catalogs in the shared Backstage configuration on a catalog release. The agent-deployment registration stays pinned on purpose.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^extras/backstage/main/shared-config\\.yaml$/"],
+      "matchStrings": [
+        "https://github\\.com/giantswarm/backstage-catalogs/blob/(?<currentValue>v[^/\\s]+)/templates/app-deployment/",
+      ],
+      "depNameTemplate": "giantswarm/backstage-catalogs",
+      "datasourceTemplate": "github-releases",
+    },
+  ],
+  "packageRules": [
+    {
+      "description": "A catalog template change can need a portal release first: always a PR, never automerged.",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["giantswarm/backstage-catalogs"],
+      "automerge": false,
+    },
+  ],
+}
