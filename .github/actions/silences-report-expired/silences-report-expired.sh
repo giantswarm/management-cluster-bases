@@ -95,10 +95,10 @@ find_expired() {
     # Check if Silence is about to expire or already expired
     warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
     if [ "$expiration_date" -le "$today_date" ]; then
-      printf "${RED} - EXPIRED${NC}" >&2
+      printf "%b - EXPIRED%b" "$RED" "$NC" >&2
       expired+=("$latest_commit")
     elif [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
-      printf "${RED} - EXPIRING SOON${NC}" >&2
+      printf "%b - EXPIRING SOON%b" "$RED" "$NC" >&2
       expiring_soon+=("$latest_commit")
     fi
     echo "" >&2
@@ -112,6 +112,26 @@ find_expired() {
   for silence in "${expiring_soon[@]}"; do
     echo "EXPIRING_SOON::$silence"
   done
+}
+
+# enable_auto_merge enables a squash auto-merge on the open pull request of
+# branch $1 when it is approved, not conflicting and has none yet. A refusal is
+# logged and the run goes on.
+enable_auto_merge() {
+  local branch="$1" state
+  state="$(gh pr view "$branch" --json reviewDecision,mergeable,autoMergeRequest \
+    -q '"\(.reviewDecision) \(.mergeable) \(.autoMergeRequest != null)"' || echo "unknown")"
+  case "$state" in
+    "APPROVED "*" true")
+      echo "> $branch: auto-merge already enabled" >&2 ;;
+    "APPROVED CONFLICTING "*)
+      echo "> $branch: approved but conflicting, auto-merge not enabled" >&2 ;;
+    "APPROVED "*)
+      echo "> $branch: approved, enabling auto-merge" >&2
+      _run gh pr merge --squash --auto "$branch" || echo "> $branch: enabling auto-merge refused" >&2 ;;
+    *)
+      echo "> $branch: not approved ($state), auto-merge not enabled" >&2 ;;
+  esac
 }
 
 function _run () {
@@ -160,6 +180,12 @@ $([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL
 
     # Also retitles pull requests opened with an earlier title format.
     _run gh pr edit "$branch_name" --title "$title" --body "$pr_body"
+
+    # A pull request opened while the silence was only expiring soon, or before
+    # auto-merge existed, has none; once approved it would sit unmerged.
+    if [[ "$mode" == "expired" ]]; then
+      enable_auto_merge "$branch_name"
+    fi
   else
     _run gh pr create \
       --head "$branch_name" \
