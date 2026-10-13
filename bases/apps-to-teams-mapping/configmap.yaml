@@ -208,7 +208,6 @@ data:
   observability-platform: atlas
   observability-policies: atlas
   oncall-shift-reporter: planeteers
-  onepassword-scim-bridge: shield
   openssf-scorecard-exporter: shield
   operational-load-exporter: planeteers
   organization-operator: shield
