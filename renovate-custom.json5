@@ -11,6 +11,29 @@
       "depNameTemplate": "giantswarm/backstage-catalogs",
       "datasourceTemplate": "github-releases",
     },
+    {
+      "description": "Raise the cap of an extra's chart once a stable release has soaked (minimumReleaseAge below); the test installations run it first through their lift.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^extras/[^/]+/oci-repository\\.yaml$/"],
+      "matchStrings": [
+        "url: oci://gsoci\\.azurecr\\.io/charts/giantswarm/(?<depName>[^\\s]+)\\n\\s+ref:\\n(?:\\s+#.*\\n)*\\s+semver: \"<=(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+      ],
+      "packageNameTemplate": "giantswarm/{{{depName}}}",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+    },
+    {
+      "description": "Raise the cap of the extras' Valkey stores (chart valkey, released from giantswarm/valkey-app) the same way.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^extras/[^/]+/valkey-oci-repository\\.yaml$/"],
+      "matchStrings": [
+        "url: oci://gsoci\\.azurecr\\.io/charts/giantswarm/valkey\\n\\s+ref:\\n(?:\\s+#.*\\n)*\\s+semver: \"<=(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+      ],
+      "depNameTemplate": "valkey",
+      "packageNameTemplate": "giantswarm/valkey-app",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+    },
   ],
   "packageRules": [
     {
@@ -18,6 +41,17 @@
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["giantswarm/backstage-catalogs"],
       "automerge": false,
+    },
+    {
+      "description": "Extras cap bumps: a PR only once the stable release is older than the soak window, never automerged.",
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["extras/*/oci-repository.yaml", "extras/*/valkey-oci-repository.yaml"],
+      "minimumReleaseAge": "3 days",
+      "internalChecksFilter": "strict",
+      "automerge": false,
+      "semanticCommitType": "fix",
+      "semanticCommitScope": "extras",
+      "commitMessageTopic": "the {{depName}} cap",
     },
   ],
 }
