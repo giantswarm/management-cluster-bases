@@ -47,7 +47,9 @@ installation at once:
 2. **Then the fleet.** Once a release ran on the test installations, a pull
    request here raises the cap in `oci-repository.yaml` to it.
 
-The same strategy holds for `mcp-capi` and `mcp-prometheus`.
+The same strategy holds for `mcp-capi` and `mcp-prometheus`, for the three
+Valkey stores (`OCIRepository` `mcp-*-valkey`), and for `mcp-pagerduty`,
+`search-mcp`, `marge` and `pro`.
 
 ## Prerequisites
 
