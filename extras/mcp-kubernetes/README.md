@@ -45,9 +45,13 @@ installation at once:
    ```
 
 2. **Then the fleet.** Once a release ran on the test installations, a pull
-   request here raises the cap in `oci-repository.yaml` to it.
+   request here raises the cap in `oci-repository.yaml` to it. Renovate opens
+   that pull request once the stable release is 3 days old
+   (`renovate-custom.json5`); it is never automerged.
 
-The same strategy holds for `mcp-capi` and `mcp-prometheus`.
+The same strategy holds for `mcp-capi` and `mcp-prometheus`, for the three
+Valkey stores (`OCIRepository` `mcp-*-valkey`), and for `mcp-pagerduty`,
+`search-mcp`, `marge` and `pro`.
 
 ## Prerequisites
 
