@@ -1,0 +1,46 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kubescape
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: x.x.x
+  url: oci://gsoci.azurecr.io/charts/giantswarm/kubescape
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kubescape
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kubescape
+    namespace: giantswarm
+  install:
+    createNamespace: true
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: kubescape
+  storageNamespace: kubescape
+  targetNamespace: kubescape
+  # The kubescape install can take longer than Flux's 5m default (see security-bundle).
+  timeout: 15m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: kubescape-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: kubescape-konfiguration
+    valuesKey: secret-values.yaml
