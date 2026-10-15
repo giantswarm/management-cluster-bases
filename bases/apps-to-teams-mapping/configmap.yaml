@@ -243,6 +243,7 @@ data:
   squid-proxy: phoenix
   starboard-exporter: shield
   strimzi-kafka-operator: atlas
+  substrate-credential-providers: bumblebee
   team-stamper: honeybadger
   tekton-dashboard-loki-proxy: tenet
   teleport-exporter: shield
