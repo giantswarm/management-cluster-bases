@@ -10,9 +10,10 @@ inputs:
     description: >-
       Token the expired-silence pull requests are pushed and opened with. The
       default github.token opens them as github-actions[bot], whose pull request
-      runs wait for a member's approval; a member's token (the
-      TAYLORBOT_GITHUB_ACTION organisation secret) gets runs that start on
-      their own.
+      runs wait for a member's approval; the giantswarm-release GitHub App's
+      installation token (minted by the caller with actions/create-github-app-token
+      from the RELEASE_BOT_CLIENT_ID and RELEASE_BOT_PRIVATE_KEY organisation
+      secrets) gets runs that start on their own.
     required: false
     default: ${{ github.token }}
 runs:
