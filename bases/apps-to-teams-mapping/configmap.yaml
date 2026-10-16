@@ -49,7 +49,6 @@ data:
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
   beekeeper: bumblebee
-  bumblebee-release-guard-proof-20261016: bumblebee
   buzz: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
