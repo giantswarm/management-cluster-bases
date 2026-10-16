@@ -64,6 +64,8 @@ data:
               - System
               - User
               - Template
+        # Arrays replace, they do not merge: an instance whose own app-config
+        # sets catalog.locations ignores this list (see the README).
         locations:
           - type: giantswarm
             target: https://github.com/giantswarm/backstage-catalogs/blob/main/catalogs/*.yaml
