@@ -213,7 +213,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
 
         - entity-card:pagerduty/EntityPagerDutyCard: false
         - entity-card:pagerduty/EntityPagerDutySmallCard: false
@@ -263,7 +262,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # AI Assistant (drawer + page). Disabled by default in the plugin:
         # it needs an LLM provider under `aiChat`, so an instance without one
         # would show an assistant that cannot answer.
@@ -379,7 +377,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
 
         - entity-card:pagerduty/EntityPagerDutyCard: false
         - entity-card:pagerduty/EntityPagerDutySmallCard: false
@@ -436,7 +433,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # AI Assistant (drawer + page). Disabled by default in the plugin:
         # it needs an LLM provider under `aiChat`, so an instance without one
         # would show an assistant that cannot answer.
@@ -498,7 +494,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # Hive (Plans, Roadmap and the product magazine at /hive): disabled by
         # default in the plugins, since the pages read plan repositories and
         # the roadmap board as the signed-in person through the
@@ -560,7 +555,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # AI Assistant (drawer + page). Disabled by default in the plugin:
         # it needs an LLM provider under `aiChat`, so an instance without one
         # would show an assistant that cannot answer.
@@ -629,7 +623,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # Hive (Plans, Roadmap and the product magazine at /hive): disabled by
         # default in the plugins, since the pages read plan repositories and
         # the roadmap board as the signed-in person through the
@@ -696,7 +689,6 @@ data:
         - page:flux
         - nav-item:flux
         - page:agent-platform
-        - nav-item:agent-platform
         # AI Assistant (drawer + page). Disabled by default in the plugin:
         # it needs an LLM provider under `aiChat`, so an instance without one
         # would show an assistant that cannot answer.
