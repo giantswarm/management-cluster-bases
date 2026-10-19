@@ -215,6 +215,7 @@ data:
   pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
+  pod-shutdown-operator: rocket
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
