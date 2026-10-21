@@ -1,0 +1,19 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: happa-ui-off
+  namespace: monitoring
+  annotations:
+    motivation: "The happa web UI is turned off on every installation (its HelmRelease post-renders the UI resources away, the happaapi route stays). Covers the HelmRelease upgrade on each installation while it rolls; a failed release is checked live per installation instead."
+    valid-until: "2026-10-26"
+spec:
+  matchers:
+    - name: alertname
+      value: "FluxGiantswarmHelmReleaseFailed|RepeatedHelmOperation"
+      matchType: "=~"
+    - name: name
+      value: "happa"
+      matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
