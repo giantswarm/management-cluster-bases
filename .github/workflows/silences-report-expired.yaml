@@ -16,7 +16,16 @@ jobs:
           # The report needs the bot branches' remote refs for its
           # --force-with-lease push and the history for each silence's author.
           fetch-depth: 0
+      - name: Generate giantswarm-release token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+          # Push the silence branch and open, edit, comment on and auto-merge its PR (reviewer and assignee included).
+          permission-contents: write
+          permission-pull-requests: write
       - uses: ./.github/actions/silences-report-expired
         with:
           directory_pattern: 'bases/silences'
-          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+          token: ${{ steps.app-token.outputs.token }}
