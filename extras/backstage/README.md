@@ -105,3 +105,21 @@ patches:
 ```
 
 Commit these changes to git and raise a PR to have this merged into the main branch. Once your PR is accepted and merged, backstage will be deployed to your management cluster during the next full reconciliation cycle.
+
+## Instances that set their own `catalog.locations`
+
+The shared configuration (`extras/backstage/main/shared-config.yaml`) carries a
+`catalog.locations` list. A later values layer's array **replaces** the shared
+array, it is not merged with it. An instance whose own `app-config.yaml` sets
+`catalog.locations` therefore never reads the shared list, and a change to it
+(a template pin, a new location) does not arrive there; make that change in the
+instance's own `app-config.yaml`.
+
+Instances that set their own list today:
+
+- `gazelle`, the Dev Portal (`giantswarm-management-clusters`,
+  `management-clusters/gazelle/extras/backstage/backstage/app-config.yaml`).
+
+Every other instance (for example `graveler`, `glean` and the customer
+management clusters) sets no `catalog.locations` of its own and reads the
+shared list. An instance that adds its own list moves into the one above.
