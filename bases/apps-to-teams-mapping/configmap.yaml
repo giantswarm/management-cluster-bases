@@ -233,6 +233,7 @@ data:
   rbac-bootstrap: shield
   rbac-operator: shield
   release-exporter: planeteers
+  release-test-app: honeybadger
   reports-server: shield
   resource-police: phoenix
   sbom-advisory-operator: shield
