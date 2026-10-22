@@ -22,14 +22,13 @@ spec:
     name: sbom-advisory-operator
     namespace: giantswarm
   install:
-    createNamespace: true
     remediation:
       remediateLastFailure: false
       retries: 10
   interval: 5m
   releaseName: sbom-advisory-operator
   # Next to the kubescape SBOMs it reads and the PolicyReports it writes, like the kubescape
-  # release itself; the namespace is created on the MCs that do not run kubescape.
+  # release itself. The namespace is expected to exist already.
   storageNamespace: kubescape
   targetNamespace: kubescape
   timeout: 10m
