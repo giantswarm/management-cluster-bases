@@ -257,6 +257,7 @@ data:
   teleport-tbot: shield
   tempo: atlas
   test-app: honeybadger
+  toolchain-manager: bumblebee
   trivy-operator: shield
   trivy: shield
   tunnelport: bumblebee
