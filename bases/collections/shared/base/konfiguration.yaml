@@ -265,6 +265,12 @@ spec:
             value: rbac-operator
           - name: team
             value: shield
+      sbom-advisory-operator:
+        variables:
+          - name: app
+            value: sbom-advisory-operator
+          - name: team
+            value: shield
       silence-operator:
         variables:
           - name: app
