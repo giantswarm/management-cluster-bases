@@ -235,6 +235,7 @@ data:
   release-exporter: planeteers
   reports-server: shield
   resource-police: phoenix
+  sbom-advisory-operator: shield
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
