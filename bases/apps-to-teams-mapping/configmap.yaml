@@ -161,7 +161,6 @@ data:
   klaus-gateway: bumblebee
   klaus: bumblebee
   konfigure-operator: honeybadger
-  kong-app: cabbage
   kserve-crd: bumblebee
   kserve-llmisvc-crd: bumblebee
   kserve-llmisvc-resources: bumblebee
