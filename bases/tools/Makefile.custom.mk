@@ -52,7 +52,7 @@ $(BUILD_COLLECTIONS_TARGETS): $(KUSTOMIZE) ## Build the collections overlay of a
 .PHONY: build-changed-collections
 build-changed-collections: ## Build the collections overlay of every management cluster changed since DIFF_BASE
 	@echo "====> $@"
-	@mcs=$$(git diff --name-only $(DIFF_BASE) -- management-clusters | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
+	@mcs=$$(git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
 	if [ -z "$$mcs" ]; then \
 		echo "no management cluster collections changed since $(DIFF_BASE)"; \
 		exit 0; \

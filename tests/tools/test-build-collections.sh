@@ -57,7 +57,6 @@ collection beta ocirepository.yaml
 git -C "${fixture}" init --quiet
 git -C "${fixture}" add -A
 git -C "${fixture}" -c user.email=t@t -c user.name=t commit --quiet -m baseline
-baseline="$(git -C "${fixture}" rev-parse HEAD)"
 
 run() { # run <make-goal...>; prints the exit code
   local rc=0
