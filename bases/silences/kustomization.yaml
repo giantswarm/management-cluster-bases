@@ -1,4 +1,3 @@
 namePrefix: common-
 resources:
   - grafanapostgresqlarchivingfailures.yaml
-  - happa-ui-off.yaml
