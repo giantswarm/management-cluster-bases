@@ -13,6 +13,7 @@ OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
 ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
 
 BUILD_CATALOG_TARGETS := $(addsuffix -catalogs, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
+BUILD_COLLECTIONS_TARGETS := $(addsuffix -collections, $(addprefix build-,$(notdir $(wildcard management-clusters/*))))
 BUILD_MC_TARGETS := $(addprefix build-,$(notdir $(wildcard management-clusters/*)))
 
 BUILD_CRD_TARGETS := build-common-crds build-common-flux-v2-crds build-flux-app-crds build-flux-app-v2-crds build-flux-operator-crds build-giantswarm-crds
@@ -21,6 +22,10 @@ BUILD_FLUX_APP_TARGETS := build-flux-app-customer build-flux-app-giantswarm
 
 BASE_REPOSITORY := giantswarm/management-cluster-bases
 MCB_BRANCH ?= main
+
+# What `build-changed-collections` compares the working tree against. CI passes
+# the pull request's base commit; the default suits a laptop.
+DIFF_BASE ?= origin/main
 
 # TODO Change https://github.com/giantswarm/apptestctl/blame/90942be9c1c2fd58f765bc191d8ef5889717eb4b/hack/sync-crds.sh to use these instead (ATS will need make too tho)
 .PHONY: build-catalogs-with-defaults
@@ -34,6 +39,37 @@ $(BUILD_CATALOG_TARGETS): $(KUSTOMIZE) ## Build Giant Swarm catalogs for managem
 	@echo "====> $@"
 	mkdir -p output
 	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -catalogs,,$@))/catalogs -o output/$(subst build-,,$(subst -catalogs,,$@))-catalogs.yaml
+
+.PHONY: $(BUILD_COLLECTIONS_TARGETS)
+$(BUILD_COLLECTIONS_TARGETS): $(KUSTOMIZE) ## Build the collections overlay of a management cluster
+	@echo "====> $@"
+	mkdir -p output
+	$(KUSTOMIZE) build --load-restrictor LoadRestrictionsNone management-clusters/$(subst build-,,$(subst -collections,,$@))/collections -o output/$(subst build-,,$(subst -collections,,$@))-collections.yaml
+
+# Renders only what changed, so a pull request pays for the clusters it touches
+# instead of the whole fleet. Every cluster is attempted, so one broken overlay
+# does not hide the next one.
+.PHONY: build-changed-collections
+build-changed-collections: ## Build the collections overlay of every management cluster changed since DIFF_BASE
+	@echo "====> $@"
+	@mcs=$$({ git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters; \
+		git ls-files --others --exclude-standard -- management-clusters; } | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
+	if [ -z "$$mcs" ]; then \
+		echo "no management cluster collections changed since $(DIFF_BASE)"; \
+		exit 0; \
+	fi; \
+	rc=0; \
+	for mc in $$mcs; do \
+		if [ ! -d "management-clusters/$$mc/collections" ]; then \
+			echo "skip  $$mc (collections removed)"; \
+		elif $(MAKE) build-$$mc-collections; then \
+			echo "ok    $$mc"; \
+		else \
+			echo "FAIL  $$mc"; \
+			rc=1; \
+		fi; \
+	done; \
+	exit $$rc
 
 .PHONY: $(BUILD_CRD_TARGETS)
 build-common-flux-v2-crds:  ## Builds https://github.com/giantswarm/management-cluster-bases//bases/crds/common-flux-v2

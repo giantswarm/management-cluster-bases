@@ -1,0 +1,28 @@
+name: Test collections build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'bases/tools/Makefile.custom.mk'
+      - 'tests/tools/**'
+      - '.github/workflows/test-build-collections.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-build-collections:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The test needs kustomize on PATH; the Makefile downloads its pinned one.
+      - name: Install kustomize
+        run: make bin/kustomize && echo "$PWD/bin" >> "$GITHUB_PATH"
+
+      - name: Run the collections build checks
+        run: tests/tools/test-build-collections.sh
