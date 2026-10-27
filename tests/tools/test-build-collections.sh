@@ -56,7 +56,7 @@ collection beta ocirepository.yaml
 
 git -C "${fixture}" init --quiet
 git -C "${fixture}" add -A
-git -C "${fixture}" -c user.email=t@t -c user.name=t commit --quiet -m baseline
+git -C "${fixture}" -c user.email=t@t -c user.name=t -c commit.gpgsign=false commit --quiet -m baseline
 
 run() { # run <make-goal...>; prints the exit code
   local rc=0
@@ -76,7 +76,7 @@ assert "build-beta-collections fails on a malformed overlay" 2 "$(run build-beta
 # CI renders the clusters a pull request touches, and only those.
 collection beta ocirepository.yaml # back to a clean tree
 git -C "${fixture}" add -A
-git -C "${fixture}" -c user.email=t@t -c user.name=t commit --quiet -m clean
+git -C "${fixture}" -c user.email=t@t -c user.name=t -c commit.gpgsign=false commit --quiet -m clean
 baseline="$(git -C "${fixture}" rev-parse HEAD)"
 
 rm -rf "${fixture}/output"
@@ -92,6 +92,13 @@ assert "build-changed-collections renders the touched cluster" 1 \
   "$([ -f "${fixture}/output/alpha-collections.yaml" ] && echo 1 || echo 0)"
 assert "build-changed-collections skips the untouched cluster" 0 \
   "$([ -f "${fixture}/output/beta-collections.yaml" ] && echo 1 || echo 0)"
+
+# A new cluster that is not `git add`ed yet is a change too, on a laptop.
+collection gamma ocirepository.yaml
+assert "build-changed-collections succeeds with an untracked cluster" 0 \
+  "$(run build-changed-collections DIFF_BASE="${baseline}")"
+assert "build-changed-collections renders the untracked cluster" 1 \
+  "$([ -f "${fixture}/output/gamma-collections.yaml" ] && echo 1 || echo 0)"
 
 # A malformed change in a touched cluster fails the check.
 collection beta component-that-does-not-exist
