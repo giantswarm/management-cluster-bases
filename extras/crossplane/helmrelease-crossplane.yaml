@@ -9,7 +9,7 @@ spec:
   ref:
     # Used by renovate
     # repo: giantswarm/crossplane
-    tag: 2.6.0
+    tag: 2.11.0
   url: oci://gsoci.azurecr.io/charts/giantswarm/crossplane
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
