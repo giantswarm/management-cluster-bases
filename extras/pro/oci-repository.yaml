@@ -11,5 +11,5 @@ spec:
     # installations first, through the OCIRepository patch in their
     # extras/kustomization.yaml that follows every newer stable, and the
     # rest of the fleet once this cap is raised after it ran there.
-    semver: "<=1.15.2"
+    semver: "<=1.15.4"
   provider: generic
