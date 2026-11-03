@@ -247,6 +247,7 @@ data:
   squid-proxy: phoenix
   starboard-exporter: shield
   strimzi-kafka-operator: atlas
+  sveltos-dashboard: honeybadger
   sveltos: honeybadger
   team-stamper: honeybadger
   tekton-dashboard-loki-proxy: tenet
