@@ -1,0 +1,57 @@
+---
+# grafana-mcp requires a multi-release-safe grafana chart: selector labels
+# derived from the release name and a branding.enabled toggle. The first
+# grafana-app release carrying this is 2.43.0 (update the semver floor below
+# if it lands under a different version). Merge order: grafana-app release,
+# then giantswarm/shared-configs (grafana-mcp app values), then this.
+# On an older chart, grafana-mcp pods would join the main grafana Service
+# selector and Flux would adopt the main release's grafana-branding ConfigMap.
+# The semver floor and disableTakeOwnership below make that fail instead.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: grafana-mcp
+  namespace: giantswarm
+spec:
+  interval: 10m
+  provider: generic
+  ref:
+    semver: ">=2.43.0"
+  url: oci://gsoci.azurecr.io/charts/giantswarm/grafana
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana-mcp
+  namespace: giantswarm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: grafana-mcp
+    namespace: giantswarm
+  dependsOn:
+  - name: grafana
+  install:
+    createNamespace: true
+    disableTakeOwnership: true
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: grafana-mcp
+  storageNamespace: monitoring
+  targetNamespace: monitoring
+  timeout: 10m
+  upgrade:
+    disableTakeOwnership: true
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: grafana-mcp-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: grafana-mcp-konfiguration
+    valuesKey: secret-values.yaml

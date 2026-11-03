@@ -16,3 +16,5 @@ patches:
     path: semver-kyverno-policies-ux.yaml
 resources:
   - ../../base
+components:
+  - ../../extras/grafana-mcp
