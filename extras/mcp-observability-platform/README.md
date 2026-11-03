@@ -76,7 +76,7 @@ both hold:
 Graveler runs a hand-applied release today:
 
 - the Helm release `mcp-observability-platform` in `monitoring`, installed by
-  the suspended HelmRelease `org-giantswarm/graveler-mcp-observability-platform`;
+  the HelmRelease `org-giantswarm/graveler-mcp-observability-platform`;
 - the OCIRepository and the values ConfigMap
   `graveler-mcp-observability-platform-values` in `org-giantswarm`;
 - the Secrets `mcp-observability-platform-oauth` and
@@ -87,25 +87,30 @@ Graveler runs a hand-applied release today:
 
 Order:
 
+1.Order:
+
 1. Release mcp-observability-platform 0.5.0.
 2. Merge this extra and its shared-configs template. Nothing deploys them yet.
-3. Uninstall the hand-applied release:
+3. Suspend the hand-applied HelmRelease:
+   `flux suspend helmrelease graveler-mcp-observability-platform -n org-giantswarm`.
+   Flux reinstalls the release between steps 4 and 5 otherwise.
+4. Uninstall the hand-applied release:
    `helm uninstall mcp-observability-platform -n monitoring`.
    The new release collides with it on the ClusterRole and the
    ClusterRoleBinding `mcp-observability-platform` and on the HTTPRoute
    hostname. A suspended HelmRelease does not uninstall its release on
-   deletion, so this step runs first.
-4. Delete the hand-applied objects in `org-giantswarm`:
+   deletion, so this step runs before step 5.
+5. Delete the hand-applied objects in `org-giantswarm`:
    `kubectl -n org-giantswarm delete helmrelease,ocirepository graveler-mcp-observability-platform`
    and `kubectl -n org-giantswarm delete configmap graveler-mcp-observability-platform-values`.
-5. Delete the stray Secrets:
+6. Delete the stray Secrets:
    `kubectl -n monitoring delete secret mcp-observability-platform-oauth mcp-observability-platform-grafana`.
-6. Merge the graveler change in giantswarm-management-clusters. Flux applies
+7. Merge the graveler change in giantswarm-management-clusters. Flux applies
    the extra, the Valkey and the new Dex client Secret.
-7. Keep the hand-applied `grafana-mcp` objects until pull request 907 runs
+8. Keep the hand-applied `grafana-mcp` objects until pull request 907 runs
    `grafana-mcp` on graveler. Then delete them.
 
-Outage window: the graveler change rotates the Dex client secret, and
+dow: the graveler change rotates the Dex client secret, and
 dex-app restarts with the new value. From that merge until the new release
 installs, every sign-in to the MCP fails. Running sessions end too: the
 hand-applied release stored them in memory.
