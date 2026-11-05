@@ -9,6 +9,7 @@ data:
   agent-manager: bumblebee
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
+  agent-platform-operator: bumblebee
   agent-platform: bumblebee
   agent-sandbox: bumblebee
   agent: bumblebee
@@ -242,6 +243,7 @@ data:
   security-profiles-operator: shield
   silence-operator: atlas
   sitesearch: bumblebee
+  skill-manager: bumblebee
   sloth-rules: atlas
   sloth: atlas
   squid-proxy: phoenix
