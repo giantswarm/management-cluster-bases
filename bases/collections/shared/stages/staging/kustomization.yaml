@@ -12,4 +12,5 @@ patches:
 resources:
   - ../../base
 components:
+  - ../../extras/grafana-mcp
   - ../../extras/kubescape
