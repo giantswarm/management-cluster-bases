@@ -11,7 +11,7 @@ spec:
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
-  revisionHistoryLimit: 0
+  revisionHistoryLimit: 1
   skipDependencyResolution: true
   package: gsoci.azurecr.io/giantswarm/upbound-provider-family-gcp:v${gcpversion:=1.0.0}
   runtimeConfigRef:
