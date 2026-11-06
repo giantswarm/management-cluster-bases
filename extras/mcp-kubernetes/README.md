@@ -25,31 +25,15 @@ resources:
 
 ## Version Strategy
 
-The `OCIRepository` is capped at the newest stable the fleet runs
-(`semver: "<=X.Y.Z"`), so a new stable release never rolls onto every
-installation at once:
+The `OCIRepository` follows stable `mcp-kubernetes` chart releases in
+`>=1.13.34 <2.0.0`. Flux automatically selects newer patches and minors,
+including 1.14.x. Prereleases, releases below 1.13.34 and 2.x are excluded.
+There is no release-age delay or cap-promotion pull request for this chart.
 
-1. **Test installations first.** Their `extras/kustomization.yaml` (in the
-   installation's management-clusters repository, next to the `./mcp-*/`
-   entries) lifts the cap and follows every newer stable release:
+Installations inherit this range from the shared base. An installation's
+`OCIRepository` override must retain the same major-version boundary.
 
-   ```yaml
-   patches:
-     - patch: |-
-         - op: replace
-           path: /spec/ref/semver
-           value: ">=1.11.2"
-       target:
-         kind: OCIRepository
-         name: mcp-kubernetes
-   ```
-
-2. **Then the fleet.** Once a release ran on the test installations, a pull
-   request here raises the cap in `oci-repository.yaml` to it. Renovate opens
-   that pull request once the stable release is 3 days old
-   (`renovate-custom.json5`); it is never automerged.
-
-The same strategy holds for `mcp-capi` and `mcp-prometheus`, for the three
+The staged promotion strategy still holds for `mcp-capi` and `mcp-prometheus`, for the three
 Valkey stores (`OCIRepository` `mcp-*-valkey`), and for `mcp-pagerduty`,
 `search-mcp`, `marge` and `pro`.
 
