@@ -9,9 +9,5 @@ spec:
   interval: 1m
   url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-kubernetes
   ref:
-    # Capped at the newest stable the fleet runs: a new stable reaches the test
-    # installations first, through the OCIRepository patch in their
-    # extras/kustomization.yaml that follows every newer stable, and the
-    # rest of the fleet once this cap is raised after it ran there.
-    semver: "<=1.13.34"
+    semver: ">=1.13.34 <2.0.0"
   provider: generic
