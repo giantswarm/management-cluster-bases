@@ -10,12 +10,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: List kustomizations
-        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.38.0
         with:
           args: --list-files management-clusters
 
       - name: Lint kustomizations
-        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.38.0
         with:
           args: --format=github management-clusters
 
@@ -34,12 +34,12 @@ jobs:
 
       - name: List generated manifests
         if: steps.check_output.outputs.has_files == 'true'
-        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.38.0
         with:
           args: --list-files output
 
       - name: Lint generated manifests
         if: steps.check_output.outputs.has_files == 'true'
-        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.37.1
+        uses: docker://gsoci.azurecr.io/giantswarm/yamllint:1.38.0
         with:
           args: --format=github output
