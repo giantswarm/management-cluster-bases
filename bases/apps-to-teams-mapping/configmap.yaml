@@ -93,6 +93,7 @@ data:
   cluster: tenet
   coredns-app: cabbage
   coredns-extensions: cabbage
+  crossplane-app-platform: honeybadger
   crossplane-fn-irsa: phoenix
   crossplane-fn-mcoidc: phoenix
   crossplane: honeybadger
