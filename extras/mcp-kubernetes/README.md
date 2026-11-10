@@ -25,7 +25,17 @@ resources:
 
 ## Version Strategy
 
-Auto-updates enabled via SemVer range `>=0.0.0`. New versions deploy automatically when pushed to the OCI registry.
+The `OCIRepository` follows stable `mcp-kubernetes` chart releases in
+`>=1.13.34 <2.0.0`. Flux automatically selects newer patches and minors,
+including 1.14.x. Prereleases, releases below 1.13.34 and 2.x are excluded.
+There is no release-age delay or cap-promotion pull request for this chart.
+
+Installations inherit this range from the shared base. An installation's
+`OCIRepository` override must retain the same major-version boundary.
+
+The staged promotion strategy still holds for `mcp-capi` and `mcp-prometheus`, for the three
+Valkey stores (`OCIRepository` `mcp-*-valkey`), and for `mcp-pagerduty`,
+`search-mcp`, `marge` and `pro`.
 
 ## Prerequisites
 

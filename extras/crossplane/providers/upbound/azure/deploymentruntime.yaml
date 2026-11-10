@@ -24,6 +24,10 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 128Mi
 ---
 # DeploymentRuntimeConfig for Azure resources
 apiVersion: pkg.crossplane.io/v1beta1
@@ -50,6 +54,10 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 128Mi
 ---
 # DeploymentRuntimeConfig for Kubernetes resources
 apiVersion: pkg.crossplane.io/v1beta1

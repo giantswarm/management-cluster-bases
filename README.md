@@ -21,6 +21,12 @@ To learn more about how GitOps works with Giant Swarm, check our [GitOps documen
   - `provider`: definitions for all the infrastructure providers we serve.
 - `extras`: collection of patches, additional resources, and mix-ins used by several management clusters.
 
+## Shared workflows
+
+The workflows in `.github/workflows` that declare `on: workflow_call` (`generate_diffs.yaml`, `delete_diffs.yaml` and `lint.yaml`) are reusable: a management-clusters repository calls them with `uses: giantswarm/management-cluster-bases/.github/workflows/<name>.yaml@main`.
+
+A re-run of a workflow run keeps the reusable workflow at the version the original event resolved, so after a fix to a workflow here, give the consumer pull request a new event (push a commit, or close and reopen it); a re-run cannot pick the fix up.
+
 ## Tools
 
 In order to upgrade Flux App and `konfigure` bump the versions in `Makefile.custom.mk` and run the following command:

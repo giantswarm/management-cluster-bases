@@ -43,6 +43,7 @@ resources:
   - prometheus-remotewrite.yaml
   - prometheus-rules.yaml
   - rbac-operator.yaml
+  - sbom-advisory-operator.yaml
   - silence-operator.yaml
   - sloth-rules.yaml
   - sloth.yaml

@@ -20,6 +20,16 @@ spec:
   # cluster's flux-migration directory is empty, so this becomes Ready at once
   # and does not block `crds`.
   wait: true
+  # A deliberately suspended muster MCPServer (spec.suspended: true) reports
+  # Ready=False with reason Suspended. kstatus reads that as not ready, which
+  # would hold this health gate, and everything that dependsOn it, forever.
+  # Count a suspended MCPServer as current; any other Ready=False reason is a
+  # real failure; no Ready condition yet means still in progress.
+  healthCheckExprs:
+    - apiVersion: muster.giantswarm.io/v1alpha1
+      kind: MCPServer
+      failed: has(status.conditions) && status.conditions.exists(e, e.type == 'Ready' && e.status == 'False' && e.reason != 'Suspended')
+      current: has(status.conditions) && status.conditions.exists(e, e.type == 'Ready' && (e.status == 'True' || (e.status == 'False' && e.reason == 'Suspended')))
   sourceRef:
     kind: GitRepository
     name: management-clusters-fleet
@@ -46,6 +56,12 @@ spec:
   retryInterval: 30s
   timeout: 15m
   wait: true
+  # Same as flux-migration: a suspended MCPServer is current, not failed.
+  healthCheckExprs:
+    - apiVersion: muster.giantswarm.io/v1alpha1
+      kind: MCPServer
+      failed: has(status.conditions) && status.conditions.exists(e, e.type == 'Ready' && e.status == 'False' && e.reason != 'Suspended')
+      current: has(status.conditions) && status.conditions.exists(e, e.type == 'Ready' && (e.status == 'True' || (e.status == 'False' && e.reason == 'Suspended')))
   sourceRef:
     kind: GitRepository
     name: management-clusters-fleet

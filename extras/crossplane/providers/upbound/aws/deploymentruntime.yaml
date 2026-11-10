@@ -18,6 +18,10 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 256Mi
 ---
 # DeploymentRuntimeConfig for AWS resources
 apiVersion: pkg.crossplane.io/v1beta1
@@ -38,6 +42,10 @@ spec:
             - name: package-runtime
               args:
                 - --debug
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 256Mi
 ---
 # DeploymentRuntimeConfig for AWS resources
 apiVersion: pkg.crossplane.io/v1beta1

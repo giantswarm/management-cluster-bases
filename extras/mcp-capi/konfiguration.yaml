@@ -2,7 +2,7 @@
 apiVersion: konfigure.giantswarm.io/v1alpha1
 kind: Konfiguration
 metadata:
-  name: mcp-runbooks-konfiguration
+  name: mcp-capi-konfiguration
   namespace: flux-giantswarm
 spec:
   targets:
@@ -15,12 +15,12 @@ spec:
         - name: installation
           value: "${cluster_name}"
     iterations:
-      mcp-runbooks:
+      mcp-capi:
         variables:
           - name: app
-            value: mcp-runbooks
+            value: mcp-capi
           - name: team
-            value: planeteers
+            value: bumblebee
   destination:
     namespace: flux-giantswarm
     naming:
@@ -34,3 +34,4 @@ spec:
       gitRepository:
         name: "giantswarm-config"
         namespace: "flux-giantswarm"
+

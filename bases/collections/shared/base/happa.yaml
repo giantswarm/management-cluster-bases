@@ -26,6 +26,20 @@ spec:
       remediateLastFailure: false
       retries: 10
   interval: 5m
+  # The happa web UI is off on every installation. The release stays for the
+  # happaapi HTTPRoute, BackendTLSPolicy and SecurityPolicy: the management
+  # cluster API endpoint Backstage's Kubernetes plugin reads.
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          name: happa|happa-configmap|happa-network-policy|happa-psp
+        patch: |
+          $patch: delete
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: happa
   releaseName: happa
   storageNamespace: giantswarm
   targetNamespace: giantswarm

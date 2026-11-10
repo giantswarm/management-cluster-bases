@@ -6,9 +6,8 @@ metadata:
   labels:
     application.giantswarm.io/team: bumblebee
 spec:
-  interval: 10m
+  interval: 1m
   url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-kubernetes
   ref:
-    # Auto-update: deploy latest version automatically
-    semver: ">=0.0.0"
+    semver: ">=1.13.34 <2.0.0"
   provider: generic

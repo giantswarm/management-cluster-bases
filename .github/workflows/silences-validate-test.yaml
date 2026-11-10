@@ -1,0 +1,19 @@
+name: Test silences validation
+
+on:
+  pull_request:
+    paths:
+      - '.github/actions/silences-validate/**'
+      - '.github/workflows/silences-validate-test.yaml'
+      - 'tests/silences-validate/**'
+
+jobs:
+  silences_validate_test:
+    runs-on: ubuntu-latest
+    name: Test silences validation
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install yq
+        run: make bin/yq
+      - name: Run the validator against the fixtures
+        run: tests/silences-validate/run.sh

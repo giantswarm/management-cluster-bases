@@ -6,9 +6,11 @@ metadata:
   name: apps-to-teams-mapping
   namespace: giantswarm
 data:
+  agent-manager: bumblebee
+  agent-mem-experiments: honeybadger
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
-  agent-platform-standalone: bumblebee
+  agent-platform-operator: bumblebee
   agent-platform: bumblebee
   agent-sandbox: bumblebee
   agent: bumblebee
@@ -48,6 +50,8 @@ data:
   azuredisk-csi-driver-app: phoenix
   azurefile-csi-driver-app: phoenix
   backstage: bumblebee
+  beekeeper: bumblebee
+  buzz: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
   cert-exporter: tenet
@@ -83,12 +87,14 @@ data:
   cluster-cleaner: tenet
   cluster-cloud-director: rocket
   cluster-eks: phoenix
+  cluster-manager: bumblebee
   cluster-probes: phoenix
   cluster-proxmox: rocket
   cluster-vsphere: rocket
   cluster: tenet
   coredns-app: cabbage
   coredns-extensions: cabbage
+  crossplane-app-platform: honeybadger
   crossplane-fn-irsa: phoenix
   crossplane-fn-mcoidc: phoenix
   crossplane: honeybadger
@@ -97,6 +103,7 @@ data:
   dashboards: atlas
   debug-toolbox: planeteers
   deletion-blocker-operator: rocket
+  devctl: honeybadger
   dex-app: shield
   dex-operator: shield
   dicebear: bumblebee
@@ -106,7 +113,6 @@ data:
   docs-proxy-app: bumblebee
   encryption-config-hasher: tenet
   encryption-provider-operator: tenet
-  envoy-ai-gateway: cabbage
   envoy-gateway: cabbage
   etcd-backup-operator: tenet
   etcd-defrag: tenet
@@ -117,7 +123,6 @@ data:
   external-dns-crossplane-resources: cabbage
   external-secrets: honeybadger
   falco: shield
-  fe-docs: bumblebee
   fluent-logshipping-app: atlas
   flux-app: honeybadger
   flux-operator: honeybadger
@@ -126,7 +131,11 @@ data:
   gateway-api-config: cabbage
   gateway-api-crds: cabbage
   gel: shield
+  giantswarm-platform-manager: bumblebee
+  giantswarm-repo-manager: bumblebee
   goldilocks: tenet
+  google-access-token-credential-provider: bumblebee
+  gpu-node-pool: bumblebee
   gpu-operator: tenet
   grafana-organization: shield
   grafana: atlas
@@ -144,6 +153,7 @@ data:
   k6-operator: cabbage
   k8s-audit-metrics: tenet
   k8s-dns-node-cache-app: cabbage
+  kagent-crds: bumblebee
   kagent: bumblebee
   kamaji-etcd: rocket
   kamaji: rocket
@@ -152,11 +162,11 @@ data:
   karpenter: phoenix
   keda: atlas
   klaus-gateway: bumblebee
-  klaus-operator: bumblebee
   klaus: bumblebee
   konfigure-operator: honeybadger
-  kong-app: cabbage
   kserve-crd: bumblebee
+  kserve-llmisvc-crd: bumblebee
+  kserve-llmisvc-resources: bumblebee
   kserve-resources: bumblebee
   kserve-runtime-configs: bumblebee
   kube-downscaler: planeteers
@@ -167,6 +177,7 @@ data:
   kubeedge-cloudcore: rocket
   kubescape: shield
   kyverno-crds: shield
+  kyverno-playground: shield
   kyverno-policies-connectivity: cabbage
   kyverno-policies-dx: honeybadger
   kyverno-policies-observability: atlas
@@ -176,16 +187,20 @@ data:
   kyverno: shield
   local-path-provisioner: rocket
   loki: atlas
+  marge: bumblebee
   mcp-capi: bumblebee
   mcp-kubernetes: bumblebee
   mcp-observability-platform: atlas
   mcp-prometheus: atlas
+  mcp-timescale: bumblebee
   metrics-server-app: atlas
   microservices-demo-app: cabbage
   mimir: atlas
+  model-manager: bumblebee
   multus-cni: rocket
   muster-crds: bumblebee
   muster: bumblebee
+  n8n: planeteers
   net-exporter: cabbage
   network-policies: cabbage
   node-exporter-app: tenet
@@ -197,13 +212,13 @@ data:
   observability-platform: atlas
   observability-policies: atlas
   oncall-shift-reporter: planeteers
-  onepassword-scim-bridge: shield
   openssf-scorecard-exporter: shield
   operational-load-exporter: planeteers
   organization-operator: shield
   pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
+  pod-shutdown-operator: rocket
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
@@ -216,22 +231,28 @@ data:
   proxmox-csi-plugin: rocket
   proxysocks: cabbage
   pyroscope: atlas
+  rancher-fleet: rocket
   rbac-bootstrap: shield
   rbac-operator: shield
   release-exporter: planeteers
+  release-test-app: honeybadger
   reports-server: shield
   resource-police: phoenix
+  sbom-advisory-operator: shield
   schema-server: honeybadger
   search-mcp: bumblebee
   security-bundle: shield
   security-profiles-operator: shield
   silence-operator: atlas
   sitesearch: bumblebee
+  skill-manager: bumblebee
   sloth-rules: atlas
   sloth: atlas
   squid-proxy: phoenix
   starboard-exporter: shield
   strimzi-kafka-operator: atlas
+  sveltos-dashboard: honeybadger
+  sveltos: honeybadger
   team-stamper: honeybadger
   tekton-dashboard-loki-proxy: tenet
   teleport-exporter: shield
@@ -241,6 +262,7 @@ data:
   teleport-tbot: shield
   tempo: atlas
   test-app: honeybadger
+  toolchain-manager: bumblebee
   trivy-operator: shield
   trivy: shield
   tunnelport: bumblebee
@@ -249,6 +271,8 @@ data:
   vertical-pod-autoscaler-app: tenet
   vertical-pod-autoscaler-crd: tenet
   vllm: bumblebee
+  vm-manager: bumblebee
   vsphere-csi-driver: rocket
   whereabouts: rocket
+  workspace-manager: bumblebee
   zot: honeybadger

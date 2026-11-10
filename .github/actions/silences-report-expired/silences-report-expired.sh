@@ -5,7 +5,9 @@ set -euo pipefail
 YQ="bin/yq"
 KUSTOMIZATION_FILENAME="kustomization.yaml"
 
-COMMIT_MESSAGE_PREFIX="chore(silences): remove expired silence - "
+# Pull request titles and commit subjects are conventional commits of at most
+# 72 characters; the silence's path goes into the body.
+TITLE_MAX_LENGTH=72
 PULL_REQUEST_BODY_EXPIRED="This pull request was automatically created using the $(basename "$0") script.
 
 If you are assigned for review, this means you created a silence which is **now expired** based on the \`valid-until\` annotation, and has **been removed from AlertManager**.
@@ -19,6 +21,24 @@ If this is correct, please approve this PR or update the \`valid-until\` annotat
 PULL_REQUEST_REMINDER="Please merge this PR to delete this silence or update the \`valid-until\` annotation."
 
 DATE="$(command -v gdate || command -v date)"
+
+# pr_title prints the title for silence file $1 in mode $2 (expired or soon):
+# "chore(silences): remove expired <cluster> silence <name>", the cluster taken
+# from a management-clusters/<cluster>/silences/ path and left out elsewhere.
+pr_title() {
+  local file="$1" mode="$2"
+  local name cluster="" state="expired" title
+  name="$(basename "$file" .yaml)"
+  if [[ "$file" =~ (^|/)management-clusters/([^/]+)/silences/ ]]; then
+    cluster="${BASH_REMATCH[2]} "
+  fi
+  [[ "$mode" == "expired" ]] || state="expiring"
+  title="chore(silences): remove ${state} ${cluster}silence ${name}"
+  if (( ${#title} > TITLE_MAX_LENGTH )); then
+    title="${title:0:$((TITLE_MAX_LENGTH - 3))}..."
+  fi
+  echo "$title"
+}
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -75,10 +95,10 @@ find_expired() {
     # Check if Silence is about to expire or already expired
     warning_threshold="$((60 * 60 * 24 * 2))" # 2 days in seconds
     if [ "$expiration_date" -le "$today_date" ]; then
-      printf "${RED} - EXPIRED${NC}" >&2
+      printf "%b - EXPIRED%b" "$RED" "$NC" >&2
       expired+=("$latest_commit")
     elif [ "$((expiration_date - today_date))" -le "$warning_threshold" ]; then
-      printf "${RED} - EXPIRING SOON${NC}" >&2
+      printf "%b - EXPIRING SOON%b" "$RED" "$NC" >&2
       expiring_soon+=("$latest_commit")
     fi
     echo "" >&2
@@ -92,6 +112,26 @@ find_expired() {
   for silence in "${expiring_soon[@]}"; do
     echo "EXPIRING_SOON::$silence"
   done
+}
+
+# enable_auto_merge enables a squash auto-merge on the open pull request of
+# branch $1 when it is approved, not conflicting and has none yet. A refusal is
+# logged and the run goes on.
+enable_auto_merge() {
+  local branch="$1" state
+  state="$(gh pr view "$branch" --json reviewDecision,mergeable,autoMergeRequest \
+    -q '"\(.reviewDecision) \(.mergeable) \(.autoMergeRequest != null)"' || echo "unknown")"
+  case "$state" in
+    "APPROVED "*" true")
+      echo "> $branch: auto-merge already enabled" >&2 ;;
+    "APPROVED CONFLICTING "*)
+      echo "> $branch: approved but conflicting, auto-merge not enabled" >&2 ;;
+    "APPROVED "*)
+      echo "> $branch: approved, enabling auto-merge" >&2
+      _run gh pr merge --squash --auto "$branch" || echo "> $branch: enabling auto-merge refused" >&2 ;;
+    *)
+      echo "> $branch: not approved ($state), auto-merge not enabled" >&2 ;;
+  esac
 }
 
 function _run () {
@@ -115,7 +155,7 @@ report() {
   # Map the git commit author to its github handle using github api
   userGithubHandle="$(gh api "/repos/${repository_name}/commits/${commit_sha}" -q '.author.login')"
 
-  message="${COMMIT_MESSAGE_PREFIX}${file}"
+  title="$(pr_title "$file" "$mode")"
 
   # Create the git branch
   $DRY_RUN && echo "> dry run active, otherwise would run..."
@@ -126,23 +166,32 @@ report() {
     _run "$YQ" -i  'del(.resources[] | select(. == "'"$filename"'"))' "$directory/$KUSTOMIZATION_FILENAME"
     _run git add "$directory/$KUSTOMIZATION_FILENAME"
   fi
-  _run git commit --quiet --all --message="${message}"
+  _run git commit --quiet --all --message="${title}" --message="Remove the silence \`${file}\`."
   _run git push --force-with-lease --quiet --set-upstream origin "$branch_name"
 
   pr_data="$(gh pr view "$branch_name" --json state,url || echo '{}')"
   pr_status="$(echo "$pr_data" | $YQ e '.state')"
-  pr_body="$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")"
+  pr_body="Silence: \`${file}\`
+
+$([[ "$mode" == "expired" ]] && echo "$PULL_REQUEST_BODY_EXPIRED" || echo "$PULL_REQUEST_BODY_SOON")"
 
   if [[ "$pr_status" == "OPEN" ]]; then
     _run gh pr comment "$branch_name" --body "@${userGithubHandle} $PULL_REQUEST_REMINDER"
 
-    _run gh pr edit "$branch_name" --body "$pr_body"
+    # Also retitles pull requests opened with an earlier title format.
+    _run gh pr edit "$branch_name" --title "$title" --body "$pr_body"
+
+    # A pull request opened while the silence was only expiring soon, or before
+    # auto-merge existed, has none; once approved it would sit unmerged.
+    if [[ "$mode" == "expired" ]]; then
+      enable_auto_merge "$branch_name"
+    fi
   else
     _run gh pr create \
       --head "$branch_name" \
       --reviewer "${userGithubHandle}" \
       --assignee "${userGithubHandle}" \
-      --title "${message}" \
+      --title "$title" \
       --body "$pr_body"
 
     [[ "$mode" == "expired" ]] && _run gh pr merge --squash --auto "$branch_name" || true

@@ -2,12 +2,16 @@
 # alloy-logexporter — the audit/Teleport log export pipeline (giantswarm/giantswarm#37251).
 #
 # Deployed to every management cluster but disabled by default: the defaults
-# ConfigMap below turns the release into a no-op that renders zero objects until the
-# feature is switched on.
+# ConfigMap below turns the release into a no-op that renders nothing but a Service
+# until the feature is switched on.
 #
 # observability-operator turns it on by creating the `alloy-logexporter-config`
 # ConfigMap, which carries `alloy.enabled: true`, the deployment shape and the Alloy
 # config. That ConfigMap is optional here so this stays valid before it exists.
+#
+# `alloy-logexporter-konfiguration` holds the per-installation values from
+# shared-configs: on CAPA, the IRSA role and its ServiceAccount annotation. The chart
+# renders that role even while disabled.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -31,6 +35,16 @@ data:
     # `condition: alloy.enabled` on the dependency in alloy-app's Chart.yaml.
     alloy:
       enabled: false
+      alloy:
+        # Kept while disabled so the Service below carries the mirror's port.
+        extraPorts:
+          - name: push
+            port: 3100
+            targetPort: 3100
+            protocol: TCP
+    # A valid Service is mandatory for the request mirror's backendRef to be valid.
+    serviceWhenDisabled:
+      enabled: true
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -66,6 +80,9 @@ spec:
   - kind: ConfigMap
     name: alloy-logexporter-defaults
     valuesKey: values
+  - kind: ConfigMap
+    name: alloy-logexporter-konfiguration
+    valuesKey: configmap-values.yaml
   - kind: ConfigMap
     name: alloy-logexporter-config
     valuesKey: values

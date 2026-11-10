@@ -3,3 +3,15 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: agent-platform
+---
+# The agents' namespace. The agent-platform-connectivity chart renders it only while
+# the kagent component is on (agent-platform v3.17.1), but the fleet stages kagent's
+# Secrets (the oauth2-proxy credentials, the model provider key) here before turning
+# kagent on, so the namespace is the fleet's: created on every management cluster
+# and adopted by the chart when kagent is on (same spec, no field conflict).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kagent
+  labels:
+    application.giantswarm.io/team: bumblebee

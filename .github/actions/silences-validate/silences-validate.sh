@@ -30,8 +30,14 @@ yaml_extension() {
   echo "  [ok] .yaml extension"
 }
 
+# yq_doc evaluates the yq expression $3 on document $2 (0-based) of file $1, so a
+# file holding several Silence documents is checked one document at a time.
+yq_doc() {
+  $YQ e "select(document_index == $2) | $3" "$1"
+}
+
 has_cluster_id_matcher() {
-  content="$($YQ e '.spec.matchers[] | select(.name == "cluster_id")' "$1")"
+  content="$(yq_doc "$1" "$2" '.spec.matchers[] | select(.name == "cluster_id")')"
   if [[ -z "$content" ]] || [[ "$content" == "null" ]]; then
     error "  [err] cluster_id matcher not found"
     return 1
@@ -41,15 +47,15 @@ has_cluster_id_matcher() {
 
 # Get the API version of the silence
 get_api_version() {
-  api_version="$($YQ e '.apiVersion' "$1")"
+  api_version="$(yq_doc "$1" "$2" '.apiVersion')"
   echo "$api_version"
 }
 
 # validate_v1alpha2_apiversion fail if v1alpha2 file doesn't have correct apiVersion
 validate_v1alpha2_apiversion() {
-  local file_path="$1"
+  local file_path="$1" document="$2"
   local api_version
-  api_version="$(get_api_version "$file_path")"
+  api_version="$(get_api_version "$file_path" "$document")"
 
   if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
     echo "  [ok] v1alpha2 apiVersion correct"
@@ -65,14 +71,14 @@ validate_v1alpha2_apiversion() {
 
 # validate_v1alpha2_namespace fail if v1alpha2 file doesn't have namespace
 validate_v1alpha2_namespace() {
-  local file_path="$1"
+  local file_path="$1" document="$2"
   local api_version
-  api_version="$(get_api_version "$file_path")"
+  api_version="$(get_api_version "$file_path" "$document")"
 
   # Only validate namespace for v1alpha2
   if [[ "$api_version" == "observability.giantswarm.io/v1alpha2" ]]; then
     local namespace
-    namespace="$($YQ e '.metadata.namespace' "$file_path")"
+    namespace="$(yq_doc "$file_path" "$document" '.metadata.namespace')"
     if [[ -z "$namespace" ]] || [[ "$namespace" == "null" ]]; then
       error "  [err] v1alpha2 silence requires metadata.namespace"
       return 1
@@ -142,12 +148,12 @@ alertname_matches() {
 }
 
 # impacted_alerts_for prints a markdown bullet list of the cached all_pipelines
-# alerts whose name satisfies every alertname matcher of the silence file $1.
-# With no alertname matcher, all all_pipelines alerts are listed.
+# alerts whose name satisfies every alertname matcher of document $2 of the
+# silence file $1. With no alertname matcher, all all_pipelines alerts are listed.
 impacted_alerts_for() {
-  local silence_file="$1"
+  local silence_file="$1" document="$2"
   local -a alertname_matchers
-  mapfile -t alertname_matchers < <($YQ e -N '.spec.matchers[] | select(.name == "alertname") | (.matchType // "=") + " " + .value' "$silence_file" 2>/dev/null | grep -v '^[[:space:]]*$' || true)
+  mapfile -t alertname_matchers < <(yq_doc "$silence_file" "$document" '.spec.matchers[] | select(.name == "alertname") | (.matchType // "=") + " " + .value' 2>/dev/null | grep -v '^[[:space:]]*$' || true)
 
   local alert_entry alert_name runbook_url matcher match_type match_value alert_is_impacted
   for alert_entry in "${ALL_PIPELINES_ALERTS[@]}"; do
@@ -174,9 +180,9 @@ impacted_alerts_for() {
 # warn_force_all posts a PR comment when the force-all annotation is set to "true",
 # listing the all_pipelines alerts this silence would override (best effort).
 warn_force_all() {
-  local file_path="$1"
+  local file_path="$1" document="$2"
   local force_all
-  force_all="$($YQ e '.metadata.annotations["silence.application.giantswarm.io/force-all"]' "$file_path")"
+  force_all="$(yq_doc "$file_path" "$document" '.metadata.annotations["silence.application.giantswarm.io/force-all"]')"
   if [[ "$force_all" != "true" ]]; then
     return
   fi
@@ -188,12 +194,12 @@ warn_force_all() {
   fi
 
   local body
-  body=":warning: The silence \`$(basename "$file_path")\` sets \`silence.application.giantswarm.io/force-all: \"true\"\`, which makes it apply to alerts regardless of their \`all_pipelines\` label."
+  body=":warning: The silence \`$(yq_doc "$file_path" "$document" '.metadata.name')\` in \`$(basename "$file_path")\` sets \`silence.application.giantswarm.io/force-all: \"true\"\`, which makes it apply to alerts regardless of their \`all_pipelines\` label."
 
   # Best effort: list the all_pipelines alerts this silence would reach.
   if build_all_pipelines_alerts; then
     local impacted
-    impacted="$(impacted_alerts_for "$file_path" || true)"
+    impacted="$(impacted_alerts_for "$file_path" "$document" || true)"
     if [[ -n "$impacted" ]]; then
       body+=$'\n\n'"It would override the \`all_pipelines\` protection for at least the following alerts:"$'\n'"$impacted"
     else
@@ -221,7 +227,7 @@ notify_expiry_on_weekend(){
 
 # valid_until_date fail if valid-until annotation is missing or invalid
 valid_until_date() {
-  valid_until_annotation="$($YQ e '.metadata.annotations.valid-until' "$1")" || return 1
+  valid_until_annotation="$(yq_doc "$1" "$2" '.metadata.annotations.valid-until')" || return 1
   if [[ -z "$valid_until_annotation" ]] || [[ "$valid_until_annotation" == "null" ]]; then
     error "  [err] valid until required"
     return 1
@@ -275,15 +281,27 @@ main() {
     echo "> checking $file_path"
 
     yaml_extension "$file_path"               || has_error=true
-    validate_v1alpha2_apiversion "$file_path" || has_error=true
-    validate_v1alpha2_namespace "$file_path"  || has_error=true
-    valid_until_date "$file_path"             || has_error=true
     validate_kustomization_resources "$file"  || has_error=true
-    has_cluster_id_matcher "$file_path"       || has_error=true
 
-    # Non-blocking: warn in the PR thread when force-all is enabled
-    warn_force_all "$file_path"
+    # A file may hold several Silence documents: run the checks on each one.
+    local document_indexes
+    if ! document_indexes="$($YQ e -N 'document_index' "$file_path")"; then
+      error "  [err] can't parse YAML"
+      has_error=true
+      continue
+    fi
+    mapfile -t documents <<< "$document_indexes"
+    for document in "${documents[@]}"; do
+      echo "> checking document $((document + 1))/${#documents[@]} ($(yq_doc "$file_path" "$document" '.metadata.name')) of $file"
 
+      validate_v1alpha2_apiversion "$file_path" "$document" || has_error=true
+      validate_v1alpha2_namespace "$file_path" "$document"  || has_error=true
+      valid_until_date "$file_path" "$document"             || has_error=true
+      has_cluster_id_matcher "$file_path" "$document"       || has_error=true
+
+      # Non-blocking: warn in the PR thread when force-all is enabled
+      warn_force_all "$file_path" "$document"
+    done
   done
 
   if $has_error; then

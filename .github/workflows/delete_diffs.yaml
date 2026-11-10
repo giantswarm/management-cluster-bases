@@ -22,11 +22,16 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: Rendered manifest diff
       - name: Delete diff comments
-        uses: jungwinter/comment@fda92dbcb5e7e79cccd55ecb107a8a3d7802a469 # v1.1.0
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         # nothing to delete if no diff comment was found
         if: steps.fc.outputs.comment-id != ''
         continue-on-error: true
+        env:
+          COMMENT_ID: ${{ steps.fc.outputs.comment-id }}
         with:
-          type: delete
-          comment_id: ${{ steps.fc.outputs.comment-id }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.deleteComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: Number(process.env.COMMENT_ID),
+            });
