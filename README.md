@@ -27,6 +27,8 @@ The workflows in `.github/workflows` that declare `on: workflow_call` (`generate
 
 A re-run of a workflow run keeps the reusable workflow at the version the original event resolved, so after a fix to a workflow here, give the consumer pull request a new event (push a commit, or close and reopen it); a re-run cannot pick the fix up.
 
+The composite action `.github/actions/organization-kustomizations` refuses an Agent Platform organization's kustomization file under `management-clusters/*/extras/agent-platform-organizations` that loads anything outside its own directory: a field other than `apiVersion`, `kind`, `metadata` and `resources`, or a `resources` entry with `..`, an absolute path, a git or HTTP URL, or a symbolic link. Every management-clusters repository runs it on each pull request through the workflow that devctl generates for the `fleet` flavour (`zz_generated.validate_organization_kustomizations.yaml`). Run it locally from a management-clusters repository with `python3 <this repository>/.github/actions/organization-kustomizations/check-organization-kustomizations.py`.
+
 ## Tools
 
 In order to upgrade Flux App and `konfigure` bump the versions in `Makefile.custom.mk` and run the following command:
