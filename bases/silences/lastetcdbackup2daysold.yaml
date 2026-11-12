@@ -1,0 +1,16 @@
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: lastetcdbackup2daysold
+  namespace: monitoring
+  annotations:
+    motivation: "The alert fires continuously for every workload cluster whatever the real backup state, because its suppression clause never matches a workload cluster. Silenced everywhere until the alert rule is corrected."
+    valid-until: "2027-02-26"
+spec:
+  matchers:
+    - name: alertname
+      value: "LatestETCDBackup2DaysOld"
+      matchType: "="
+    - name: cluster_id
+      value: ".*"
+      matchType: "=~"
