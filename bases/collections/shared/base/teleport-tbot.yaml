@@ -1,23 +1,52 @@
-apiVersion: application.giantswarm.io/v1alpha1
-kind: App
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
 metadata:
-  annotations:
-    chart-operator.giantswarm.io/force-helm-upgrade: "true"
+  name: teleport-tbot
+  namespace: giantswarm
   labels:
-    app-operator.giantswarm.io/version: 0.0.0
-  name: teleport-tbot
-  namespace: giantswarm
+    app.kubernetes.io/name: teleport-tbot
 spec:
-  catalog: control-plane-catalog
-  config:
-    configMap:
-      name: teleport-tbot-konfiguration
-      namespace: giantswarm
-    secret:
-      name: teleport-tbot-konfiguration
-      namespace: giantswarm
-  kubeConfig:
-    inCluster: true
+  interval: 10m
+  provider: generic
+  ref:
+    tag: 0.4.1
+  url: oci://gsoci.azurecr.io/charts/giantswarm/teleport-tbot
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
   name: teleport-tbot
   namespace: giantswarm
-  version: 0.4.1
+  labels:
+    app.kubernetes.io/name: teleport-tbot
+spec:
+  install:
+    remediation:
+      remediateLastFailure: false
+      retries: 10
+  interval: 5m
+  releaseName: teleport-tbot
+  storageNamespace: giantswarm
+  targetNamespace: giantswarm
+  timeout: 10m
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 10
+      strategy: rollback
+  valuesFrom:
+  - kind: ConfigMap
+    name: teleport-tbot-registered-clusters
+    valuesKey: values
+    optional: true
+  - kind: ConfigMap
+    name: teleport-tbot-konfiguration
+    valuesKey: configmap-values.yaml
+  - kind: Secret
+    name: teleport-tbot-konfiguration
+    valuesKey: secret-values.yaml
+  chartRef:
+    kind: OCIRepository
+    name: teleport-tbot
+    namespace: giantswarm
