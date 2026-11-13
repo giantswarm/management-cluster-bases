@@ -6,6 +6,11 @@ patches:
     patch:
       '[{"op": "add", "path": "/spec/targets/defaults/variables/-", "value": {"name": "stage", "value":
       "testing"}}]'
+  - target:
+      kind: App
+      name: teleport-tbot
+      namespace: giantswarm
+    patch: '[{"op": "replace", "path": "/spec/version", "value": "0.5.0"}]'
 resources:
   - ../../base
 components:
