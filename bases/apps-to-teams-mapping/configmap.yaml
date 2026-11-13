@@ -60,6 +60,7 @@ data:
   chart-operator-extensions: honeybadger
   chart-operator: honeybadger
   cilium-crossplane-resources: phoenix
+  cilium-extensions: cabbage
   cilium-servicemonitors: cabbage
   cilium: cabbage
   cloud-provider-cloud-director: rocket
