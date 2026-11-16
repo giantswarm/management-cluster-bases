@@ -5,6 +5,10 @@ KUSTOMIZE_VERSION ?= v5.6.0
 
 HELM := ./bin/helm
 
+DEVCTL ?= ./bin/devctl
+# TODO bump to the first release with `devctl reservation check-extras` (giantswarm/devctl#3723)
+DEVCTL_VERSION ?= v8.167.9
+
 YQ := ./bin/yq
 YQ_VERSION := 4.31.2
 
@@ -48,25 +52,27 @@ $(BUILD_COLLECTIONS_TARGETS): $(KUSTOMIZE) ## Build the collections overlay of a
 
 # Renders only what changed, so a pull request pays for the clusters it touches
 # instead of the whole fleet. Every cluster is attempted, so one broken overlay
-# does not hide the next one.
+# does not hide the next one. A touched cluster with an extras overlay also gets
+# its reservation blocks checked: `devctl reservation reserve` refuses a patch
+# after a block, but only at reserve time, so a later hand edit lands unseen.
 .PHONY: build-changed-collections
-build-changed-collections: ## Build the collections overlay of every management cluster changed since DIFF_BASE
+build-changed-collections: ## Build the collections and check the extras of every management cluster changed since DIFF_BASE
 	@echo "====> $@"
 	@mcs=$$({ git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters; \
-		git ls-files --others --exclude-standard -- management-clusters; } | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
+		git ls-files --others --exclude-standard -- management-clusters; } | \
+		sed -n -e 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' -e 's|^management-clusters/\([^/]*\)/extras/.*|\1|p' | sort -u); \
 	if [ -z "$$mcs" ]; then \
-		echo "no management cluster collections changed since $(DIFF_BASE)"; \
+		echo "no management cluster collections or extras changed since $(DIFF_BASE)"; \
 		exit 0; \
 	fi; \
 	rc=0; \
 	for mc in $$mcs; do \
-		if [ ! -d "management-clusters/$$mc/collections" ]; then \
-			echo "skip  $$mc (collections removed)"; \
-		elif $(MAKE) build-$$mc-collections; then \
-			echo "ok    $$mc"; \
-		else \
-			echo "FAIL  $$mc"; \
-			rc=1; \
+		dir=management-clusters/$$mc; \
+		if [ -d "$$dir/collections" ]; then \
+			if $(MAKE) build-$$mc-collections; then echo "ok    $$mc collections"; else echo "FAIL  $$mc collections"; rc=1; fi; \
+		fi; \
+		if [ -f "$$dir/extras/kustomization.yaml" ]; then \
+			if $(MAKE) -s $(DEVCTL) && $(DEVCTL) reservation check-extras "$$dir/extras/kustomization.yaml"; then echo "ok    $$mc extras"; else echo "FAIL  $$mc extras"; rc=1; fi; \
 		fi; \
 	done; \
 	exit $$rc
@@ -172,6 +178,12 @@ $(KUSTOMIZE): ## Download kustomize locally if necessary.
 $(HELM): ## Download helm locally if necessary.
 	@echo "====> $@"
 	curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | HELM_INSTALL_DIR=$(dir $@) USE_SUDO=false bash
+
+$(DEVCTL): ## Download devctl locally if necessary.
+	@echo "====> $@"
+	mkdir -p $(dir $@)
+	curl -sfL https://github.com/giantswarm/devctl/releases/download/$(DEVCTL_VERSION)/devctl-$(OS)-$(ARCH) > $@
+	chmod +x $@
 
 $(YQ): ## Download yq locally if necessary.
 	@echo "====> $@"
