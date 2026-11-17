@@ -1,0 +1,32 @@
+name: Test mcp-kubernetes version policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'extras/mcp-kubernetes/**'
+      - 'tests/extras/test-mcp-kubernetes-version-policy.sh'
+      - '.github/workflows/test-mcp-kubernetes-version-policy.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  version-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Helm
+        uses: Azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        with:
+          version: v4.3.0
+
+      - name: Install Kustomize and yq
+        run: make bin/kustomize bin/yq && echo "$PWD/bin" >> "$GITHUB_PATH"
+
+      - name: Check the rendered version policy
+        run: tests/extras/test-mcp-kubernetes-version-policy.sh

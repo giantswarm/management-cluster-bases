@@ -11,7 +11,7 @@ spec:
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
-  revisionHistoryLimit: 0
+  revisionHistoryLimit: 1
   skipDependencyResolution: true
   package: gsoci.azurecr.io/giantswarm/upbound-provider-family-azure:v1.13.1
   runtimeConfigRef:
@@ -26,7 +26,7 @@ spec:
   ignoreCrossplaneConstraints: false
   packagePullPolicy: IfNotPresent
   revisionActivationPolicy: Automatic
-  revisionHistoryLimit: 0
+  revisionHistoryLimit: 1
   skipDependencyResolution: true
   package: gsoci.azurecr.io/giantswarm/crossplane-contrib-provider-kubernetes:v1.2.1
   runtimeConfigRef:

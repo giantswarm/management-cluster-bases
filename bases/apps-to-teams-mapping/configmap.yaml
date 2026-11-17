@@ -7,8 +7,10 @@ metadata:
   namespace: giantswarm
 data:
   agent-manager: bumblebee
+  agent-mem-experiments: honeybadger
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
+  agent-platform-operator: bumblebee
   agent-platform: bumblebee
   agent-sandbox: bumblebee
   agent: bumblebee
@@ -58,6 +60,7 @@ data:
   chart-operator-extensions: honeybadger
   chart-operator: honeybadger
   cilium-crossplane-resources: phoenix
+  cilium-extensions: cabbage
   cilium-servicemonitors: cabbage
   cilium: cabbage
   cloud-provider-cloud-director: rocket
@@ -92,6 +95,7 @@ data:
   cluster: tenet
   coredns-app: cabbage
   coredns-extensions: cabbage
+  crossplane-app-platform: honeybadger
   crossplane-fn-irsa: phoenix
   crossplane-fn-mcoidc: phoenix
   crossplane: honeybadger
@@ -215,7 +219,6 @@ data:
   pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
-  pod-shutdown-operator: rocket
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
@@ -242,6 +245,7 @@ data:
   security-profiles-operator: shield
   silence-operator: atlas
   sitesearch: bumblebee
+  skill-manager: bumblebee
   sloth-rules: atlas
   sloth: atlas
   squid-proxy: phoenix

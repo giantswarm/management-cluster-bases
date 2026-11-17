@@ -1,3 +1,5 @@
 namePrefix: common-
 resources:
   - grafanapostgresqlarchivingfailures.yaml
+  - clusterinternetegressunavailable-github-outage.yaml
+  - lastetcdbackup2daysold.yaml
