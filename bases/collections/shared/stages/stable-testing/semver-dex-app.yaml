@@ -1,5 +1,0 @@
-- op: remove
-  path: /spec/ref/tag
-- op: add
-  path: /spec/ref/semver
-  value: x.x.x
