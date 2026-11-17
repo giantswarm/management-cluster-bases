@@ -1,0 +1,26 @@
+# Checks the Agent Platform organization paths of a management-clusters repository
+# (giantswarm/giantswarm#39013). Every kustomization file under
+# management-clusters/*/extras/agent-platform-organizations may carry only apiVersion, kind,
+# metadata and resources, and every resources entry must be a file or directory inside the
+# file's own directory: no '..', no absolute path, no git or HTTP URL, no symbolic link.
+# Such an entry would let one organization's Flux Kustomization decrypt and apply another
+# organization's Secret, or load from the network.
+#
+# The caller checks out the repository first. The check's code comes from this repository,
+# so a pull request in the caller cannot change what it refuses.
+name: "Organization kustomizations"
+description: "Refuse an Agent Platform organization kustomization that loads anything outside its directory"
+inputs:
+  root:
+    description: "The checked-out management-clusters repository"
+    required: false
+    default: "."
+runs:
+  using: "composite"
+  steps:
+    - name: Check organization kustomizations
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        ROOT: ${{ inputs.root }}
+      run: python3 "$ACTION_PATH/check-organization-kustomizations.py" "$ROOT"
