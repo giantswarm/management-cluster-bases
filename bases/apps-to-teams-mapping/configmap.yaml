@@ -54,6 +54,7 @@ data:
   buzz: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
+  capz-crossplane-resources: phoenix
   cert-exporter: tenet
   cert-manager-app: shield
   cert-manager-crossplane-resources: shield
