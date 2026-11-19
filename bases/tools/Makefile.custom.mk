@@ -8,6 +8,10 @@ HELM := ./bin/helm
 YQ := ./bin/yq
 YQ_VERSION := 4.31.2
 
+# Needs `devctl reservation check-extras`, which came with v8.168.0.
+DEVCTL := ./bin/devctl
+DEVCTL_VERSION ?= v8.168.3
+
 GNU_SED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
 OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
 ARCH ?= $(shell go env GOARCH 2>/dev/null || echo amd64)
@@ -49,13 +53,20 @@ $(BUILD_COLLECTIONS_TARGETS): $(KUSTOMIZE) ## Build the collections overlay of a
 # Renders only what changed, so a pull request pays for the clusters it touches
 # instead of the whole fleet. Every cluster is attempted, so one broken overlay
 # does not hide the next one.
+#
+# A changed extras overlay gets `devctl reservation check-extras`: reservation
+# blocks must stay the last patches, as a patch after one can move the reserved
+# source off its dev build. devctl checks this only when it writes a block, so a
+# hand edit would otherwise go unnoticed until the next reservation command.
 .PHONY: build-changed-collections
-build-changed-collections: ## Build the collections overlay of every management cluster changed since DIFF_BASE
+build-changed-collections: ## Build the collections overlay, and check the reservation blocks of the extras, of every management cluster changed since DIFF_BASE
 	@echo "====> $@"
-	@mcs=$$({ git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters; \
-		git ls-files --others --exclude-standard -- management-clusters; } | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
-	if [ -z "$$mcs" ]; then \
-		echo "no management cluster collections changed since $(DIFF_BASE)"; \
+	@changed=$$({ git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters; \
+		git ls-files --others --exclude-standard -- management-clusters; }); \
+	mcs=$$(echo "$$changed" | sed -n 's|^management-clusters/\([^/]*\)/collections/.*|\1|p' | sort -u); \
+	extras=$$(echo "$$changed" | sed -n 's|^management-clusters/\([^/]*\)/extras/.*|\1|p' | sort -u); \
+	if [ -z "$$mcs$$extras" ]; then \
+		echo "no management cluster collections or extras changed since $(DIFF_BASE)"; \
 		exit 0; \
 	fi; \
 	rc=0; \
@@ -66,6 +77,17 @@ build-changed-collections: ## Build the collections overlay of every management 
 			echo "ok    $$mc"; \
 		else \
 			echo "FAIL  $$mc"; \
+			rc=1; \
+		fi; \
+	done; \
+	if [ -n "$$extras" ]; then $(MAKE) $(DEVCTL) || exit 1; fi; \
+	for mc in $$extras; do \
+		if [ ! -f "management-clusters/$$mc/extras/kustomization.yaml" ]; then \
+			echo "skip  $$mc extras (removed)"; \
+		elif DEVCTL_UNSAFE_FORCE_VERSION=$(DEVCTL_VERSION:v%=%) $(DEVCTL) reservation check-extras management-clusters/$$mc/extras/kustomization.yaml; then \
+			echo "ok    $$mc extras"; \
+		else \
+			echo "FAIL  $$mc extras"; \
 			rc=1; \
 		fi; \
 	done; \
@@ -167,6 +189,14 @@ $(KUSTOMIZE): ## Download kustomize locally if necessary.
 	@echo "====> $@"
 	mkdir -p $(dir $@)
 	curl -sfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz" | tar zxv -C $(dir $@)
+	chmod +x $@
+
+# The version pin keeps CI on a known release; DEVCTL_UNSAFE_FORCE_VERSION in the
+# recipe that runs it lets devctl start when a newer release exists.
+$(DEVCTL): ## Download devctl locally if necessary.
+	@echo "====> $@"
+	mkdir -p $(dir $@)
+	curl -sfL -o $@ https://github.com/giantswarm/devctl/releases/download/$(DEVCTL_VERSION)/devctl-$(OS)-$(ARCH)
 	chmod +x $@
 
 $(HELM): ## Download helm locally if necessary.
