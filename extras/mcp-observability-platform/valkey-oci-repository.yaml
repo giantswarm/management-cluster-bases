@@ -1,0 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mcp-observability-platform-valkey
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
+spec:
+  interval: 1m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/valkey
+  ref:
+    # Capped at the newest stable the fleet runs: a new stable reaches the test
+    # installations first, through the OCIRepository patch in their
+    # extras/kustomization.yaml that follows every newer stable, and the
+    # rest of the fleet once this cap is raised after it ran there.
+    semver: "<=0.4.10"
+  provider: generic

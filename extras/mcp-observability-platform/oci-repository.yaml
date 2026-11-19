@@ -1,0 +1,19 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mcp-observability-platform
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
+spec:
+  interval: 1m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-observability-platform
+  ref:
+    # Capped at 0.5.0, the first release with Grafana jwt auth: no installation
+    # outside the test stage runs it yet, and a release below 0.5.0 cannot
+    # serve the shared-configs values. A new stable reaches the test
+    # installations first, through the OCIRepository patch in their
+    # extras/kustomization.yaml that follows every newer stable, and the
+    # rest of the fleet once this cap is raised after it ran there.
+    semver: "<=0.5.0"
+  provider: generic

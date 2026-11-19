@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mcp-observability-platform
+  namespace: flux-giantswarm
+  labels:
+    application.giantswarm.io/team: atlas
+spec:
+  releaseName: mcp-observability-platform
+  chartRef:
+    kind: OCIRepository
+    name: mcp-observability-platform
+    namespace: flux-giantswarm
+  install:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  interval: 10m
+  targetNamespace: mcp-observability-platform
+  timeout: 10m
+  upgrade:
+    remediation:
+      retries: 10
+      remediateLastFailure: false
+  valuesFrom:
+    # ConfigMap rendered by Konfiguration from shared-configs template
+    - kind: ConfigMap
+      name: mcp-observability-platform-konfiguration
+      valuesKey: configmap-values.yaml
