@@ -19,6 +19,10 @@ spec:
         variables:
           - name: app
             value: azure-workload-identity-webhook
+      capz-crossplane-resources:
+        variables:
+          - name: app
+            value: capz-crossplane-resources
       cluster-api-provider-azure:
         variables:
           - name: app
