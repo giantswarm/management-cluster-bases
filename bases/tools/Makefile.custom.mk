@@ -10,7 +10,7 @@ YQ_VERSION := 4.31.2
 
 # Needs `devctl reservation check-extras`, which came with v8.168.0.
 DEVCTL := ./bin/devctl
-DEVCTL_VERSION ?= v8.168.0
+DEVCTL_VERSION ?= v8.168.3
 
 GNU_SED := $(shell sed --version 1>/dev/null 2>&1; echo $$?)
 OS ?= $(shell go env GOOS 2>/dev/null || echo linux)
