@@ -9,5 +9,5 @@ spec:
   interval: 1m
   url: oci://gsoci.azurecr.io/charts/giantswarm/mcp-kubernetes
   ref:
-    semver: ">=1.13.34 <2.0.0"
+    semver: ">=1.13.34 <=1.15.1"
   provider: generic
