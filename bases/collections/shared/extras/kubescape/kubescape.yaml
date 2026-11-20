@@ -37,6 +37,10 @@ spec:
       remediateLastFailure: true
       retries: 10
       strategy: rollback
+    # Upgrades take longer than installs, because the node-agent DaemonSet
+    # updates one node at a time. A timed-out upgrade is rolled back, and
+    # kubescape 0.1.x can't read the storage that 0.2.x has already migrated.
+    timeout: 30m
   valuesFrom:
   - kind: ConfigMap
     name: kubescape-konfiguration
