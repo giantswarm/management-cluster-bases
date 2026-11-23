@@ -34,7 +34,8 @@ done <<'VERSIONS'
 1.15.1 true
 1.15.2 true
 1.16.0 true
-1.16.1 false
+1.16.7 true
+1.16.8 false
 1.16.0-rc.1 false
 1.99.0 false
 1.14.0-rc.1 false
