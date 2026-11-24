@@ -10,6 +10,6 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 1
   skipDependencyResolution: true
-  package: gsoci.azurecr.io/giantswarm/upbound-provider-azure-authorization:v1.13.1
+  package: gsoci.azurecr.io/giantswarm/upbound-provider-azure-authorization:v2.8.4
   runtimeConfigRef:
     name: upbound-provider-family-azure
