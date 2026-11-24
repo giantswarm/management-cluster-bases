@@ -2,6 +2,7 @@ resources:
 - authorization.yaml
 - deploymentruntime.yaml
 - managedidentity.yaml
+- managedresourceactivationpolicy.yaml
 - network.yaml
 - polex.yaml
 - provider.yaml

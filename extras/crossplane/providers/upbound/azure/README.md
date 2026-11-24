@@ -84,6 +84,28 @@ patches:
       kind: ClusterRoleBinding
 ```
 
+## Managed resource activation
+
+Crossplane v2 only creates a CRD for a managed resource kind when its
+ManagedResourceDefinition (MRD) is activated by a
+`ManagedResourceActivationPolicy`. This base ships the `default` policy in
+[`managedresourceactivationpolicy.yaml`](./managedresourceactivationpolicy.yaml)
+with an explicit list of the kinds used on Giant Swarm management clusters,
+instead of Crossplane's default `activate: ["*"]`, which installs every kind
+of every provider family member (~150 CRDs) and costs kube-apiserver memory.
+
+To use a managed resource kind that is not listed yet, add its MRD name
+(`<plural>.<group>`, e.g. `flexibleservers.dbforpostgresql.azure.upbound.io`)
+to the policy. Check the MRD names with:
+
+```nohighlight
+kubectl get managedresourcedefinitions
+```
+
+An MRD cannot go back from `Active` to `Inactive`. Already-active, unused kinds
+keep their CRDs until the MRD is deleted; the provider revision then
+re-creates it as `Inactive`, which also removes its CRD.
+
 ## Using crossplane with WorkloadIdentity
 
 To use Azure WorkloadIdentity with crossplane azure providers, both the pod
