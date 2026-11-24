@@ -1,17 +1,5 @@
 # Restricts which managed resource definitions (MRDs) of the installed
 # providers become CRDs on the management cluster.
-#
-# Crossplane's init container creates a ManagedResourceActivationPolicy named
-# `default` with `activate: ["*"]` only when none exists; it never updates it.
-# By shipping `default` from here, Flux owns the spec and the list below wins.
-#
-# Without this, every MRD of every provider family member is activated (~150
-# CRDs for the Azure members installed here), although only a handful are used.
-# Each CRD costs kube-apiserver memory (watch cache, etcd client, OpenAPI/CEL
-# schemas) even when no objects exist.
-#
-# Add an entry here before using a new managed resource kind. Activations are
-# MRD names (`<plural>.<group>`); wildcard prefixes like `*.<group>` work.
 apiVersion: apiextensions.crossplane.io/v1alpha1
 kind: ManagedResourceActivationPolicy
 metadata:
