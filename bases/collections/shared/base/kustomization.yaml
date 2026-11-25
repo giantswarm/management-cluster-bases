@@ -29,6 +29,7 @@ resources:
   - konfiguration.yaml
   - konfigure-operator.yaml
   - kube-downscaler.yaml
+  - kubescape.yaml
   - kyverno-policies-connectivity.yaml
   - kyverno-policies-dx.yaml
   - kyverno-policies-observability.yaml
