@@ -54,12 +54,12 @@ $(BUILD_COLLECTIONS_TARGETS): $(KUSTOMIZE) ## Build the collections overlay of a
 # instead of the whole fleet. Every cluster is attempted, so one broken overlay
 # does not hide the next one.
 #
-# A changed extras overlay gets `devctl reservation check-extras`: reservation
+# A changed extras or collections overlay gets `devctl reservation check-extras`: reservation
 # blocks must stay the last patches, as a patch after one can move the reserved
 # source off its dev build. devctl checks this only when it writes a block, so a
 # hand edit would otherwise go unnoticed until the next reservation command.
 .PHONY: build-changed-collections
-build-changed-collections: ## Build the collections overlay, and check the reservation blocks of the extras, of every management cluster changed since DIFF_BASE
+build-changed-collections: ## Build the collections overlay, and check the reservation blocks of the collections and extras, of every management cluster changed since DIFF_BASE
 	@echo "====> $@"
 	@changed=$$({ git diff --no-renames --name-only $(DIFF_BASE) -- management-clusters; \
 		git ls-files --others --exclude-standard -- management-clusters; }); \
@@ -70,17 +70,19 @@ build-changed-collections: ## Build the collections overlay, and check the reser
 		exit 0; \
 	fi; \
 	rc=0; \
+	$(MAKE) $(DEVCTL) || exit 1; \
 	for mc in $$mcs; do \
 		if [ ! -d "management-clusters/$$mc/collections" ]; then \
 			echo "skip  $$mc (collections removed)"; \
 		elif $(MAKE) build-$$mc-collections; then \
 			echo "ok    $$mc"; \
+			DEVCTL_UNSAFE_FORCE_VERSION=$(DEVCTL_VERSION:v%=%) $(DEVCTL) reservation check-extras management-clusters/$$mc/collections/kustomization.yaml \
+				&& echo "ok    $$mc collections reservations" || { echo "FAIL  $$mc collections reservations"; rc=1; }; \
 		else \
 			echo "FAIL  $$mc"; \
 			rc=1; \
 		fi; \
 	done; \
-	if [ -n "$$extras" ]; then $(MAKE) $(DEVCTL) || exit 1; fi; \
 	for mc in $$extras; do \
 		if [ ! -f "management-clusters/$$mc/extras/kustomization.yaml" ]; then \
 			echo "skip  $$mc extras (removed)"; \
