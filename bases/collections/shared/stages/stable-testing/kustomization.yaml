@@ -11,6 +11,11 @@ patches:
     path: semver-konfigure-operator.yaml
   - target:
       kind: OCIRepository
+      name: kubescape
+      namespace: giantswarm
+    path: semver-kubescape.yaml
+  - target:
+      kind: OCIRepository
       name: kyverno-policies-ux
       namespace: giantswarm
     path: semver-kyverno-policies-ux.yaml
