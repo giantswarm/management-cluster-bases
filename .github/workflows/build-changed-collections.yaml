@@ -5,7 +5,7 @@ name: Build changed collections
 # stops at review instead of at the cluster. Manual changes to that path used to
 # reach `main` unchecked and with an empty rendered diff. A changed `extras`
 # overlay gets `devctl reservation check-extras`, which fails when a patch
-# follows a reservation block. Callers trigger on both paths.
+# follows a reservation block, as does a changed `collections` overlay. Callers trigger on both paths.
 on:
   workflow_call:
     inputs:
