@@ -30,8 +30,11 @@ spec:
   releaseName: kubescape
   storageNamespace: kubescape
   targetNamespace: kubescape
-  # The kubescape install can take longer than Flux's 5m default (see security-bundle).
-  timeout: 15m
+  # Kubescape upgrades are slow: the node-agent DaemonSet updates one node at a
+  # time. A timed-out upgrade is rolled back, and an older kubescape cannot read
+  # storage that a newer one has already migrated. security-bundle allows 30m
+  # for the same reason.
+  timeout: 30m
   upgrade:
     remediation:
       remediateLastFailure: true
