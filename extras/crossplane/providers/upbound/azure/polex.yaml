@@ -3,6 +3,8 @@ kind: PolicyException
 metadata:
   name: crossplane-upbound-provider
   namespace: kube-system
+  labels:
+    policy.giantswarm.io/migrated-to-cel: "true"
 spec:
   exceptions:
   - policyName: disallow-capabilities-strict
@@ -27,3 +29,32 @@ spec:
         - function*
         namespaces:
         - crossplane
+---
+# policies.kyverno.io/v1 sibling of the kyverno.io/v2 exception above, for the
+# CEL (ValidatingPolicy) versions of the policies. A kyverno.io/v2 exception
+# only applies to ClusterPolicies. CEL exceptions apply to whole policies: this
+# one also excepts the adding-capabilities-strict rule of
+# disallow-capabilities-strict, which the legacy exception doesn't name.
+apiVersion: policies.kyverno.io/v1
+kind: PolicyException
+metadata:
+  name: crossplane-upbound-provider
+  namespace: kube-system
+spec:
+  policyRefs:
+  - name: disallow-capabilities-strict
+    kind: ValidatingPolicy
+  - name: restrict-seccomp-strict
+    kind: ValidatingPolicy
+  matchConditions:
+  - name: crossplane-provider-workloads
+    expression: >-
+      request.kind.kind in ['Deployment', 'ReplicaSet', 'Pod'] &&
+      request.namespace == 'crossplane' &&
+      has(object.metadata.name) &&
+      (
+        object.metadata.name == 'upbound-provider' || object.metadata.name.startsWith('upbound-provider-') ||
+        object.metadata.name == 'upbound-contrib-provider' || object.metadata.name.startsWith('upbound-contrib-provider-') ||
+        object.metadata.name == 'crossplane-contrib-provider' || object.metadata.name.startsWith('crossplane-contrib-provider-') ||
+        object.metadata.name == 'function' || object.metadata.name.startsWith('function-')
+      )
