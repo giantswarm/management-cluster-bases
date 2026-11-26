@@ -6,8 +6,8 @@
 #
 #     ./tests/tools/test-build-collections.sh
 #
-# It needs `kustomize` on PATH and does not touch the network: the fixture
-# GitOps repo it builds uses local resources only.
+# It needs `kustomize` on PATH and network access, as the Makefile downloads the
+# pinned devctl. The fixture GitOps repo it builds uses local resources only.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -110,6 +110,33 @@ assert "build-changed-collections fails on a malformed touched cluster" 2 \
 rm -rf "${fixture}/management-clusters/beta/collections"
 assert "build-changed-collections skips a cluster whose collections were removed" 0 \
   "$(run build-changed-collections DIFF_BASE="${baseline}")"
+
+# A patch after a reservation block in the collections kustomization fails the
+# check, as it does in extras. Needs the pinned devctl, which the Makefile downloads.
+cat >"${fixture}/management-clusters/alpha/collections/kustomization.yaml" <<EOF
+resources:
+  - ocirepository.yaml
+patches:
+  # BEGIN reservation of alpha-app, written by \`devctl reservation reserve\`. Do not edit.
+  - target:
+      kind: OCIRepository
+      name: alpha-app
+    patch: |
+      - op: replace
+        path: /spec/ref
+        value:
+          semver: ">=0.0.0-dev"
+  # END reservation of alpha-app, written by \`devctl reservation reserve\`
+  - target:
+      kind: OCIRepository
+    patch: |
+      - op: add
+        path: /metadata/labels
+        value: {a: b}
+EOF
+assert "build-changed-collections fails on a patch after a reservation block in collections" 2 \
+  "$(run build-changed-collections DIFF_BASE="${baseline}")"
+collection alpha ocirepository.yaml # back to a clean tree
 
 # The GitOps repos do not vendor this file, they pipe it into `make -f -` from a
 # catch-all rule. `build-changed-collections` re-enters make, so check that the

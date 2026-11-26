@@ -3,7 +3,9 @@ name: Build changed collections
 # Called by the GitOps repos. Renders the `collections` overlay of every
 # management cluster the pull request touches, so that a broken change there
 # stops at review instead of at the cluster. Manual changes to that path used to
-# reach `main` unchecked and with an empty rendered diff.
+# reach `main` unchecked and with an empty rendered diff. A changed `extras`
+# overlay gets `devctl reservation check-extras`, which fails when a patch
+# follows a reservation block, as does a changed `collections` overlay. Callers trigger on both paths.
 on:
   workflow_call:
     inputs:
@@ -29,9 +31,9 @@ jobs:
           # The target diffs against the pull request base, which needs history.
           fetch-depth: 0
 
-      # The shared Makefile target downloads its own pinned kustomize, so this
+      # The shared Makefile target downloads its own pinned kustomize and devctl, so this
       # runs exactly like `make build-changed-collections` on a laptop.
-      - name: Build the collections of every touched management cluster
+      - name: Build the collections and check the extras of every touched management cluster
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           MCB_REF: ${{ inputs.mcb-ref }}

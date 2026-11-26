@@ -155,23 +155,6 @@ spec:
         - list: "request.object.spec.resources"
           pattern:
             =(namespace): "{{request.object.metadata.namespace}}"
-    - name: eventsObjectMustBeLocal
-      exclude:
-        resources:
-          namespaces:
-            - "flux-giantswarm"
-            - "giantswarm"
-            - "monitoring"
-      match:
-        resources:
-          kinds:
-            - Event
-      validate:
-        message: "spec.involvedObject namespace must be the same as metadata.namespace"
-        pattern:
-          spec:
-            involvedObject:
-              =(namespace): "{{request.object.metadata.namespace}}"
     - name: imagePolicyRepositoryMustBeLocal
       exclude:
         resources:

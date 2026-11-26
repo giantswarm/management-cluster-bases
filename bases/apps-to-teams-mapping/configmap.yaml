@@ -7,6 +7,7 @@ metadata:
   namespace: giantswarm
 data:
   agent-manager: bumblebee
+  agent-mem-experiments: honeybadger
   agent-platform-connectivity: bumblebee
   agent-platform-mcps: bumblebee
   agent-platform-operator: bumblebee
@@ -39,7 +40,6 @@ data:
   aws-pod-identity-webhook: phoenix
   aws-resolver-rules-operator: phoenix
   aws-vpc-operator: phoenix
-  azure-ad-pod-identity-app: phoenix
   azure-aks-extras: phoenix
   azure-cloud-controller-manager-app: phoenix
   azure-cloud-node-manager-app: phoenix
@@ -53,12 +53,14 @@ data:
   buzz: bumblebee
   capa-iam-operator: phoenix
   capa-karpenter-taint-remover: phoenix
+  capz-crossplane-resources: phoenix
   cert-exporter: tenet
   cert-manager-app: shield
   cert-manager-crossplane-resources: shield
   chart-operator-extensions: honeybadger
   chart-operator: honeybadger
   cilium-crossplane-resources: phoenix
+  cilium-extensions: cabbage
   cilium-servicemonitors: cabbage
   cilium: cabbage
   cloud-provider-cloud-director: rocket
@@ -93,6 +95,7 @@ data:
   cluster: tenet
   coredns-app: cabbage
   coredns-extensions: cabbage
+  crossplane-app-platform: honeybadger
   crossplane-fn-irsa: phoenix
   crossplane-fn-mcoidc: phoenix
   crossplane: honeybadger
@@ -160,7 +163,6 @@ data:
   karpenter: phoenix
   keda: atlas
   klaus-gateway: bumblebee
-  klaus: bumblebee
   konfigure-operator: honeybadger
   kserve-crd: bumblebee
   kserve-llmisvc-crd: bumblebee
@@ -216,7 +218,6 @@ data:
   pagerduty-mcp-server: atlas
   pg-cluster-recovery-test: atlas
   plugin-barman-cloud: atlas
-  pod-shutdown-operator: rocket
   policy-api-crds: shield
   policy-meta-operator: shield
   priority-classes: tenet
@@ -232,8 +233,15 @@ data:
   rancher-fleet: rocket
   rbac-bootstrap: shield
   rbac-operator: shield
+  release-aks: phoenix
+  release-aws: phoenix
+  release-azure: phoenix
+  release-cloud-director: rocket
+  release-eks: phoenix
   release-exporter: planeteers
+  release-proxmox: rocket
   release-test-app: honeybadger
+  release-vsphere: rocket
   reports-server: shield
   resource-police: phoenix
   sbom-advisory-operator: shield
@@ -256,7 +264,6 @@ data:
   teleport-exporter: shield
   teleport-kube-agent: shield
   teleport-operator: shield
-  teleport-plugin-event-handler: shield
   teleport-tbot: shield
   tempo: atlas
   test-app: honeybadger
