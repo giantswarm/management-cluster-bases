@@ -1,2 +1,2 @@
 resources:
-  - https://raw.githubusercontent.com/giantswarm/organization-operator/v2.2.0-rc.1/config/crd/bases/security.giantswarm.io_organizations.yaml
+  - https://raw.githubusercontent.com/giantswarm/organization-operator/v2.2.0/config/crd/bases/security.giantswarm.io_organizations.yaml
