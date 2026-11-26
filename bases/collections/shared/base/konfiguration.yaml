@@ -183,6 +183,12 @@ spec:
             value: kube-downscaler
           - name: team
             value: planeteers
+      kubescape:
+        variables:
+          - name: app
+            value: kubescape
+          - name: team
+            value: shield
       kyverno-policies-connectivity:
         variables:
           - name: app

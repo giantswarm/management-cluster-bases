@@ -8,5 +8,3 @@ patches:
       "testing"}}]'
 resources:
   - ../../base
-components:
-  - ../../extras/kubescape

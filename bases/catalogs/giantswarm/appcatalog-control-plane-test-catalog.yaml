@@ -35,12 +35,3 @@ spec:
       repositories:
         - type: oci
           URL: "oci://gsoci.azurecr.io/charts/giantswarm/"
-      config:
-        configMap:
-          name: "draughtsman-values-configmap"
-          namespace: "draughtsman"
-          managed: false
-        secret:
-          name: "draughtsman-values-secret"
-          namespace: "draughtsman"
-          managed: false
