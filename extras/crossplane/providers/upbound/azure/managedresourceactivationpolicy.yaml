@@ -1,0 +1,27 @@
+# Restricts which managed resource definitions (MRDs) of the installed
+# providers become CRDs on the management cluster.
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: default
+spec:
+  activate:
+    # upbound-provider-azure-storage
+    - accounts.storage.azure.upbound.io
+    - containers.storage.azure.upbound.io
+    - managementpolicies.storage.azure.upbound.io
+    # upbound-provider-azure-managedidentity
+    - userassignedidentities.managedidentity.azure.upbound.io
+    - federatedidentitycredentials.managedidentity.azure.upbound.io
+    # upbound-provider-azure-authorization
+    - roleassignments.authorization.azure.upbound.io
+    - roledefinitions.authorization.azure.upbound.io
+    # upbound-provider-azure-network (private endpoints, private DNS)
+    - privateendpoints.network.azure.upbound.io
+    - privatelinkservices.network.azure.upbound.io
+    - privatednszones.network.azure.upbound.io
+    - privatednszonevirtualnetworklinks.network.azure.upbound.io
+    - virtualnetworks.network.azure.upbound.io
+    # upbound-contrib-provider-kubernetes
+    - "*.kubernetes.crossplane.io"
+    - "*.kubernetes.m.crossplane.io"
