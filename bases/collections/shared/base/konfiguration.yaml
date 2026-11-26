@@ -219,6 +219,12 @@ spec:
             value: loki
           - name: team
             value: atlas
+      mcp-observability-platform:
+        variables:
+          - name: app
+            value: mcp-observability-platform
+          - name: team
+            value: atlas
       mimir:
         variables:
           - name: app

@@ -35,6 +35,7 @@ resources:
   - kyverno-policies-observability.yaml
   - kyverno-policies-ux.yaml
   - loki.yaml
+  - mcp-observability-platform.yaml
   - mimir.yaml
   - oauth2-proxy.yaml
   - observability-operator.yaml
